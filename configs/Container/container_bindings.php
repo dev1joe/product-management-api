@@ -1,0 +1,55 @@
+<?php
+declare(strict_types=1);
+
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\ORMSetup;
+use Psr\Container\ContainerInterface;
+use Slim\App;
+use Slim\Factory\AppFactory;
+use Slim\Views\Twig;
+
+return [
+    App::class => function(ContainerInterface $container) {
+        AppFactory::setContainer($container);
+        $app = AppFactory::create();
+
+        // TODO: add routes and middlewares
+        $routes = require __DIR__ . '/../routes.php';
+        $routes($app);
+
+        $middlewares = require __DIR__ . '/../middlewares.php';
+        $middlewares($app);
+
+        return $app;
+    },
+    Twig::class => function() {
+        $twig = Twig::create(
+            "../resources/views/",
+            [
+                'cache' => "../storage" . "/cache",
+                'auto_reload' => $_ENV['APP_ENVIRONMENT'] == 'development'
+            ]
+        );
+
+        // add any twig extensions here
+
+        return $twig;
+    },
+    EntityManager::class => function() { // TODO: abstract env access away
+        $conn = DriverManager::getConnection([
+                'driver' => $_ENV['DB_DRIVER'] ?? 'pdo_mysql',
+                'host' => $_ENV['DB_HOST'],
+                'dbname' => $_ENV['DB_NAME'],
+                'user' => $_ENV['DB_USER'],
+                'password' => $_ENV['DB_PASS'],
+        ]);
+
+        $ormSetup = ORMSetup::createAttributeMetadataConfiguration(
+            paths: [__DIR__ . "/../../app/Entities/"],
+            isDevMode: true
+        );
+
+        return new EntityManager($conn, $ormSetup);
+    }
+];

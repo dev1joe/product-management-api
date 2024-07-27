@@ -1,0 +1,53 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Entities;
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Table;
+
+#[Table, Entity]
+class Category
+{
+    #[Id, Column]
+    private int $id;
+    #[Column]
+    private string $name;
+    #[Column(name: 'product_count')]
+    private int $productCount;
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): Category
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getProductCount(): int
+    {
+        return $this->productCount;
+    }
+
+    public function setProductCount(int $productCount): Category
+    {
+        $this->productCount = $productCount;
+        return $this;
+    }
+
+    public function incrementProductCount(int $amount): Category
+    {
+        $this->productCount = $this->productCount + $amount;
+        return $this;
+    }
+
+}
