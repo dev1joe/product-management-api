@@ -15,19 +15,19 @@ return [
         $app = AppFactory::create();
 
         // TODO: add routes and middlewares
-        $routes = require __DIR__ . '/../routes.php';
+        $routes = require CONFIGS_PATH . '/routes.php';
         $routes($app);
 
-        $middlewares = require __DIR__ . '/../middlewares.php';
+        $middlewares = require CONFIGS_PATH . '/middlewares.php';
         $middlewares($app);
 
         return $app;
     },
     Twig::class => function() {
         $twig = Twig::create(
-            "../resources/views/",
-            [
-                'cache' => "../storage" . "/cache",
+            path: VIEWS_PATH,
+            settings: [
+                'cache' => STORAGE_PATH . "/cache",
                 'auto_reload' => $_ENV['APP_ENVIRONMENT'] == 'development'
             ]
         );
