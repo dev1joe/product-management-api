@@ -5,17 +5,19 @@ namespace App\Entities;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
 class Warehouse
 {
-    #[Id, Column]
+    #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]
     private string $name;
-    #[Column]
+    #[Column, ManyToOne]
     private Address $address;
 
     public function getId(): int

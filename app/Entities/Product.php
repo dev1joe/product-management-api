@@ -5,19 +5,21 @@ namespace App\Entities;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
 class Product
 {
-    #[Id, Column]
+    #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]
     private string $name;
     #[Column]
     private string $description;
-    #[Column] // TODO: tutorial about orm relationships
+    #[Column, ManyToOne]
     private Category $category;
     #[Column] // TODO: it should be the path of the photo
     private string $photo;

@@ -5,15 +5,17 @@ namespace App\Entities;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table]
 class Invoice
 {
-    #[Id, Column]
+    #[Id, Column, GeneratedValue]
     private int $id;
-    #[Column]
+    #[Column, OneToOne(targetEntity: Order::class, mappedBy: 'invoice')]
     private Order $order;
     #[Column]
     private float $tax;

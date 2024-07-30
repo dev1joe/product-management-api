@@ -10,3 +10,5 @@ use Doctrine\ORM\Mapping\Table;
 class Customer
 {
 }
+
+//TODO: on customer delete functions (in workflow project file)

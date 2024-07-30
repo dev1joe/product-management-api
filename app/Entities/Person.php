@@ -4,13 +4,15 @@ declare(strict_types=1);
 namespace App\Entities;
 
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\MappedSuperclass;
+use Doctrine\ORM\Mapping\OneToOne;
 
 #[MappedSuperclass]
 class Person
 {
-    #[Id, Column]
+    #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]
     private string $firstName;
@@ -22,7 +24,7 @@ class Person
     private string $email;
     #[Column]
     private string $password;
-    #[Column]
+    #[Column, OneToOne(inversedBy: 'person')]
     private Address $address;
 
     public function getId(): int

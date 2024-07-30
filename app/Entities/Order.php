@@ -5,16 +5,24 @@ namespace App\Entities;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
 class Order
 {
-    #[Id, Column]
+    #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]
+    #[ManyToOne]
     private Customer $customer;
+    #[Column]
+    #[OneToOne(targetEntity: Invoice::class, inversedBy: 'order')]
+    private Invoice $invoice;
     #[Column]
     private \DateTime $dateCreated;
     #[Column]

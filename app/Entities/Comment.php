@@ -5,14 +5,22 @@ namespace App\Entities;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
 class Comment
-{// TODO: Id ??
-    #[Column]
+{
+    #[Id, Column, GeneratedValue]
+    private int $id;
+    #[Column(nullable: true)]
+    #[ManyToOne, JoinColumn(onDelete: 'SET NULL')]
     private Customer $customer;
     #[Column]
+    #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Product $product;
     #[Column]
     private \DateTime $timestamp;

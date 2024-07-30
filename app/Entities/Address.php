@@ -5,14 +5,19 @@ namespace App\Entities;
 
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Table, Entity]
 class Address
 {
-    #[Id, Column]
+    #[Id, Column, GeneratedValue]
     private int $id;
+    #[Column, OneToOne(mappedBy: 'address'), JoinColumn(onDelete: 'CASCADE')]
+    private Person $person;
     #[Column]
     private string $country;
     #[Column]
