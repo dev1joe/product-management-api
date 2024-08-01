@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -10,23 +11,23 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
+#[Entity, Table(name: 'products')]
 class Product
 {
     #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]
     private string $name;
-    #[Column]
+    #[Column(type: Types::STRING, length: 1000)]
     private string $description;
     #[Column, ManyToOne]
     private Category $category;
     #[Column] // TODO: it should be the path of the photo
     private string $photo;
-    #[Column(name: "unit_price")]
-    private float $unitPrice;
-    #[Column(name: "avg_rating")]
-    private float $avgRating;
+    #[Column(name: "unit_price_cents")]
+    private int $unitPriceCents;
+    #[Column(name: "avg_rating", type: Types::DECIMAL, precision: 2, scale: 1, options: ["default" => 0])]
+    private float $avgRating = 0;
 
     public function getId(): int
     {
@@ -83,14 +84,14 @@ class Product
         return $this;
     }
 
-    public function getUnitPrice(): float
+    public function getUnitPriceCents(): float
     {
-        return $this->unitPrice;
+        return $this->unitPriceCents;
     }
 
-    public function setUnitPrice(float $unitPrice): Product
+    public function setUnitPriceCents(int $unitPriceCents): Product
     {
-        $this->unitPrice = $unitPrice;
+        $this->unitPriceCents = $unitPriceCents;
         return $this;
     }
 

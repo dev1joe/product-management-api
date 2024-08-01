@@ -6,8 +6,8 @@ namespace App\Entities;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
 
-#[Entity, Table]
-class Customer
+#[Entity, Table(name: 'customers')]
+class Customer extends Person
 {
 }
 

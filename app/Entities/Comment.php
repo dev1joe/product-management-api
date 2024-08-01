@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -11,7 +12,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
+#[Entity, Table(name: 'comments')]
 class Comment
 {
     #[Id, Column, GeneratedValue]
@@ -24,9 +25,9 @@ class Comment
     private Product $product;
     #[Column]
     private \DateTime $timestamp;
-    #[Column]
+    #[Column(type: Types::STRING, length: 1000)]
     private string $content;
-    #[Column]
+    #[Column(type: Types::DECIMAL, precision: 2, scale: 1)]
     private float $rating;
 
     public function getCustomer(): Customer

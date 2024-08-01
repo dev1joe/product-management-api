@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
+#[Entity, Table(name: 'categories')]
 class Category
 {
     #[Id, Column, GeneratedValue]

@@ -3,16 +3,17 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Enums\OrderStatus;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
+#[Entity, Table(name: 'orders')]
 class Order
 {
     #[Id, Column, GeneratedValue]
@@ -20,17 +21,16 @@ class Order
     #[Column]
     #[ManyToOne]
     private Customer $customer;
-    #[Column]
-    #[OneToOne(targetEntity: Invoice::class, inversedBy: 'order')]
-    private Invoice $invoice;
-    #[Column]
+    #[Column, OneToOne]
+    private Receipt $receipt;
+    #[Column(name: 'date_created')]
     private \DateTime $dateCreated;
-    #[Column]
+    #[Column(name: 'date_delivered')]
     private \DateTime $dateDelivered;
-    #[Column]
-    private string $status;
-    #[Column]
-    private float $total;
+    #[Column(type: Types::STRING)]
+    private OrderStatus $status = OrderStatus::Pending;
+    #[Column(name: 'total_cents')]
+    private int $totalCents;
 
     public function getId(): int
     {
@@ -87,15 +87,25 @@ class Order
         return $this;
     }
 
-    public function getTotal(): float
+    public function getTotalCents(): float
     {
-        return $this->total;
+        return $this->totalCents;
     }
 
-    public function setTotal(float $total): Order
+    public function setTotalCents(int $totalCents): Order
     {
-        $this->total = $total;
+        $this->totalCents = $totalCents;
         return $this;
     }
 
+    public function getReceipt(): Receipt
+    {
+        return $this->receipt;
+    }
+
+    public function setReceipt(Receipt $receipt): Order
+    {
+        $this->receipt = $receipt;
+        return $this;
+    }
 }

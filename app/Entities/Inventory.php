@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
+#[Entity, Table(name: 'inventories')]
 class Inventory
 {
     #[Id, Column, GeneratedValue]
@@ -21,8 +21,8 @@ class Inventory
     #[Column, ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Product $product;
     #[Column]
-    private int $count;
-    #[Column]
+    private int $quantity;
+    #[Column(name: 'last_restock')]
     private \DateTime $lastRestock;
 
     public function getWarehouse(): Warehouse
@@ -35,20 +35,20 @@ class Inventory
         return $this->product;
     }
 
-    public function getCount(): int
+    public function getQuantity(): int
     {
-        return $this->count;
+        return $this->quantity;
     }
 
-    public function setCount(int $count): Inventory
+    public function setQuantity(int $quantity): Inventory
     {
-        $this->count = $count;
+        $this->quantity = $quantity;
         return $this;
     }
 
     public function decrementCount(int $amount): Inventory
     {
-        $this->count = $this->count - $amount;
+        $this->quantity = $this->quantity - $amount;
         return $this;
     }
 

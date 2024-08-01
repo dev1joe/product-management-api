@@ -12,6 +12,9 @@
 - if a customer deletes their account, customer should be warned in case of any undelivered orders.
 - after confirmation, customer's completed orders stay, pending orders gets canceled.
 
+### customer and address (on customer delete functions)
+- if the customer is deleted, their address should also be deleted
+
 ### order item (on customer delete functions)
 - this entity is a weak entity, with the product and customer as defining entities
 - if the customer is deleted, the order item will be deleted
@@ -36,15 +39,20 @@
 # invoice status
 // TODO: check stripe payment gateway first
 
+# Currency representation
+// TODO: check stripe
+
 # Learning
 - Why specify the "Entity" and "Table" attributes ??
+  - Entity attribute is required, it marks a PHP class as an entity to be persisted in the DB
+  - while Table attribute is optional, it describes the table the entity is persisted in
 
 # Project Future
 - make a dynamic attributes system (suggested by [chatGPT](https://chatgpt.com/share/6713d5db-cf0d-47b4-93f0-305d9cbd7709))
 - advanced filtering (i5, i7 CPUs for laptops)
 - sub-categories (phones > [i-phone, Samsung, phone accessories])
 - Complaints system (using UI and emails)
-- sales tracking (store sales count)
+- sales tracking (store sales quantity)
 - advanced CMS
 - capacity for more employees (manger, supervisor, product manager, order manager)
 - order tracking 

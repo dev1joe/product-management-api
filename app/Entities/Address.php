@@ -11,13 +11,11 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
+#[Entity, Table(name: 'addresses')]
 class Address
 {
     #[Id, Column, GeneratedValue]
     private int $id;
-    #[Column, OneToOne(mappedBy: 'address'), JoinColumn(onDelete: 'CASCADE')]
-    private Person $person;
     #[Column]
     private string $country;
     #[Column]

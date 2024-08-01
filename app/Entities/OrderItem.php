@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
+#[Entity, Table(name: 'order_items')]
 class OrderItem
 {
     #[Id, Column, GeneratedValue]
@@ -22,8 +22,8 @@ class OrderItem
     private Product $product;
     #[Column]
     private int $quantity;
-    #[Column]
-    private float $totalPrice;
+    #[Column(name: 'total_price_cents')]
+    private int $totalPriceCents;
 
     public function getCustomer(): Customer
     {
@@ -58,14 +58,14 @@ class OrderItem
         return $this;
     }
 
-    public function getTotalPrice(): float
+    public function getTotalPriceCents(): float
     {
-        return $this->totalPrice;
+        return $this->totalPriceCents;
     }
 
-    public function setTotalPrice(float $totalPrice): OrderItem
+    public function setTotalPriceCents(int $totalPriceCents): OrderItem
     {
-        $this->totalPrice = $totalPrice;
+        $this->totalPriceCents = $totalPriceCents;
         return $this;
     }
 

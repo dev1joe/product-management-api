@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
 
-#[Table, Entity]
-class Administrator
+#[Entity, Table(name: 'administrators')]
+class Administrator extends Person
 {
     #[Column]
     private string $ssn;

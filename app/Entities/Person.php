@@ -14,17 +14,17 @@ class Person
 {
     #[Id, Column, GeneratedValue]
     private int $id;
-    #[Column]
+    #[Column(name: 'first_name')]
     private string $firstName;
-    #[Column]
+    #[Column(name: 'middle_name')]
     private string $middleName;
-    #[Column]
+    #[Column(name: 'last_name')]
     private string $lastName;
     #[Column]
     private string $email;
     #[Column]
     private string $password;
-    #[Column, OneToOne(inversedBy: 'person')]
+    #[Column, OneToOne]
     private Address $address;
 
     public function getId(): int
