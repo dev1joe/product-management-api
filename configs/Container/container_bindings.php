@@ -1,12 +1,15 @@
 <?php
 declare(strict_types=1);
 
+use App\RequestValidators\RequestValidatorFactory;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
+use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Views\Twig;
 
 return [
@@ -51,5 +54,14 @@ return [
         );
 
         return new EntityManager($conn, $ormSetup);
+    },
+    RequestValidatorFactory::class => function(ContainerInterface $container) {
+        return new RequestValidatorFactory($container);
+    },
+    ResponseFactoryInterface::class => function(ContainerInterface $container) {
+        /** @var App $app */
+        $app = $container->get(App::class);
+
+        return $app->getResponseFactory();
     }
 ];
