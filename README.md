@@ -43,9 +43,21 @@
 // TODO: check stripe
 
 # Learning
-- Why specify the "Entity" and "Table" attributes ??
+### Why specify the "Entity" and "Table" attributes ??
   - Entity attribute is required, it marks a PHP class as an entity to be persisted in the DB
   - while Table attribute is optional, it describes the table the entity is persisted in
+
+### Migration version aliases
+- first - Migrate down to before the first version.
+- prev - Migrate down to before the previous version.
+- next - Migrate up to the next version.
+- latest - Migrate up to the latest version.
+
+### Relationships mapping problem I made 😅
+- the problem was that the **"foreign key"** was of type VARCHAR not an INT **in all tables**
+- me: I knew where was the problem, I added the Column attribute which made the problem
+- chatGpt: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
+- third migration corrected that mistake
 
 # Project Future
 - make a dynamic attributes system (suggested by [chatGPT](https://chatgpt.com/share/6713d5db-cf0d-47b4-93f0-305d9cbd7709))

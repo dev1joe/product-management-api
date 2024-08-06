@@ -19,16 +19,16 @@ class Address
     #[Column]
     private string $country;
     #[Column]
-    private string $province;
+    private string $governorate;
     #[Column]
     private string $district;
     #[Column]
     private string $street;
     #[Column]
     private string $building;
-    #[Column]
+    #[Column(nullable: true)]
     private int $floor;
-    #[Column]
+    #[Column(nullable: true)]
     private int $apartment;
 
     public function getId(): int
@@ -53,14 +53,14 @@ class Address
         return $this;
     }
 
-    public function getProvince(): string
+    public function getGovernorate(): string
     {
-        return $this->province;
+        return $this->governorate;
     }
 
-    public function setProvince(string $province): Address
+    public function setGovernorate(string $governorate): Address
     {
-        $this->province = $province;
+        $this->governorate = $governorate;
         return $this;
     }
 

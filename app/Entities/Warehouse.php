@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
@@ -17,7 +18,7 @@ class Warehouse
     private int $id;
     #[Column]
     private string $name;
-    #[Column, ManyToOne]
+    #[ManyToOne(targetEntity: Address::class), JoinColumn(name: 'address', referencedColumnName: 'id')]
     private Address $address;
 
     public function getId(): int

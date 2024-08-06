@@ -16,9 +16,9 @@ class Inventory
 {
     #[Id, Column, GeneratedValue]
     private int $id;
-    #[Column, ManyToOne, JoinColumn(onDelete: 'CASCADE')]
+    #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Warehouse $warehouse;
-    #[Column, ManyToOne, JoinColumn(onDelete: 'CASCADE')]
+    #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Product $product;
     #[Column]
     private int $quantity;

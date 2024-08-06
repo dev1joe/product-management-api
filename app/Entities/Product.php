@@ -20,7 +20,7 @@ class Product
     private string $name;
     #[Column(type: Types::STRING, length: 1000)]
     private string $description;
-    #[Column, ManyToOne]
+    #[ManyToOne]
     private Category $category;
     #[Column] // TODO: it should be the path of the photo
     private string $photo;

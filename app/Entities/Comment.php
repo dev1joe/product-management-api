@@ -17,10 +17,10 @@ class Comment
 {
     #[Id, Column, GeneratedValue]
     private int $id;
-    #[Column(nullable: true)]
+
     #[ManyToOne, JoinColumn(onDelete: 'SET NULL')]
-    private Customer $customer;
-    #[Column]
+    private Customer|null $customer;
+
     #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Product $product;
     #[Column]

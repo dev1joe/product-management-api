@@ -16,9 +16,9 @@ class OrderItem
 {
     #[Id, Column, GeneratedValue]
     private int $id;
-    #[Column, ManyToOne, JoinColumn(onDelete: 'CASCADE')]
+    #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Customer $customer;
-    #[Column, ManyToOne, JoinColumn(onDelete: 'CASCADE')]
+    #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Product $product;
     #[Column]
     private int $quantity;

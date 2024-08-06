@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Controllers\AddressController;
 use App\Controllers\CategoryController;
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
@@ -26,6 +27,8 @@ return function(App $app) {
        $group->get('/create/warehouse', [WarehouseController::class, 'form']);
        $group->post('/warehouse', [WarehouseController::class, 'create']);
        $group->post('/warehouse/{id}', [WarehouseController::class, 'update']);
+
+       $group->get('/addresses', [AddressController::class, 'fetchAll']);
 
        $group->get('/orders', [OrderController::class, 'fetchAll']);
 

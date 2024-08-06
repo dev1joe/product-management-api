@@ -8,7 +8,6 @@ use App\Exceptions\MethodNotImplementedException;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use Doctrine\ORM\EntityManager;
-use http\Exception\RuntimeException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
@@ -53,4 +52,12 @@ class CategoryController
         // return response
         return $response->withHeader('Location', '/admin/categories')->withStatus(302);
     }
+
+    public function getCategoryNames(Request $request, Response $response): Response {
+        $result = $this->entityManager->getRepository(Category::class)->createQueryBuilder('c')
+            ->select('c.id', 'c.name')->getQuery()->getArrayResult();
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    } //TODO: test this function
 }

@@ -18,10 +18,10 @@ class Order
 {
     #[Id, Column, GeneratedValue]
     private int $id;
-    #[Column]
+
     #[ManyToOne]
     private Customer $customer;
-    #[Column, OneToOne]
+    #[OneToOne]
     private Receipt $receipt;
     #[Column(name: 'date_created')]
     private \DateTime $dateCreated;

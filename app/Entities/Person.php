@@ -24,7 +24,7 @@ class Person
     private string $email;
     #[Column]
     private string $password;
-    #[Column, OneToOne]
+    #[OneToOne]
     private Address $address;
 
     public function getId(): int

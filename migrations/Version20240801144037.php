@@ -20,7 +20,7 @@ final class Version20240801144037 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE addresses (id INT AUTO_INCREMENT NOT NULL, country VARCHAR(255) NOT NULL, province VARCHAR(255) NOT NULL, district VARCHAR(255) NOT NULL, street VARCHAR(255) NOT NULL, building VARCHAR(255) NOT NULL, floor INT NOT NULL, apartment INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE addresses (id INT AUTO_INCREMENT NOT NULL, country VARCHAR(255) NOT NULL, governorate VARCHAR(255) NOT NULL, district VARCHAR(255) NOT NULL, street VARCHAR(255) NOT NULL, building VARCHAR(255) NOT NULL, floor INT NOT NULL, apartment INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE administrators (id INT AUTO_INCREMENT NOT NULL, first_name VARCHAR(255) NOT NULL, middle_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, address VARCHAR(255) NOT NULL, ssn VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE categories (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, product_count INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE comments (id INT AUTO_INCREMENT NOT NULL, customer VARCHAR(255) DEFAULT NULL, product VARCHAR(255) NOT NULL, timestamp DATETIME NOT NULL, content VARCHAR(1000) NOT NULL, rating NUMERIC(2, 1) NOT NULL, PRIMARY KEY(id))');

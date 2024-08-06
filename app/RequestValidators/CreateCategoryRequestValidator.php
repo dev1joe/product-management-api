@@ -5,7 +5,6 @@ namespace App\RequestValidators;
 
 use App\Contracts\RequestValidatorInterface;
 use App\Exceptions\ValidationException;
-use http\Exception\RuntimeException;
 use Valitron\Validator;
 
 class CreateCategoryRequestValidator implements RequestValidatorInterface
