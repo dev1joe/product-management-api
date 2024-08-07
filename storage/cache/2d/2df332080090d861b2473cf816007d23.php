@@ -39,7 +39,7 @@ class __TwigTemplate_547f7af6ea79de8b04c8983eceb0ccee extends Template
 <head>
     <meta charset=\"UTF-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-    <title>Centered Form</title>
+    <title>Create Category</title>
     <style>
         body {
             display: flex;
@@ -61,7 +61,7 @@ class __TwigTemplate_547f7af6ea79de8b04c8983eceb0ccee extends Template
         }
         input[type=\"text\"] {
             padding: 10px;
-            width: 100%;
+            width: -webkit-fill-available;
             max-width: 300px;
             margin-bottom: 20px;
             border: 1px solid #ccc;

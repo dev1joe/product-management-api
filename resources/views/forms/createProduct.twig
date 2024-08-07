@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Category</title>
+    <title>Create Product</title>
     <style>
         body {
             display: flex;
@@ -14,7 +14,7 @@
             font-family: Arial, sans-serif;
         }
         .form-container {
-            text-align: center;
+            // text-align: center;
             border: 1px solid #ccc;
             padding: 20px;
             border-radius: 10px;
@@ -23,7 +23,7 @@
         h1 {
             margin-bottom: 20px;
         }
-        input[type="text"] {
+        input[type="text"], input[type="number"], select {
             padding: 10px;
             width: -webkit-fill-available;
             max-width: 300px;
@@ -46,11 +46,27 @@
 </head>
 <body>
 <div class="form-container">
-    <h1>Create Category</h1>
-    <form action="/admin/category" method="POST">
-        <input type="text" name="name" placeholder="Category Name" required>
+    <h1>Create Product</h1>
+    <form action="/admin/product" method="POST">
+        <input type="text" name="name" placeholder="Product Name" required><br>
+
+        <select name="category" required>
+            <option value="" selected disabled>-- select category --</option>
+
+            {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+
+        </select><br>
+
+        <input name="price" type="number" placeholder="Product Price in US Dollars"><br>
+
+        <input name="photo" type="text" value="/temp/path/for/now"><br>
+
+        <textarea name="description" cols="30" rows="8" maxlength="1000">Product Description.....</textarea>
         <br>
-        <input type="submit" value="Submit">
+
+        <br><input type="submit" value="Submit">
     </form>
 </div>
 </body>

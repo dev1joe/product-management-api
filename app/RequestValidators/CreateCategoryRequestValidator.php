@@ -14,7 +14,6 @@ class CreateCategoryRequestValidator implements RequestValidatorInterface
 
         $v->rule('required', ['name']);
         $v->rule('regex', 'name', '/^[A-Za-z ]*$/');
-        // ^[A-Za-z ]*$
 
         if(! $v->validate()) {
             throw new ValidationException($v->errors());

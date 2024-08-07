@@ -38,7 +38,7 @@ class CreateWarehouseRequestValidator implements RequestValidatorInterface
                 $data['address_id'] = $address;
                 return true;
 
-            }, "address_id")->message("entered address does not exist");
+            }, "address_id")->message("address not found");
 
         } else {
             $v->rule('required', ['country', 'governorate', 'district', 'street', 'building']);

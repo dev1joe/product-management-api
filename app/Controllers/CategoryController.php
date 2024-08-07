@@ -7,6 +7,7 @@ use App\Entities\Category;
 use App\Exceptions\MethodNotImplementedException;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
+use App\Services\CategoryService;
 use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -18,19 +19,12 @@ class CategoryController
         private readonly EntityManager $entityManager,
         private readonly Twig $twig,
         private readonly RequestValidatorFactory $requestValidatorFactory,
+        private readonly CategoryService $categoryService,
     ){
     }
 
     public function form(Request $request, Response $response): Response {
         return $this->twig->render($response, '/forms/createCategory.twig');
-    }
-
-    public function fetchAll(Request $request, Response $response) {
-        $result = $this->entityManager->getRepository(Category::class)
-            ->createQueryBuilder('c')->select('c')->getQuery()->getArrayResult();
-
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function create(Request $request, Response $response): Response {
@@ -39,7 +33,7 @@ class CategoryController
 
         // validate
         $validator = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class);
-        $validator->validate($data);
+        $data = $validator->validate($data);
 
         // create the category
         $category = new Category();
@@ -53,11 +47,11 @@ class CategoryController
         return $response->withHeader('Location', '/admin/categories')->withStatus(302);
     }
 
-    public function getCategoryNames(Request $request, Response $response): Response {
-        $result = $this->entityManager->getRepository(Category::class)->createQueryBuilder('c')
-            ->select('c.id', 'c.name')->getQuery()->getArrayResult();
+    public function fetchAll(Request $request, Response $response) {
+        $result = $this->categoryService->fetchAll();
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
-    } //TODO: test this function
+    }
+
 }
