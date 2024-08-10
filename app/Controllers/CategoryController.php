@@ -44,7 +44,11 @@ class CategoryController
         $this->entityManager->flush();
 
         // return response
-        return $response->withHeader('Location', '/admin/categories')->withStatus(302);
+        // return $response->withHeader('Location', '/admin/category/all')->withStatus(302);
+
+        $message = ['massage' => 'category created successfully!'];
+        $response->getBody()->write(json_encode($message));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
     public function fetchAll(Request $request, Response $response) {
@@ -52,6 +56,73 @@ class CategoryController
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function fetchById(Request $request, Response $response, array $args): Response {
+        $id = (int) $args['id'];
+        $arrayCategory = $this->entityManager->getRepository(Category::class)
+            ->createQueryBuilder('c')
+            ->select('c')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getArrayResult();
+
+
+        if(sizeof($arrayCategory) < 1) {
+            return $response->withStatus(404);
+        }
+
+        $response->getBody()->write(json_encode($arrayCategory));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    public function delete(Request $request, Response $response, array $args): Response {
+        $id = (int) $args['id'];
+        $category = $this->entityManager->find(Category::class, $id);
+
+        if(! $category) {
+            return $response->withStatus(404);
+        }
+
+        $this->entityManager->remove($category);
+        $this->entityManager->flush();
+
+        $successMessage = [
+            'message' => 'Category deleted successfully',
+            'deletedCategoryId' => $id,
+        ];
+
+        $response->getBody()->write(json_encode($successMessage));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    public function update(Request $request, Response $response, array $args): Response {
+        // get and validate data FIRST
+        $data = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class)
+            ->validate($request->getParsedBody());
+
+        $id = (int) $args['id'];
+
+        /** @var Category $category */
+        $category = $this->entityManager->find(Category::class, $id);
+
+        if(! $category) {
+            return $response->withStatus(404);
+        }
+
+        // real update
+        $category->setName($data['name']);
+
+        $this->entityManager->persist($category);
+        $this->entityManager->flush();
+
+        $message = [
+            'message' => 'category updated successfully!',
+            'updatedCategoryId' => $id
+        ];
+
+        $response->getBody()->write(json_encode($message));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
 }

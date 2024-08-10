@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 use App\Entities\Address;
 use App\Entities\Warehouse;
+use App\Exceptions\MethodNotImplementedException;
 use App\RequestValidators\CreateWarehouseRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\AddressService;
@@ -28,16 +29,6 @@ class WarehouseController
         $addresses = $this->addressService->fetchAllIdsDetails();
 
         return $this->twig->render($response, '/forms/createWarehouse.twig', ['addresses' => $addresses]);
-    }
-
-    public function fetchAll(Request $request, Response $response): Response {
-        $result = $this->entityManager->getRepository(Warehouse::class)
-            ->createQueryBuilder('w')->select('w', 'a')
-            ->leftJoin('w.address', 'a')
-            ->getQuery()->getArrayResult();
-
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function create(Request $request, Response $response) {
@@ -69,6 +60,23 @@ class WarehouseController
         $this->entityManager->persist($warehouse);
         $this->entityManager->flush();
 
-        return $response->withHeader('Location', '/admin/warehouses')->withStatus(302);
+        // return $response->withHeader('Location', '/admin/warehouse/all')->withStatus(302);
+        $message = ['massage' => 'warehouse created successfully!'];
+        $response->getBody()->write(json_encode($message));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+    }
+
+    public function fetchAll(Request $request, Response $response): Response {
+        $result = $this->entityManager->getRepository(Warehouse::class)
+            ->createQueryBuilder('w')->select('w', 'a')
+            ->leftJoin('w.address', 'a')
+            ->getQuery()->getArrayResult();
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function fetchById(Request $request, Response $response): Response {
+        throw new MethodNotImplementedException();
     }
 }

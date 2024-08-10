@@ -13,25 +13,43 @@ return function(App $app) {
     $app->get('/', [HomeController::class, 'index']);
 
     $app->group('/admin', function(RouteCollectorProxy $group) {
-       $group->get('/products', [ProductController::class, 'fetchAll']);
-       $group->get('/create/product', [ProductController::class, 'form']);
+        // [________________________________________ product ________________________________________]
+       $group->get('/product/all', [ProductController::class, 'fetchAll']);
+       $group->get('/product/create', [ProductController::class, 'form']);
+
        $group->post('/product', [ProductController::class, 'create']);
        $group->post('/product/{id}', [ProductController::class, 'update']);
 
-       $group->get('/categories', [CategoryController::class, 'fetchAll']);
-       $group->get('/create/category', [CategoryController::class, 'form']);
+       $group->delete('/product/{id}', [ProductController::class, 'delete']);
+
+        // [________________________________________ category ________________________________________]
+       $group->get('/category/create', [CategoryController::class, 'form']);
+       $group->get('/category/all', [CategoryController::class, 'fetchAll']);
+       $group->get('/category/{id}', [CategoryController::class, 'fetchById']);
+
        $group->post('/category', [CategoryController::class, 'create']);
        $group->post('/category/{id}', [CategoryController::class, 'update']);
 
-       $group->get('/warehouses', [WarehouseController::class, 'fetchAll']);
-       $group->get('/create/warehouse', [WarehouseController::class, 'form']);
+       $group->delete('/category/{id}', [CategoryController::class, 'delete']);
+
+       // [________________________________________ warehouse ________________________________________]
+       $group->get('/warehouse/create', [WarehouseController::class, 'form']);
+       $group->get('/warehouse/all', [WarehouseController::class, 'fetchAll']);
+       $group->get('/warehouse/{id}', [WarehouseController::class, 'fetchById']);
+
        $group->post('/warehouse', [WarehouseController::class, 'create']);
        $group->post('/warehouse/{id}', [WarehouseController::class, 'update']);
 
+       $group->delete('/warehouse/{id}', [WarehouseController::class, 'delete']);
+
+        // [________________________________________ address ________________________________________]
        $group->get('/addresses', [AddressController::class, 'fetchAll']);
 
+
+        // [________________________________________ order ________________________________________]
        $group->get('/orders', [OrderController::class, 'fetchAll']);
 
+        // [________________________________________ customer ________________________________________]
        $group->get('/customers', [CustomerController::class, 'fetchAll']);
 
     }); // authentication middleware should be associated with this group

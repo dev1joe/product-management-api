@@ -20,8 +20,9 @@ class CreateProductRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
-        $v->rule('required', ['name', 'category', 'price', 'description']);
+        $v->rule('required', ['name', 'category', 'price', 'photo', 'description']);
         $v->rule('regex', ['name', 'description'], '/^[A-Za-z1-9 ]*$/');
+        //TODO: I think I need to allow more characters
         $v->rule('lengthMax', 'description', 1000);
 
         //TODO: photo validation
@@ -36,9 +37,10 @@ class CreateProductRequestValidator implements RequestValidatorInterface
         $v->rule('integer', 'category');
 
         $v->rule(function($field, $value, $params, $fields) use(&$data) {
-            $category = $this->entityManager->find(Category::class, $value);
+            /** @var Category $category */
+            $category = $this->entityManager->find(Category::class, (int) $value);
 
-            if(! $category instanceof Category) {
+            if(! $category) {
                 return false;
             }
 

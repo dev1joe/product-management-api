@@ -22,14 +22,17 @@ class ValidationExceptionMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (ValidationException $e) {
-            var_dump($e->errors);
+            //TODO: continue this middleware
+            // redirect back to the referer
+            // show errors under input fields
 
-            return $this->responseFactory->createResponse(302);
+            // $referer = $request->getServerParams()['HTTP_REFERER'];
+            // $response = $this->responseFactory->createResponse()->withHeader('Location', $referer)->withStatus(302);
 
-            /** TODO
-             * reroute to the referer
-             * show errors under input fields
-             */
+            $response = $this->responseFactory->createResponse();
+            $response->getBody()->write(json_encode($e->errors));
+
+            return $response;
         }
     }
 }

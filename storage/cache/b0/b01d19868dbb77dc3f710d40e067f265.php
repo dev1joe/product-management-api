@@ -85,7 +85,7 @@ class __TwigTemplate_f50462d0b419e10822580e784c994ab0 extends Template
 <div class=\"form-container\">
     <h1>Create Product</h1>
     <form action=\"/admin/product\" method=\"POST\">
-        <input type=\"text\" name=\"name\" placeholder=\"Product Name\" required><br>
+        <input type=\"text\" name=\"name\" placeholder=\"Product Name\"><br>
 
         <select name=\"category\" required>
             <option value=\"\" selected disabled>-- select category --</option>

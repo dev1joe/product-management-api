@@ -51,4 +51,9 @@ class Category
         return $this;
     }
 
+    public function decrementProductCount(int $amount): Category
+    {
+        $this->productCount = $this->productCount - $amount;
+        return $this;
+    }
 }
