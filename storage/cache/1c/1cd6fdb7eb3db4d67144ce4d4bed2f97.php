@@ -13,8 +13,8 @@ use Twig\Sandbox\SecurityNotAllowedFunctionError;
 use Twig\Source;
 use Twig\Template;
 
-/* /forms/createProduct.twig */
-class __TwigTemplate_f50462d0b419e10822580e784c994ab0 extends Template
+/* /forms/uploadFile.twig */
+class __TwigTemplate_20d2e3da1ccdcc0116c25f3adbefc683 extends Template
 {
     private $source;
     private $macros = [];
@@ -34,7 +34,6 @@ class __TwigTemplate_f50462d0b419e10822580e784c994ab0 extends Template
     protected function doDisplay(array $context, array $blocks = [])
     {
         $macros = $this->macros;
-        // line 1
         yield "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
@@ -84,38 +83,8 @@ class __TwigTemplate_f50462d0b419e10822580e784c994ab0 extends Template
 <body>
 <div class=\"form-container\">
     <h1>Create Product</h1>
-    <form action=\"/admin/product\" method=\"POST\" enctype=\"multipart/form-data\">
-        <input type=\"text\" name=\"name\" placeholder=\"Product Name\" required><br>
-
-        <select name=\"category\" required>
-            <option value=\"\" selected disabled>-- select category --</option>
-
-            ";
-        // line 56
-        $context['_parent'] = $context;
-        $context['_seq'] = CoreExtension::ensureTraversable(($context["categories"] ?? null));
-        foreach ($context['_seq'] as $context["_key"] => $context["category"]) {
-            // line 57
-            yield "                <option value=\"";
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["category"], "id", [], "any", false, false, false, 57), "html", null, true);
-            yield "\">";
-            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["category"], "name", [], "any", false, false, false, 57), "html", null, true);
-            yield "</option>
-            ";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['category'], $context['_parent'], $context['loop']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 59
-        yield "
-        </select><br>
-
-        <input name=\"price\" type=\"number\" placeholder=\"Product Price in US Dollars\"><br>
-
-        <input type=\"file\" name=\"photo\"><br>
-
-        <textarea name=\"description\" cols=\"30\" rows=\"8\" maxlength=\"1000\">Product Description.....</textarea>
-        <br>
+    <form action=\"/admin/upload/file\" method=\"POST\" enctype=\"multipart/form-data\">
+        <input type=\"file\" name=\"file\"><br>
 
         <br><input type=\"submit\" value=\"Submit\">
     </form>
@@ -131,15 +100,7 @@ class __TwigTemplate_f50462d0b419e10822580e784c994ab0 extends Template
      */
     public function getTemplateName()
     {
-        return "/forms/createProduct.twig";
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function isTraitable()
-    {
-        return false;
+        return "/forms/uploadFile.twig";
     }
 
     /**
@@ -147,11 +108,11 @@ class __TwigTemplate_f50462d0b419e10822580e784c994ab0 extends Template
      */
     public function getDebugInfo()
     {
-        return array (  110 => 59,  99 => 57,  95 => 56,  38 => 1,);
+        return array ();
     }
 
     public function getSourceContext()
     {
-        return new Source("", "/forms/createProduct.twig", "/home/joe/PhpstormProjects/ecommerce/resources/views/forms/createProduct.twig");
+        return new Source("", "/forms/uploadFile.twig", "/home/joe/PhpstormProjects/ecommerce/resources/views/forms/uploadFile.twig");
     }
 }

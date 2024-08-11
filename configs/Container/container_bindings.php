@@ -1,16 +1,20 @@
 <?php
 declare(strict_types=1);
 
+use App\Config;
+use App\Enums\StorageDriver;
 use App\RequestValidators\RequestValidatorFactory;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
+use League\Flysystem\Filesystem;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Views\Twig;
+use function DI\create;
 
 return [
     App::class => function(ContainerInterface $container) {
@@ -26,12 +30,15 @@ return [
 
         return $app;
     },
-    Twig::class => function() {
+    Config::class => create(Config::class)->constructor(
+        require CONFIGS_PATH . '/app.php'
+    ),
+    Twig::class => function(Config $config) {
         $twig = Twig::create(
             path: VIEWS_PATH,
             settings: [
                 'cache' => STORAGE_PATH . "/cache",
-                'auto_reload' => $_ENV['APP_ENVIRONMENT'] == 'development'
+                'auto_reload' => $config->get('app_env') == 'development'
             ]
         );
 
@@ -39,18 +46,12 @@ return [
 
         return $twig;
     },
-    EntityManager::class => function() { // TODO: abstract env access away
-        $conn = DriverManager::getConnection([
-                'driver' => $_ENV['DB_DRIVER'] ?? 'pdo_mysql',
-                'host' => $_ENV['DB_HOST'],
-                'dbname' => $_ENV['DB_NAME'],
-                'user' => $_ENV['DB_USER'],
-                'password' => $_ENV['DB_PASS'],
-        ]);
+    EntityManager::class => function(Config $config) {
+        $conn = DriverManager::getConnection($config->get('doctrine.connection'));
 
         $ormSetup = ORMSetup::createAttributeMetadataConfiguration(
-            paths: [__DIR__ . "/../../app/Entities/"],
-            isDevMode: true
+            paths: [__DIR__ . "/../../app/Entities/"], //TODO: abstract entities path ?
+            isDevMode: $config->get('app_env') == 'development'
         );
 
         return new EntityManager($conn, $ormSetup);
@@ -63,5 +64,17 @@ return [
         $app = $container->get(App::class);
 
         return $app->getResponseFactory();
+    },
+    Filesystem::class => function(Config $config) {
+        // The internal adapter
+        $adapter = match($config->get('storage.driver')) {
+            StorageDriver::Local => new League\Flysystem\Local\LocalFilesystemAdapter(
+                STORAGE_PATH
+            ),
+            //TODO: add FTP driver here if needed
+        };
+
+        // The FilesystemOperator
+        return new League\Flysystem\Filesystem($adapter);
     }
 ];

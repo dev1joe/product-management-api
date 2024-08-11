@@ -47,24 +47,8 @@
 <body>
 <div class="form-container">
     <h1>Create Product</h1>
-    <form action="/admin/product" method="POST" enctype="multipart/form-data">
-        <input type="text" name="name" placeholder="Product Name" required><br>
-
-        <select name="category" required>
-            <option value="" selected disabled>-- select category --</option>
-
-            {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
-
-        </select><br>
-
-        <input name="price" type="number" placeholder="Product Price in US Dollars"><br>
-
-        <input type="file" name="photo"><br>
-
-        <textarea name="description" cols="30" rows="8" maxlength="1000">Product Description.....</textarea>
-        <br>
+    <form action="/admin/upload/file" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file"><br>
 
         <br><input type="submit" value="Submit">
     </form>

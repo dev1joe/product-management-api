@@ -59,6 +59,19 @@
 - chatGpt: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
 - third migration corrected that mistake
 
+### accepting a file in HTML form tag
+- I found that I need to define `enctype` attribute with value `multipart/form-data` to be able to send files to the server
+- but why is that ?? and what does the new terminology mean ?
+
+### talk about file size
+- if we want to validate that the uploaded file is five Megabytes
+- Megabytes = 5
+- Kilobytes = Megabytes * 1024
+- Bytes = Kilobytes * 1024
+
+### MIME types reference ??
+- a reference by internet assigned numbers authority (iana) [here](https://www.iana.org/assignments/media-types/media-types.xhtml)
+
 # Project Future
 - make a dynamic attributes system (suggested by [chatGPT](https://chatgpt.com/share/6713d5db-cf0d-47b4-93f0-305d9cbd7709))
 - advanced filtering (i5, i7 CPUs for laptops)

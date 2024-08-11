@@ -8,10 +8,12 @@ use App\Exceptions\MethodNotImplementedException;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\CategoryService;
+use League\Flysystem\Filesystem;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Entities\Product;
 use Doctrine\ORM\EntityManager;
+use Psr\Http\Message\UploadedFileInterface;
 use Slim\Views\Twig;
 
 class ProductController
@@ -21,6 +23,7 @@ class ProductController
         private readonly Twig $twig,
         private readonly CategoryService $categoryService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
+        private readonly Filesystem $filesystem,
     ){
     }
 
@@ -50,7 +53,16 @@ class ProductController
         $product->setName($data['name']);
         $product->setUnitPriceCents($data['price']);
         $product->setDescription($data['description']);
-        $product->setPhoto($data['photo']);
+
+        // photo handling
+        /** @var UploadedFileInterface $file */
+        $file = $request->getUploadedFiles()['photo'];
+        $fileName = $file->getClientFilename();
+
+        $this->filesystem->write('/products/' . $fileName, $file->getStream()->getContents());
+
+        $fullLocation = STORAGE_PATH . '/products/' . $fileName;
+        $product->setPhoto($fullLocation);
 
         /** @var Category $category */
         $category = $data['category'];

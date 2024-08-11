@@ -17,6 +17,7 @@
         "doctrine/sql-formatter": "^1.4",
         "symfony/yaml": "^7.1",
         "php-di/php-di": "^7.0",
-        "vlucas/valitron": "^1.4"
+        "vlucas/valitron": "^1.4",
+        "league/flysystem": "^3.0"
     }
 }

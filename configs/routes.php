@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Controllers\AddressController;
 use App\Controllers\CategoryController;
+use App\Controllers\FileController;
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
 use App\Controllers\WarehouseController;
@@ -51,6 +52,10 @@ return function(App $app) {
 
         // [________________________________________ customer ________________________________________]
        $group->get('/customers', [CustomerController::class, 'fetchAll']);
+
+        // [________________________________________ files ________________________________________]
+        $group->get('/upload/file', [FileController::class, 'form']);
+       $group->post('/upload/file', [FileController::class, 'store']);
 
     }); // authentication middleware should be associated with this group
 };
