@@ -1,4 +1,4 @@
-# Relationships
+f# Relationships
 ### customer and comments
 - if a customer deletes their account, the comments shouldn't be deleted. to implement that, the comment's customer foreign key can be null. Is that ok ? or will it produce issues ?
 
@@ -53,7 +53,7 @@
 - next - Migrate up to the next version.
 - latest - Migrate up to the latest version.
 
-### Relationships mapping problem I made 😅
+### Relationships mapping mistake I made 😅
 - the problem was that the **"foreign key"** was of type VARCHAR not an INT **in all tables**
 - me: I knew where was the problem, I added the Column attribute which made the problem
 - chatGpt: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
@@ -69,7 +69,16 @@
 - Kilobytes = Megabytes * 1024
 - Bytes = Kilobytes * 1024
 
-### MIME types reference ??
+### security when receiving files from the user
+- when receiving a file, you validate it
+  - successful upload
+  - size ?
+  - name ?
+  - type
+- but when it comes to types, the file type can be spoofed !! even the UploadedFileInterface->getClientMedaType function documentation tells you to not trust the output of this function 
+
+### MIME types reference ?? you got it
+- what are MIME types ?? (write it here for reference)
 - a reference by internet assigned numbers authority (iana) [here](https://www.iana.org/assignments/media-types/media-types.xhtml)
 
 # Project Future

@@ -7,6 +7,7 @@ use App\Entities\Category;
 use App\Exceptions\MethodNotImplementedException;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
+use App\RequestValidators\UploadProductPhotoRequestValidator;
 use App\Services\CategoryService;
 use League\Flysystem\Filesystem;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -56,7 +57,10 @@ class ProductController
 
         // photo handling
         /** @var UploadedFileInterface $file */
-        $file = $request->getUploadedFiles()['photo'];
+        $file = $this->requestValidatorFactory->make(
+            UploadProductPhotoRequestValidator::class
+        )->validate($request->getUploadedFiles())['photo'];
+
         $fileName = $file->getClientFilename();
 
         $this->filesystem->write('/products/' . $fileName, $file->getStream()->getContents());
@@ -64,6 +68,7 @@ class ProductController
         $fullLocation = STORAGE_PATH . '/products/' . $fileName;
         $product->setPhoto($fullLocation);
 
+        // category handling
         /** @var Category $category */
         $category = $data['category'];
         $category->incrementProductCount(1);
