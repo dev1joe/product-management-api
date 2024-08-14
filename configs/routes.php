@@ -38,6 +38,8 @@ return function(App $app) {
        $group->get('/warehouse/all', [WarehouseController::class, 'fetchAll']);
        $group->get('/warehouse/{id}', [WarehouseController::class, 'fetchById']);
 
+       $group->get('/warehouse/update/{id}', [WarehouseController::class, 'updateForm']);
+
        $group->post('/warehouse', [WarehouseController::class, 'create']);
        $group->post('/warehouse/{id}', [WarehouseController::class, 'update']);
 

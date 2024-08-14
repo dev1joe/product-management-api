@@ -18,18 +18,14 @@ class CreateWarehouseRequestValidator implements RequestValidatorInterface
 
     public function validate(array $data): array
     {
-        // TODO: Implement validate() method.
-
         $v = new Validator($data);
 
         $v->rule('required', 'name');
         $v->rule('regex', 'name', '/^[A-Za-z ]*$/');
 
         if(array_key_exists('address_id', $data)) {
-            // make sure that the given id exists
-
             $v->rule(function($field, $value, $params, $fields) use(&$data) {
-                $address = $this->entityManager->getRepository(Address::class)->find($value); //TODO: this query needs testing
+                $address = $this->entityManager->getRepository(Address::class)->find($value);
 
                 if($address == null) {
                     return false;

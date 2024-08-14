@@ -47,14 +47,17 @@
 <body>
 <div class="form-container">
     <h1>Create Warehouse</h1>
-    <form action="/admin/warehouse" method="POST">
-        <input type="text" name="name" placeholder="Warehouse Name" required>
+    <form action="/admin/warehouse{% if warehouse.id %}/{{ warehouse.id }}" {% endif %}" method="POST">
+        <input name="id" type="hidden" {% if warehouse.id %} value="{{ warehouse.id }}" {% endif %}>
+        <input type="text" name="name" placeholder="Warehouse Name" value="{{ warehouse.name }}" required>
 
         <h3>Select and existing address</h3>
         <select name="address_id">
-           <option value='' selected disabled>-- select address --</option>
+           <option value="" selected disabled>-- select address --</option>
             {% for address in addresses %}
-                <option value="{{ address.id }}">{{ address.details }}</option>
+                <option value="{{ address.id }}"{% if warehouse.address.id == address.id %} selected{% endif %}>
+                    {{ address.details }}
+                </option>
             {% endfor %}
 
         </select>

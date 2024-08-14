@@ -25,8 +25,6 @@ class CreateProductRequestValidator implements RequestValidatorInterface
         //TODO: I think I need to allow more characters
         $v->rule('lengthMax', 'description', 1000);
 
-        //TODO: photo validation
-
         // price handling
         $v->rule('numeric', 'price');
         $price = (int) $data['price'];
