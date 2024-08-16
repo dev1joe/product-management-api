@@ -14,31 +14,30 @@ class AddressService
     ){
     }
 
-    public function create(array $data): Warehouse {
-        $warehouse = new Warehouse();
-        $warehouse->setName($data['name']);
+    /**
+     * a simple create function that assumes the data is already validated and all necessary fields are present
+     * @return Address
+     */
+    public function create(array $data): Address {
+        $address = new Address();
+        $address->setCountry($data['country']);
+        $address->setGovernorate($data['governorate']);
+        $address->setDistrict($data['district']);
+        $address->setStreet($data['street']);
+        $address->setBuilding($data['building']);
 
-        if(array_key_exists('address_id', $data)) {
-            $address = $data['address_id'];
-        } else {
-            $address = new Address();
-
-            $address->setCountry($data['country']);
-            $address->setGovernorate($data['governorate']);
-            $address->setDistrict($data['district']);
-            $address->setStreet($data['street']);
-            $address->setBuilding($data['building']);
-
-            $this->entityManager->persist($address);
-
+        if(array_key_exists('floor', $data)) {
+            $address->setFloor($data['floor']);
         }
 
-        $warehouse->setAddress($address);
+        if(array_key_exists('apartment', $data)) {
+            $address->setApartment($data['apartment']);
+        }
 
-        $this->entityManager->persist($warehouse);
+        $this->entityManager->persist($address);
         $this->entityManager->flush();
 
-        return $warehouse;
+        return $address;
     }
 
     public function fetchAllAddresses(): array {

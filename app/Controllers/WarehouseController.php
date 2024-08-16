@@ -6,13 +6,15 @@ namespace App\Controllers;
 use App\Entities\Address;
 use App\Entities\Warehouse;
 use App\Exceptions\MethodNotImplementedException;
-use App\RequestValidators\CreateWarehouseRequestValidator;
+use App\Exceptions\ValidationException;
+use App\RequestValidators\CreateWarehouseExistingAddressRequestValidator;
+use App\RequestValidators\CreateWarehouseNewAddressRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
-use App\RequestValidators\WarehouseUpdateValidator;
 use App\Services\AddressService;
+use App\Services\WarehouseService;
 use Doctrine\ORM\EntityManager;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 
 class WarehouseController
@@ -21,7 +23,8 @@ class WarehouseController
         private readonly EntityManager $entityManager,
         private readonly RequestValidatorFactory $requestValidatorFactory,
         private readonly Twig $twig,
-        private readonly AddressService $addressService
+        private readonly AddressService $addressService,
+        private readonly WarehouseService $warehouseService,
     ){
     }
 
@@ -32,15 +35,36 @@ class WarehouseController
         return $this->twig->render($response, '/forms/createWarehouse.twig', ['addresses' => $addresses]);
     }
 
-    public function create(Request $request, Response $response) {
+    public function create(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
 
-        $validator = $this->requestValidatorFactory->make(CreateWarehouseRequestValidator::class);
-        $data = $validator->validate($data);
+        if(array_key_exists('address_type', $data)) {
+            $addressType = $data['address_type'];
 
-        $this->addressService->create($data);
+            if($addressType == 'existing') {
 
-        // return $response->withHeader('Location', '/admin/warehouse/all')->withStatus(302);
+                $data = $this->requestValidatorFactory->make(
+                    CreateWarehouseExistingAddressRequestValidator::class
+                )->validate($data);
+
+                $this->warehouseService->createWithAddress($data['name'], $data['address']);
+
+            } else if($addressType == 'new') {
+
+                $data = $this->requestValidatorFactory->make(
+                    CreateWarehouseNewAddressRequestValidator::class
+                )->validate($data);
+
+                $this->warehouseService->create($data);
+
+            } else {
+                throw new ValidationException(['address_type' => 'address type must only be new or exiting, address type is ' . $addressType . '.']);
+            }
+
+        } else {
+            throw new ValidationException(['address_type' => 'address type is required']);
+        }
+
         $message = ['massage' => 'warehouse created successfully!'];
         $response->getBody()->write(json_encode($message));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
@@ -57,7 +81,7 @@ class WarehouseController
     }
 
     public function fetchById(Request $request, Response $response): Response {
-        throw new MethodNotImplementedException();
+        throw new MethodNotImplementedException(); //TODO: implement this function
     }
 
     public function updateForm(Request $request, Response $response, array $args): Response {
@@ -76,23 +100,73 @@ class WarehouseController
             ]
         );
     }
+
     public function update(Request $request, Response $response, array $args): Response {
         $data = $request->getParsedBody();
-        // $response->getBody()->write(json_encode($data));
-        // return $response->withHeader('Content-Type', 'application/json');
+        $id = null;
 
-        $validator = $this->requestValidatorFactory->make(CreateWarehouseRequestValidator::class);
-        $data = $validator->validate($data);
+        if(array_key_exists('id', $data)) {
+            $id = (int) $data['id'];
+        } else {
+            $id = (int) $args['id'];
+        }
 
-        // what if the data is not changed ???
-        $this->requestValidatorFactory->make(WarehouseUpdateValidator::class)->validate($data);
+        $warehouse = $this->entityManager->find(Warehouse::class, $id);
 
-        // given that the warehouse data is changed at this point, we can proceed to create a new warehouse object
-        $this->addressService->create($data); //TODO: must be moved to the warehouse service !!!!!!!!
+        if(! $warehouse) {
+            throw new ValidationException(['name' => 'Warehouse not found']);
+        }
 
-        /** @var Warehouse $oldWarehouse */
-        $oldWarehouse = $this->entityManager->find(Warehouse::class, (int) $data['id']);
-        $this->entityManager->remove($oldWarehouse);
+        if(array_key_exists('address_type', $data)) {
+            $addressType = $data['address_type'];
+
+            if($addressType == 'existing') {
+
+                $data = $this->requestValidatorFactory->make(
+                    CreateWarehouseExistingAddressRequestValidator::class
+                )->validate($data);
+
+                // make sure data changed
+                // either different address
+                // or different name
+
+                /** @var Address $newAddress */
+                $newAddress = $data['address'];
+
+                if(
+                    $warehouse->getAddress()->getId() === $newAddress->getId() &&
+                    $warehouse->getName() === $data['name']
+                ) {
+                    throw new ValidationException([
+                        'name' => 'either name or address has to be changed',
+                        'address' => 'either name or address has to be changed',
+                    ]);
+                }
+
+                $warehouse->setName($data['name']);
+                $warehouse->setAddress($newAddress);
+
+            } else if($addressType == 'new') {
+
+                $data = $this->requestValidatorFactory->make(
+                    CreateWarehouseNewAddressRequestValidator::class
+                )->validate($data);
+
+                $warehouse->setName($data['name']);
+
+                // create and assign new address
+                $address = $this->addressService->create($data); // the address is flushed by the create function
+                $warehouse->setAddress($address);
+
+            } else {
+                throw new ValidationException(['address_type' => 'address type must only be new or exiting, address type is ' . $addressType . '.']);
+            }
+
+        } else {
+            throw new ValidationException(['address_type' => 'address type is required']);
+        }
+
+        $this->entityManager->persist($warehouse);
         $this->entityManager->flush();
 
         $message = "update successful !";
