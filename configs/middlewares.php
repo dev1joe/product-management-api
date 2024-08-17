@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+use App\Middlewares\StartSessionMiddleware;
+use App\Middlewares\ValidationErrorsMiddleware;
 use App\Middlewares\ValidationExceptionMiddleware;
 use Slim\App;
 use Slim\Middleware\MethodOverrideMiddleware;
@@ -13,5 +15,8 @@ return function(App $app) {
     $app->add(MethodOverrideMiddleware::class);
     // twig middleware
     $app->add(TwigMiddleware::create($app, $container->get(Twig::class)));
+
+    $app->add(ValidationErrorsMiddleware::class);
     $app->add(ValidationExceptionMiddleware::class);
+    $app->add(StartSessionMiddleware::class);
 };

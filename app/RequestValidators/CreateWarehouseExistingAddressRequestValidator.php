@@ -25,6 +25,10 @@ class CreateWarehouseExistingAddressRequestValidator implements RequestValidator
         $v->rule('integer', 'address');
 
         $v->rule(function($field, $value, $params, $fields) use(&$data) {
+            if(! array_key_exists('address', $data)) {
+                return false;
+            }
+
             $address = $this->entityManager->getRepository(Address::class)->find($value);
 
             if($address == null) {

@@ -1,0 +1,59 @@
+
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <link rel="stylesheet" href="{% static 'store/styles/cart.css' %}" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>WhishList</title>
+    </head>
+    <body>
+      
+      <section class="p-5">
+        <div class="continer">
+          <h1 class="text-center mb-5">WishList</h1>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="text-center">Image</th>
+                <th scope="col" class="text-center">Item</th>
+                <th scope="col" class="text-center">Price</th>
+                <th scope="col" class="text-center">Cart</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center">
+                  <img src="{% static 'store/Images/Logo.png' %}" alt="Product" class="pro-img" />
+                </td>
+                <td class="text-center txt">Laptop Dell G15</td>
+                <td class="text-center txt">36000 EGP</td>
+                <td class="text-center Cart">
+                  <a href="{% url 'Store' %}" class="btn btn-sm bg-primary text-light text-center add">ADD <i class="bi bi-arrow-Right-circle"></i></a>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <img src="{% static 'store/Images/Relational.png' %}" alt="Product" class="pro-img" />
+                </td>
+                <td class="text-center txt">Laptop Dell G15</td>
+                <td class="text-center txt">36000 EGP</td>
+                <td class="text-center Cart">
+                  <a href="{% url 'Store' %}" class="btn btn-sm bg-primary text-light text-center add">ADD <i class="bi bi-arrow-Right-circle"></i></a>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-center">
+                  <img src="{% static 'store/Images/Designer.png' %}" alt="Product" class="pro-img" />
+                </td>
+                <td class="text-center txt">Laptop Dell G15</td>
+                <td class="text-center txt">36000 EGP</td>
+                <td class="text-center Cart">
+                  <a href="{% url 'Store' %}" class="btn btn-sm bg-primary text-light text-center add">ADD <i class="bi bi-arrow-Right-circle"></i></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </body>
+  </html>

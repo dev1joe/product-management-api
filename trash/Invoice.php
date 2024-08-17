@@ -21,7 +21,7 @@ class Invoice
     #[Column]
     private float $tax;
     #[Column]
-    private string $status; // TODO: refactor to enum
+    private string $status; // refactor to enum
     #[Column(name: 'billing_details')]
     private string $billingDetails;
     #[Column]

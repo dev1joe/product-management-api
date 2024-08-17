@@ -16,7 +16,7 @@ class FileController
     }
 
     public function form(Request $request, Response $response): Response {
-        return $this->twig->render($response, '/forms/uploadFile.twig');
+        return $this->twig->render($response, '/uploadFile.twig');
     }
 
     public function store(Request $request, Response $response) {

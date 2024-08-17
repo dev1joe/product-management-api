@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        input,select {
+            padding: 10px;
+            width: -webkit-fill-available;
+            max-width: 300px;
+            min-width: 250px;
+            margin-bottom: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 0.7lh;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .invalid-feedback {
+            color: red;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h1>Register</h1>
+    <form action="/register" method="POST">
+        <input type="text" name="firstName" placeholder="First Name" value="{{ old.firstName }}" required>
+        <div class="invalid-feedback">{{ errors.firstName | first }}</div>
+
+        <input type="text" name="middleName" placeholder="Middle Name" value="{{ old.middleName }}">
+        <div class="invalid-feedback">{{ errors.middleName | first }}</div>
+
+        <input type="text" name="lastName" placeholder="Last Name" value="{{ old.lastName }}" required>
+        <div class="invalid-feedback">{{ errors.lastName | first }}</div>
+
+        <input type="email" name="email" placeholder="Email" value="{{ old.email }}" required>
+        <div class="invalid-feedback">{{ errors.email | first }}</div>
+
+        <input type="password" name="password" placeholder="Password" required>
+        <div class="invalid-feedback">{{ errors.password | first }}</div>
+
+        <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+        <div class="invalid-feedback">{{ errors.confirmPassword | first }}</div>
+
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</body>
+</html>

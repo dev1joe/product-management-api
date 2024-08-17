@@ -19,6 +19,7 @@ use Slim\Views\Twig;
 
 class WarehouseController
 {
+    // TODO: refactor to warehouse service
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly RequestValidatorFactory $requestValidatorFactory,
@@ -29,14 +30,16 @@ class WarehouseController
     }
 
     public function form(Request $request, Response $response): Response {
-
         $addresses = $this->addressService->fetchAllIdsDetails();
 
-        return $this->twig->render($response, '/forms/createWarehouse.twig', ['addresses' => $addresses]);
+        return $this->twig->render($response, '/warehouse/createWarehouse.twig', ['addresses' => $addresses]);
     }
 
     public function create(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
+
+        // var_dump($data);
+        // return $response;
 
         if(array_key_exists('address_type', $data)) {
             $addressType = $data['address_type'];
@@ -93,7 +96,7 @@ class WarehouseController
         $addresses = $this->addressService->fetchAllIdsDetails();
         return $this->twig->render(
             $response,
-            '/forms/createWarehouse.twig',
+            '/warehouse/updateWarehouse.twig',
             [
                 'warehouse' => $warehouse,
                 'addresses' => $addresses,
@@ -137,7 +140,7 @@ class WarehouseController
                     $warehouse->getAddress()->getId() === $newAddress->getId() &&
                     $warehouse->getName() === $data['name']
                 ) {
-                    throw new ValidationException([
+                    throw new ValidationException(errors: [
                         'name' => 'either name or address has to be changed',
                         'address' => 'either name or address has to be changed',
                     ]);

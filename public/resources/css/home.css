@@ -1,0 +1,272 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+}
+
+.navbar-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.navbar-icons.left {
+    justify-content: flex-start;
+}
+
+.navbar-icons.right {
+    justify-content: flex-end;
+}
+
+.navbar-logo {
+    flex-grow: 1;
+    width: 25px ;
+    height: 25px ;
+    
+}
+.navbar-logo img {
+    width: 30px;
+    height: 30px;
+    filter: invert(80%)
+}
+
+.icon-link img {
+    width: 24px;
+    height: 24px;
+    filter: invert(100%);
+    margin-right:10px;
+    
+}
+
+.icon-link {
+    display: inline-block;
+}
+.name {
+    color: rgb(200, 199, 199);
+    padding: 0px;
+    margin: 0px;
+    
+}
+
+/* search bar */
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    flex-grow: 2;
+    margin: 0 20px;
+    margin-left: 16%;
+}
+
+.search-bar input[type="text"] {
+    width: 80%;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.search-bar button {
+    background-color: #555;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 1%;
+}
+
+.search-bar button img {
+    width: 20px;
+    height: 20px;
+    filter: invert(100%);
+    
+}
+
+.search-bar button:hover {
+    background-color: #444;
+}
+
+/* banner */
+
+.banner-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    margin-top: 3%;
+    
+}
+
+.banner-slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    
+}
+
+.slide {
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.slide img {
+    width: 100%;
+    display: block;
+    border-radius: 4px;
+}
+
+.banner-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.banner-btn.left {
+    left: 10px;
+}
+
+.banner-btn.right {
+    right: 10px;
+}
+
+.banner-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Smaller Navigation Bar */
+.sub-navbar {
+    background-color: #444;
+    padding: 0px 20px;
+    display: flex;
+    justify-content: center;
+    height: 40px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropbtn {
+    background-color: #444;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #555;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #666;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #555;
+}
+
+/* Basic Styling for Sections */
+.products-section {
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #f9f9f9;
+}
+
+.products-section h2 {
+    text-align: left;
+    margin-bottom: 15px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Product Cards Horizontal List */
+.product-cards {
+    display: flex;
+    overflow-x: auto;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.product-cards li {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.product-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px 5px 0 0;
+}
+
+.info {
+    padding: 15px;
+    text-align: center;
+}
+
+.product-card h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.rating {
+    font-size: 16px;
+    color: #FFD700;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 20px;
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Add a little spacing at the end of the product list */
+.product-cards::after {
+    content: '';
+    flex: 0 0 15px;
+}

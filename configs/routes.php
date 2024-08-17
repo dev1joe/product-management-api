@@ -2,7 +2,9 @@
 declare(strict_types=1);
 
 use App\Controllers\AddressController;
+use App\Controllers\AuthController;
 use App\Controllers\CategoryController;
+use App\Controllers\CustomerController;
 use App\Controllers\FileController;
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
@@ -12,6 +14,17 @@ use Slim\Routing\RouteCollectorProxy;
 
 return function(App $app) {
     $app->get('/', [HomeController::class, 'index']);
+    $app->get('/login', [AuthController::class, 'loginForm']);
+    $app->post('/login', [AuthController::class, 'logIn']);
+    $app->get('/register', [AuthController::class, 'registrationForm']);
+    $app->post('/register', [AuthController::class, 'register']);
+
+    //TODO: define routes group that will have the "customer authentication" middleware
+    /**
+     * wishlist
+     * cart
+     * profile
+     */
 
     $app->group('/admin', function(RouteCollectorProxy $group) {
         // [________________________________________ product ________________________________________]
@@ -53,12 +66,12 @@ return function(App $app) {
        $group->get('/orders', [OrderController::class, 'fetchAll']);
 
         // [________________________________________ customer ________________________________________]
-       $group->get('/customers', [CustomerController::class, 'fetchAll']);
+       $group->get('/customer/all', [CustomerController::class, 'fetchAll']);
 
         // [________________________________________ files ________________________________________]
         $group->get('/upload/file', [FileController::class, 'form']);
        $group->post('/upload/file', [FileController::class, 'store']);
 
-    }); // authentication middleware should be associated with this group
+    }); // TODO: admin authentication middleware should be associated with this group
 };
 

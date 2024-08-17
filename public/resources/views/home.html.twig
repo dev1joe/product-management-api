@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="resources/css/home.css">
+    <title>Electronics Store</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-icons left">
+            <div class="navbar-logo">
+                <a href="#"><img src="resources/images/logo.png" alt="Logo"></a>
+            </div>
+            <p class="name">
+                WIND
+            </p>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" placeholder="Search for products...">
+            <button type="submit"><img src="resources/images/search.png" alt="Search"></button>
+        </div>
+
+        <div class="navbar-icons right">
+           <!-- <a href="#" class="icon-link"><img src="dollar.png" alt="Currency"></a>
+            <a href="#" class="icon-link"><img src="language.png" alt="Language"></a> -->
+            <a href="#" class="icon-link"><img src="resources/images/cart.png" alt="Cart"></a>
+            <a href="#" class="icon-link"><img src="resources/images/wishlist.png" alt="Wishlist"></a>
+            <a href="#" class="icon-link"><img src="resources/images/user.png" alt="Profile"></a>
+        </div>
+    </nav>
+    <nav class="sub-navbar">
+        <div class="dropdown">
+            <button class="dropbtn">Laptops</button>
+            <div class="dropdown-content">
+                <a href="#">Gaming Laptops</a>
+                <a href="#">Ultrabooks</a>
+                <a href="#">2-in-1 Laptops</a>
+                <a href="#">Business Laptops</a>
+                <a href="#">Chromebooks</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">Smartphones</button>
+            <div class="dropdown-content">
+                <a href="#">Flagship</a>
+                <a href="#">Mid-Range</a>
+                <a href="#">Budget</a>
+                <a href="#">Foldable</a>
+                <a href="#">Gaming</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">Cameras</button>
+            <div class="dropdown-content">
+                <a href="#">nikon</a>
+                <a href="#">canon</a>
+                <a href="#">lens</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">Home Appliances</button>
+            <div class="dropdown-content">
+                <a href="#">Refrigerators</a>
+                <a href="#">Washing Machines</a>
+                <a href="#">Microwave Ovens</a>
+                <a href="#">Air Conditioners</a>
+                <a href="#">Vacuum Cleaners</a>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropbtn">Accessories</button>
+            <div class="dropdown-content">
+                <a href="#">Headphones</a>
+                    <a href="#">Chargers</a>
+                    <a href="#">Phone Cases</a>
+                    <a href="#">Screen Protectors</a>
+                    <a href="#">Memory Cards</a>
+                    <a href="#">Power Banks</a>
+            </div>
+        </div>
+    </nav>
+    <div class="banner-container">
+        <div class="banner-slides">
+            <div class="slide"><img src="https://btech.com/media/homecontent/banner/a/r/arab__web-banner__2368x800_ar_1.png" alt="Banner 1"></div>
+            <div class="slide"><img src="https://btech.com/media/homecontent/banner/u/p/upgrad_web_banner_arab_2_1.jpg" alt="Banner 2"></div>
+            <div class="slide"><img src="https://btech.com/media/homecontent/banner/2/3/2368x800_en.jpg" alt="Banner 3"></div>
+        </div>
+        <button class="banner-btn left" onclick="prevSlide()">&#10094;</button>
+        <button class="banner-btn right" onclick="nextSlide()">&#10095;</button>
+    </div>
+
+    <section class="products-section">
+        <h2>New Products</h2>
+        <ul class="product-cards">
+            <li class="product-card">
+                <img src="https://btech.com/media/catalog/product/t/u/tubro-blade-pro-stand.png" alt="Product 1">
+                <div class="info">
+                    <h3>Product Title 1</h3>
+                    <div class="rating">
+                        ★★★★☆
+                    </div>
+                    <p class="price">$199.99</p>
+               </div>
+            </li>
+            {% for product in products %}
+                {{ include('/product/productCard.twig', {product: product}) }}
+            {% endfor %}
+            <!-- Add more product cards as needed -->
+        </ul>
+    </section>
+
+    <!-- Top Selling Products Section -->
+    <section class="products-section">
+        <h2>Top Selling Products</h2>
+        <ul class="product-cards">
+            <li class="product-card">
+                <img src="https://btech.com/media/catalog/product/2/8/28-l-solo_1.jpg" alt="Product 2">
+                <div class="info">
+                    <h3>Product Title 1</h3>
+                    <div class="rating">
+                        ★★★★☆
+                    </div>
+                    <p class="price">$199.99</p>
+               </div>
+            </li>
+            <li class="product-card">
+                <img src="https://btech.com/media/catalog/product/2/8/28-l-solo_1.jpg" alt="Product 2">
+                <div class="info">
+                    <h3>Product Title 1</h3>
+                    <div class="rating">
+                        ★★★★☆
+                    </div>
+                    <p class="price">$199.99</p>
+               </div>
+            </li>
+            <li class="product-card">
+                <img src="https://btech.com/media/catalog/product/2/8/28-l-solo_1.jpg" alt="Product 2">
+                <div class="info">
+                    <h3>Product Title 1</h3>
+                    <div class="rating">
+                        ★★★★☆
+                    </div>
+                    <p class="price">$199.99</p>
+               </div>
+            </li>
+            <!-- Add more product cards as needed -->
+        </ul>
+    </section>
+
+    <!-- For You Products Section -->
+    <section class="products-section">
+        <h2>For You</h2>
+        <ul class="product-cards">
+            <li class="product-card">
+                <img src="https://btech.com/media/catalog/product/2/8/28-l-solo_1.jpg" alt="Product 3">
+                <div class="info">
+                    <h3>Product Title 1</h3>
+                    <div class="rating">
+                        ★★★★☆
+                    </div>
+                    <p class="price">$199.99</p>
+               </div>
+            </li>
+            <li class="product-card">
+                <img src="https://btech.com/media/catalog/product/s/h/sharp-split-air-conditioner-1-5-hp-cool-standard-dry-turbo-white-ah-a12yse-closed_2.jpg" alt="Product 2">
+                <div class="info">
+                    <h3>Product Title 1</h3>
+                    <div class="rating">
+                        ★★★★☆
+                    </div>
+                    <p class="price">$199.99</p>
+               </div>
+            </li>
+            <li class="product-card">
+                <img src="https://btech.com/media/catalog/product/l/e/levant-fhd-t5300-ua43t5300auxtw-frontblack-229857917.jpg" alt="Product 2">
+                <div class="info">
+                    <h3>Product Title 1</h3>
+                    <div class="rating">
+                        ★★★★☆
+                    </div>
+                    <p class="price">$199.99</p>
+               </div>
+            </li>
+            <!-- Add more product cards as needed -->
+        </ul>
+    </section>
+
+    <script src="resources/js/app.js"></script>
+</body>
+</html>
+

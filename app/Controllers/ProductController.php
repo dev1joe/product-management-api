@@ -9,6 +9,7 @@ use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UploadProductPhotoRequestValidator;
 use App\Services\CategoryService;
+use App\Services\ProductService;
 use League\Flysystem\Filesystem;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -25,20 +26,19 @@ class ProductController
         private readonly CategoryService $categoryService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
         private readonly Filesystem $filesystem,
+        private readonly ProductService $productService,
     ){
     }
-
+    // TODO: refactor to product service
     public function form(Request $request, Response $response): Response {
         $categories = $this->categoryService->fetchCategoryNames();
 
-        return $this->twig->render($response, '/forms/createProduct.twig', ['categories' => $categories]);
+        return $this->twig->render($response, '/product/createProduct.twig', ['categories' => $categories]);
         //TODO: missing the photo input field
     }
 
     public function fetchAll(Request $request, Response $response): Response {
-        $result = $this->entityManager->getRepository(Product::class)
-            ->createQueryBuilder('p')->select('p', 'c')->leftJoin('p.category', 'c')
-            ->getQuery()->getArrayResult();
+        $result = $this->productService->fetchAll();
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
@@ -63,10 +63,10 @@ class ProductController
 
         $fileName = $file->getClientFilename();
 
-        $this->filesystem->write('/products/' . $fileName, $file->getStream()->getContents());
+        $this->filesystem->write($fileName, $file->getStream()->getContents());
 
-        $fullLocation = STORAGE_PATH . '/products/' . $fileName;
-        $product->setPhoto($fullLocation);
+        $relativeLocation = '/storage/'.$fileName;
+        $product->setPhoto($relativeLocation);
 
         // category handling
         /** @var Category $category */

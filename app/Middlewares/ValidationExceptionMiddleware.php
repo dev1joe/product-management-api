@@ -9,11 +9,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Slim\Views\Twig;
 
 class ValidationExceptionMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private readonly ResponseFactoryInterface $responseFactory
+        private readonly ResponseFactoryInterface $responseFactory,
     ){
     }
 
@@ -22,15 +23,23 @@ class ValidationExceptionMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (ValidationException $e) {
-            //TODO: continue this middleware
-            // redirect back to the referer
-            // show errors under input fields
+            $oldData = $request->getParsedBody();
+            $sensitiveData = ['password', 'confirmPassword'];
 
-            // $referer = $request->getServerParams()['HTTP_REFERER'];
-            // $response = $this->responseFactory->createResponse()->withHeader('Location', $referer)->withStatus(302);
+            $_SESSION['old'] = array_diff_key($oldData, array_flip($sensitiveData));
+            /**
+             * array_diff_key() function compares keys
+             * password and confirmPassword strings are values not keys in sensitiveData array
+             * so we flip it to compare keys with each other
+             */
 
-            $response = $this->responseFactory->createResponse();
-            $response->getBody()->write(json_encode($e->errors));
+            $_SESSION['errors'] = $e->errors;
+
+            $referer = $request->getServerParams()['HTTP_REFERER'];
+            $response = $this->responseFactory->createResponse()->withHeader('Location', $referer)->withStatus(302);
+
+            // $response = $this->responseFactory->createResponse();
+            // $response->getBody()->write(json_encode($e->errors));
 
             return $response;
         }

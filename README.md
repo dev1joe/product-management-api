@@ -43,6 +43,12 @@ f# Relationships
 // TODO: check stripe
 
 # Learning
+
+## Slim Framework
+### Middlewares
+- Each new middleware layer surrounds any existing middleware layers. The concentric structure expands outwardly as additional middleware layers are added.
+- The last middleware layer added is the first to be executed. 
+
 ### Why specify the "Entity" and "Table" attributes ??
   - Entity attribute is required, it marks a PHP class as an entity to be persisted in the DB
   - while Table attribute is optional, it describes the table the entity is persisted in

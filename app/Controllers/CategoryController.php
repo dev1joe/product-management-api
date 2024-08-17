@@ -15,6 +15,7 @@ use Slim\Views\Twig;
 
 class CategoryController
 {
+    // TODO: refactor to category service
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly Twig $twig,
@@ -24,7 +25,7 @@ class CategoryController
     }
 
     public function form(Request $request, Response $response): Response {
-        return $this->twig->render($response, '/forms/createCategory.twig');
+        return $this->twig->render($response, '/category/createCategory.twig');
     }
 
     public function create(Request $request, Response $response): Response {

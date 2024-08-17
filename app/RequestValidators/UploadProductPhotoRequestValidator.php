@@ -54,6 +54,7 @@ class UploadProductPhotoRequestValidator implements RequestValidatorInterface
         $tmpFilePath = $uploadedFile->getStream()->getMetadata('uri');
         $detector = new FinfoMimeTypeDetector();
         $mimeType = $detector->detectMimeType($tmpFilePath, $uploadedFile->getStream()->getContents());
+        $uploadedFile->getStream()->rewind();
 
         if(! in_array($mimeType, $allowedMimeTypes)) {
             throw new ValidationException(['photo' => 'Invalid file type (server side validation)']);

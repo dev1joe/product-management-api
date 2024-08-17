@@ -14,6 +14,11 @@ use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Views\Twig;
+use Symfony\Bridge\Twig\Extension\AssetExtension;
+use Symfony\Component\Asset\Packages;
+use Symfony\Component\Asset\PathPackage;
+use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
+use Twig\TwigFunction;
 use function DI\create;
 
 return [
@@ -21,7 +26,7 @@ return [
         AppFactory::setContainer($container);
         $app = AppFactory::create();
 
-        // TODO: add routes and middlewares
+        //adding routes and middlewares
         $routes = require CONFIGS_PATH . '/routes.php';
         $routes($app);
 
@@ -35,7 +40,7 @@ return [
     ),
     Twig::class => function(Config $config) {
         $twig = Twig::create(
-            path: VIEWS_PATH,
+            path: NEW_VIEWS_PATH,
             settings: [
                 'cache' => STORAGE_PATH . "/cache",
                 'auto_reload' => $config->get('app_env') == 'development'
@@ -43,7 +48,8 @@ return [
         );
 
         // add any twig extensions here
-
+        $packages = new Packages(new PathPackage('/../resources', new EmptyVersionStrategy()));
+        $twig->addExtension(new AssetExtension($packages));
         return $twig;
     },
     EntityManager::class => function(Config $config) {
@@ -69,7 +75,7 @@ return [
         // The internal adapter
         $adapter = match($config->get('storage.driver')) {
             StorageDriver::Local => new League\Flysystem\Local\LocalFilesystemAdapter(
-                STORAGE_PATH
+                PRODUCT_STORAGE_PATH
             ),
             //TODO: add FTP driver here if needed
         };

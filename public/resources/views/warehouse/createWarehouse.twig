@@ -13,16 +13,19 @@
             margin: 0;
             font-family: Arial, sans-serif;
         }
+
         .form-container {
-            // text-align: center;
+        / / text-align: center;
             border: 1px solid #ccc;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             margin-bottom: 20px;
         }
+
         input[type="text"], select {
             padding: 10px;
             width: -webkit-fill-available;
@@ -31,6 +34,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         input[type="submit"] {
             padding: 10px 20px;
             background-color: #007BFF;
@@ -39,57 +43,78 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
         .option-label {
             font-size: 18px;
+        }
+        .invalid-feedback {
+            color: red;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
 <div class="form-container">
     <h1>Create Warehouse</h1>
-    <form action="/admin/warehouse{% if warehouse.id %}/{{ warehouse.id }}" {% endif %}" method="POST">
-        <input name="id" type="hidden" {% if warehouse.id %} value="{{ warehouse.id }}" {% endif %}> <br>
-        <input type="text" name="name" placeholder="Warehouse Name" value="{{ warehouse.name }}" required> <br>
+    <form action="/admin/warehouse" method="POST">
+    <input type="text" name="name" placeholder="Warehouse Name" value="{{ old.name }}" required> <br>
+    <div class="invalid-feedback"> {{ errors.name | first }}</div>
+    <br>
 
-        <input type="radio" name="address_type" value="existing" id="existingAddressOption" checked onclick="toggleInputs(0)">
-        <label class="option-label" for="existingAddressOption">Select an existing address</label> <br>
+    <input type="radio" name="address_type" value="existing" id="existingAddressOption" checked
+           onclick="toggleInputs(0)">
+    <label class="option-label" for="existingAddressOption">Select an existing address</label> <br>
 
-        <select name="address" id="addressIdSelector">
-           <option value="" selected disabled>-- select address --</option>
-            {% for address in addresses %}
-                <option value="{{ address.id }}"{% if warehouse.address.id == address.id %} selected{% endif %}>
-                    {{ address.details }}
-                </option>
-            {% endfor %}
-        </select> <br>
+    <select name="address" id="addressIdSelector" required>
+        <option value="" selected disabled>-- select address --</option>
+        {% for address in addresses %}
+            <option value="{{ address.id }}"{% if old.address %} selected{% endif %}>
+                {{ address.details }}
+            </option>
+        {% endfor %}
+    </select> <br>
+    <div class="invalid-feedback"> {{ errors.address | first }}</div>
+    <br>
 
-        <input type="radio" name="address_type" value="new" id="newAddressOption" onclick="toggleInputs(1)">
-        <label class="option-label" for="newAddressOption">Add a new address</label> <br>
+    <input type="radio" name="address_type" value="new" id="newAddressOption" onclick="toggleInputs(1)">
+    <label class="option-label" for="newAddressOption">Add a new address</label> <br>
 
-        <select name="country" id="countrySelector">
-                <option value="" selected disabled>-- select country --</option>
-                <option value="Egypt">Egypt</option>
-                <option value="UAE">United Arab Emirates</option>
-                <option value="KSA">Saudi Arabia</option>
-                <option value="Morocco">Morocco</option>
-        </select><br>
+    <select name="country" id="countrySelector">
+        <option value="" selected disabled>-- select country --</option>
+        <option value="Egypt">Egypt</option>
+        <option value="UAE">United Arab Emirates</option>
+        <option value="KSA">Saudi Arabia</option>
+        <option value="Morocco">Morocco</option>
+    </select><br>
+    <div class="invalid-feedback"> {{ errors.country | first }}</div>
+    <br>
 
-        <input type="text" name="governorate" placeholder="Governorate / State" id="governorateField"><br>
-        <input type="text" name="district" placeholder="District / City" id="districtField"><br>
-        <input type="text" name="street" placeholder="Street" id="streetField"><br>
-        <input type="text" name="building" placeholder="Building" id="buildingField"><br>
+    <input type="text" name="governorate" placeholder="Governorate / State" id="governorateField"><br>
+    <div class="invalid-feedback"> {{ errors.governorate | first }}</div>
+    <br>
 
-        <input type="submit" value="Submit">
+    <input type="text" name="district" placeholder="District / City" id="districtField"><br>
+    <div class="invalid-feedback"> {{ errors.district | first }}</div>
+    <br>
+
+    <input type="text" name="street" placeholder="Street" id="streetField"><br>
+    <div class="invalid-feedback"> {{ errors.street | first }}</div>
+    <br>
+
+    <input type="text" name="building" placeholder="Building" id="buildingField"><br>
+    <div class="invalid-feedback"> {{ errors.building | first }}</div>
+    <br>
+
+    <input type="submit" value="Submit">
     </form>
 </div>
 </body>
 
 <script>
-
-
     function toggleInputs(x) {
         const option1 = document.getElementById('existingAddressOption');
         const addressIdSelector = document.getElementById('addressIdSelector');
@@ -101,15 +126,7 @@
         const streetField = document.getElementById('streetField');
         const buildingField = document.getElementById('buildingField');
 
-        let list = [option1, addressIdSelector, countrySelector, governorateField, districtField, streetField, buildingField]
-
-        for (let i = 0; i < list.length; i++) {
-            if (! list[i]) {
-                console.log(`element ${i} is null`)
-            }
-        }
-
-        if(x === 0) {
+        if (x === 0) {
             addressIdSelector.disabled = false;
 
             countrySelector.disabled = true;
