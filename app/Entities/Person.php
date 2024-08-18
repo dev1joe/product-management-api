@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Contracts\AuthenticatableInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToOne;
 
 #[MappedSuperclass]
-class Person
+class Person implements AuthenticatableInterface
 {
     #[Id, Column, GeneratedValue]
     private int $id;

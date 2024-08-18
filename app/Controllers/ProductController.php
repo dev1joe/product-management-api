@@ -47,6 +47,9 @@ class ProductController
     public function create(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
 
+        // $response->getBody()->write(json_encode($data));
+        // return $response->withHeader('Content-Type', 'application/json');
+
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
         $data = $validator->validate($data);
 
@@ -81,6 +84,7 @@ class ProductController
 
         // return $response->withHeader('Location', '/admin/product/all')->withStatus(302);
 
+        // TODO: redirect to "all products page" when it's present
         $message = ['massage' => 'product created successfully!'];
         $response->getBody()->write(json_encode($message));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);

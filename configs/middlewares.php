@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Middlewares\AuthenticateMiddleware;
 use App\Middlewares\StartSessionMiddleware;
 use App\Middlewares\ValidationErrorsMiddleware;
 use App\Middlewares\ValidationExceptionMiddleware;
@@ -12,6 +13,7 @@ use Slim\Views\TwigMiddleware;
 return function(App $app) {
     $container = $app->getContainer();
 
+    $app->add(AuthenticateMiddleware::class);
     $app->add(MethodOverrideMiddleware::class);
     // twig middleware
     $app->add(TwigMiddleware::create($app, $container->get(Twig::class)));

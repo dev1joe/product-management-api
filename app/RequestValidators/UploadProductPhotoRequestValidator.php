@@ -18,19 +18,19 @@ class UploadProductPhotoRequestValidator implements RequestValidatorInterface
 
         // 1. validate uploaded file
         if(! $uploadedFile) {
-            throw new ValidationException(['photo' => 'Please upload a photo']);
+            throw new ValidationException(['photo' => ['Please upload a photo']]);
         }
 
         // validate that there are no upload errors
         if($uploadedFile->getError() !== UPLOAD_ERR_OK) {
-            throw new ValidationException(['photo' => 'Failed to upload photo']);
+            throw new ValidationException(['photo' => ['Failed to upload photo']]);
         }
 
         // 2. validate file's size
         $maxFileSize = 5 * 1024 * 1024;
 
         if($uploadedFile->getSize() > $maxFileSize) {
-            throw new ValidationException(['photo' => 'Maximum allowed size is 5 MBs']);
+            throw new ValidationException(['photo' => ['Maximum allowed size is 5 MBs']]);
         }
 
         // 3. validate file's name
@@ -45,7 +45,7 @@ class UploadProductPhotoRequestValidator implements RequestValidatorInterface
         $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
 
         if(! in_array($uploadedFile->getClientMediaType(), $allowedMimeTypes)) {
-            throw new ValidationException(['photo' => 'Invalid file type (client side validation)']);
+            throw new ValidationException(['photo' => ['Invalid file type (client side validation)']]);
         }
 
         // validation using a Flysystem MIME type detector
@@ -57,7 +57,7 @@ class UploadProductPhotoRequestValidator implements RequestValidatorInterface
         $uploadedFile->getStream()->rewind();
 
         if(! in_array($mimeType, $allowedMimeTypes)) {
-            throw new ValidationException(['photo' => 'Invalid file type (server side validation)']);
+            throw new ValidationException(['photo' => ['Invalid file type (server side validation)']]);
         }
 
         return $data;

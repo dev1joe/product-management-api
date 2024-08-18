@@ -9,22 +9,31 @@ use App\Controllers\FileController;
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
 use App\Controllers\WarehouseController;
+use App\Middlewares\CustomerAuthorizationMiddleware;
+use App\Middlewares\GuestMiddleware;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
 return function(App $app) {
     $app->get('/', [HomeController::class, 'index']);
-    $app->get('/login', [AuthController::class, 'loginForm']);
-    $app->post('/login', [AuthController::class, 'logIn']);
-    $app->get('/register', [AuthController::class, 'registrationForm']);
-    $app->post('/register', [AuthController::class, 'register']);
+
+    $app->group('', function (RouteCollectorProxy $group) {
+        $group->get('/login', [AuthController::class, 'loginForm']);
+        $group->post('/login', [AuthController::class, 'logIn']);
+        $group->get('/register', [AuthController::class, 'registrationForm']);
+        $group->post('/register', [AuthController::class, 'register']);
+    })->add(GuestMiddleware::class);
+
+    // $app->get('/profile', [CustomerController::class, 'profile'])->add(AuthMiddleware::class);
 
     //TODO: define routes group that will have the "customer authentication" middleware
-    /**
-     * wishlist
-     * cart
-     * profile
-     */
+    $app->group('', function (RouteCollectorProxy $group) {
+        $group->get('/profile', [CustomerController::class, 'profile']);
+        $group->get('/cart', []);
+        $group->get('/wishlist', []);
+        $group->post('/logout', [AuthController::class, 'logOut']);
+    })->add(CustomerAuthorizationMiddleware::class);
+
 
     $app->group('/admin', function(RouteCollectorProxy $group) {
         // [________________________________________ product ________________________________________]

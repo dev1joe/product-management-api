@@ -27,7 +27,7 @@
             <a href="#" class="icon-link"><img src="language.png" alt="Language"></a> -->
             <a href="#" class="icon-link"><img src="resources/images/cart.png" alt="Cart"></a>
             <a href="#" class="icon-link"><img src="resources/images/wishlist.png" alt="Wishlist"></a>
-            <a href="#" class="icon-link"><img src="resources/images/user.png" alt="Profile"></a>
+            <a href="/profile" class="icon-link"><img src="resources/images/user.png" alt="Profile"></a>
         </div>
     </nav>
     <nav class="sub-navbar">
@@ -94,20 +94,9 @@
     <section class="products-section">
         <h2>New Products</h2>
         <ul class="product-cards">
-            <li class="product-card">
-                <img src="https://btech.com/media/catalog/product/t/u/tubro-blade-pro-stand.png" alt="Product 1">
-                <div class="info">
-                    <h3>Product Title 1</h3>
-                    <div class="rating">
-                        ★★★★☆
-                    </div>
-                    <p class="price">$199.99</p>
-               </div>
-            </li>
             {% for product in products %}
                 {{ include('/product/productCard.twig', {product: product}) }}
             {% endfor %}
-            <!-- Add more product cards as needed -->
         </ul>
     </section>
 

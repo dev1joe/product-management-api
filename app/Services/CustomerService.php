@@ -47,4 +47,8 @@ class CustomerService
 
         return $customer;
     }
+
+    public function fetchByEmail(string $email): Customer|null {
+        return $this->entityManager->getRepository(Customer::class)->findOneBy(['email' => $email]);
+    }
 }

@@ -3,68 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/resources/css/form.css">
     <title>Create Product</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .form-container {
-            text-align: center;
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        input[type="text"], input[type="number"], input[type="file"],select {
-            padding: 10px;
-            width: -webkit-fill-available;
-            max-width: 300px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        input[type="submit"] {
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
 <div class="form-container">
     <h1>Create Product</h1>
     <form action="/admin/product" method="POST" enctype="multipart/form-data">
-        <input type="text" name="name" placeholder="Product Name" required><br>
+        <input type="text" name="name" placeholder="Product Name" value="{{ old.name }}" required>
+        <div class="invalid-feedback">{{ errors.name | first }}</div>
 
         <select name="category" required>
             <option value="" selected disabled>-- select category --</option>
 
             {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
+                <option value="{{ category.id }}" {% if old.category == category.id %} selected {% endif %}>{{ category.name }}</option>
             {% endfor %}
 
-        </select><br>
+        </select>
+        <div class="invalid-feedback">{{ errors.category | first }}</div>
 
-        <input name="price" type="number" placeholder="Product Price in US Dollars"><br>
+        <input name="price" type="number" placeholder="Product Price in US Dollars" value="{{ old.price }}">
+        <div class="invalid-feedback">{{ errors.price | first }}</div>
 
-        <input type="file" name="photo"><br>
+        <input type="file" name="photo" required>
+        <div class="invalid-feedback">{{ errors.photo | first }}</div>
 
-        <textarea name="description" cols="30" rows="8" maxlength="1000">Product Description.....</textarea>
-        <br>
+        <textarea name="description" cols="30" rows="8" maxlength="1000">{{ old.description ? old.description : "Product Description....." }}</textarea>
+        <div class="invalid-feedback">{{ errors.description | first }}</div>
 
         <br><input type="submit" value="Submit">
     </form>

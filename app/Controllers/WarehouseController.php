@@ -61,11 +61,11 @@ class WarehouseController
                 $this->warehouseService->create($data);
 
             } else {
-                throw new ValidationException(['address_type' => 'address type must only be new or exiting, address type is ' . $addressType . '.']);
+                throw new ValidationException(['address_type' => ['address type must only be new or exiting, address type is ' . $addressType . '.']]);
             }
 
         } else {
-            throw new ValidationException(['address_type' => 'address type is required']);
+            throw new ValidationException(['address_type' => ['address type is required']]);
         }
 
         $message = ['massage' => 'warehouse created successfully!'];
@@ -117,7 +117,7 @@ class WarehouseController
         $warehouse = $this->entityManager->find(Warehouse::class, $id);
 
         if(! $warehouse) {
-            throw new ValidationException(['name' => 'Warehouse not found']);
+            throw new ValidationException(['name' => ['Warehouse not found']]);
         }
 
         if(array_key_exists('address_type', $data)) {
@@ -162,11 +162,11 @@ class WarehouseController
                 $warehouse->setAddress($address);
 
             } else {
-                throw new ValidationException(['address_type' => 'address type must only be new or exiting, address type is ' . $addressType . '.']);
+                throw new ValidationException(['address_type' => ['address type must only be new or exiting, address type is ' . $addressType . '.']]);
             }
 
         } else {
-            throw new ValidationException(['address_type' => 'address type is required']);
+            throw new ValidationException(['address_type' => ['address type is required']]);
         }
 
         $this->entityManager->persist($warehouse);

@@ -1,4 +1,4 @@
-f# Relationships
+# Relationships
 ### customer and comments
 - if a customer deletes their account, the comments shouldn't be deleted. to implement that, the comment's customer foreign key can be null. Is that ok ? or will it produce issues ?
 
@@ -86,6 +86,15 @@ f# Relationships
 ### MIME types reference ?? you got it
 - what are MIME types ?? (write it here for reference)
 - a reference by internet assigned numbers authority (iana) [here](https://www.iana.org/assignments/media-types/media-types.xhtml)
+
+### customer's secure connection
+1. configure cookie options:
+   - httponly: only access the session using http (because it's accessible by js by default)
+   - secure: HTTPS only, it's never sent on an insecure HTTP connection (except for localhost) 
+   - samesite: 
+2. cross-site scripting (XSS) protection
+3. regenerate session id
+- more information at [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
 
 # Project Future
 - make a dynamic attributes system (suggested by [chatGPT](https://chatgpt.com/share/6713d5db-cf0d-47b4-93f0-305d9cbd7709))

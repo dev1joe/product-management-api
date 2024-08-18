@@ -2,8 +2,10 @@
 declare(strict_types=1);
 
 use App\Config;
+use App\Contracts\AuthServiceInterface;
 use App\Enums\StorageDriver;
 use App\RequestValidators\RequestValidatorFactory;
+use App\Services\AuthService;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
@@ -82,5 +84,9 @@ return [
 
         // The FilesystemOperator
         return new League\Flysystem\Filesystem($adapter);
-    }
+    },
+    AuthServiceInterface::class => function(ContainerInterface $container) {
+        return $container->get(AuthService::class);
+        // `App\Services\AuthService` is the default implementation of the AuthServiceInterface
+    },
 ];
