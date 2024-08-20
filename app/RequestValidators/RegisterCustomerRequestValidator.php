@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\RequestValidators;
 
 use App\Contracts\RequestValidatorInterface;
+use App\Entities\Administrator;
 use App\Entities\Customer;
 use App\Exceptions\ValidationException;
 use Doctrine\ORM\EntityManager;
@@ -29,11 +30,18 @@ class RegisterCustomerRequestValidator implements RequestValidatorInterface
         $v->rule('email', 'email');
         $v->rule('equals', 'confirmPassword', 'password')->label('Confirm Password');
         $v->rule(
-            fn($field, $value, $params, $fields) => ! $this->entityManager->getRepository(Customer::class)->count(
-                ['email' => $value]
-            ),
-            'email'
+            function($field, $value, $params, $fields) {
+                $customersExist = (bool) $this->entityManager->getRepository(Customer::class)->count(['email' => $value]);
+                $adminsExist = (bool) $this->entityManager->getRepository(Administrator::class)->count(['email' => $value]);
+
+                return(! $customersExist && ! $adminsExist);
+            }, 'email'
         )->message('User with the given email address already exists');
+
+        $func = function($data) {
+
+        };
+
 
         if (! $v->validate()) {
             throw new ValidationException($v->errors());

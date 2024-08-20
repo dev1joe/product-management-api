@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Controllers\AddressController;
+use App\Controllers\AdminController;
 use App\Controllers\AuthController;
 use App\Controllers\CategoryController;
 use App\Controllers\CustomerController;
@@ -9,6 +10,7 @@ use App\Controllers\FileController;
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
 use App\Controllers\WarehouseController;
+use App\Middlewares\AdminAuthorizationMiddleware;
 use App\Middlewares\CustomerAuthorizationMiddleware;
 use App\Middlewares\GuestMiddleware;
 use Slim\App;
@@ -22,6 +24,8 @@ return function(App $app) {
         $group->post('/login', [AuthController::class, 'logIn']);
         $group->get('/register', [AuthController::class, 'registrationForm']);
         $group->post('/register', [AuthController::class, 'register']);
+        //-------------
+        $group->get('/admin/login', [AuthController::class, 'adminLoginForm']);
     })->add(GuestMiddleware::class);
 
     // $app->get('/profile', [CustomerController::class, 'profile'])->add(AuthMiddleware::class);
@@ -30,12 +34,15 @@ return function(App $app) {
     $app->group('', function (RouteCollectorProxy $group) {
         $group->get('/profile', [CustomerController::class, 'profile']);
         $group->get('/cart', []);
-        $group->get('/wishlist', []);
+        $group->get('/wishlist', [CustomerController::class, 'wishlist']);
         $group->post('/logout', [AuthController::class, 'logOut']);
     })->add(CustomerAuthorizationMiddleware::class);
 
 
     $app->group('/admin', function(RouteCollectorProxy $group) {
+        $group->get('', [AdminController::class, 'profile']);
+
+
         // [________________________________________ product ________________________________________]
        $group->get('/product/all', [ProductController::class, 'fetchAll']);
        $group->get('/product/create', [ProductController::class, 'form']);
@@ -81,6 +88,6 @@ return function(App $app) {
         $group->get('/upload/file', [FileController::class, 'form']);
        $group->post('/upload/file', [FileController::class, 'store']);
 
-    }); // TODO: admin authentication middleware should be associated with this group
+    })->add(AdminAuthorizationMiddleware::class);
 };
 

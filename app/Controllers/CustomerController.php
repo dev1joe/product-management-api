@@ -24,6 +24,11 @@ class CustomerController
     }
 
     public function profile(Request $request, Response $response): Response {
-        return $this->twig->render($response, '/profile.twig');
+        return $this->twig->render($response, '/customer/profile.twig');
+    }
+
+    public function wishlist(Request $request, Response $response): Response {
+        $response->getBody()->write("<h1>Hi this is the wishlist, have a good day &#x1F60A;</h1>");
+        return $response->withHeader('Content-Type', 'text/html');
     }
 }

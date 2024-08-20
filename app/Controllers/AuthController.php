@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Contracts\AuthServiceInterface;
+use App\Enums\UserType;
 use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\ValidationException;
 use App\RequestValidators\RegisterCustomerRequestValidator;
@@ -26,7 +27,19 @@ class AuthController
     }
 
     public function loginForm(Request $request, Response $response): Response {
-        return $this->twig->render($response, '/auth/login.twig');
+        return $this->twig->render(
+            $response,
+            '/auth/login.twig',
+            ['register' => true, 'userType' => UserType::Customer->value]
+        );
+    }
+
+    public function adminLoginForm(Request $request, Response $response): Response {
+        return $this->twig->render(
+            $response,
+            '/auth/login.twig',
+            ['register' => false, 'userType' => UserType::Admin->value]
+        );
     }
 
     public function logIn(Request $request, Response $response): Response {
@@ -35,19 +48,25 @@ class AuthController
 
         // validate data
         $v = new Validator($data);
-        $v->rule('required', ['email', 'password']);
+        $v->rule('required', ['email', 'password', 'userType']);
         $v->rule('email', 'email');
+        $v->rule('alpha', 'userType');
 
         if(! $v->validate()) {
             throw new ValidationException($v->errors());
         }
 
-        if(! $this->authService->attemptLogIn($data)) {
+        $userTypeKey = $data['userType'];
+
+        $userTypeKey = ($userTypeKey === 'customer')? UserType::Customer : UserType::Admin;
+
+        if(! $this->authService->attemptLogIn($data, $userTypeKey)) {
             throw new ValidationException(['password' => ['invalid email or password']]);
         }
 
         // redirect
-        return $response->withHeader('Location', '/')->withStatus(302);
+        $location = ($userTypeKey === UserType::Customer)? '/' : '/admin';
+        return $response->withHeader('Location', $location)->withStatus(302);
     }
 
     public function registrationForm(Request $request, Response $response): Response {
@@ -65,7 +84,7 @@ class AuthController
     }
 
     public function logOut(Request $request, Response $response): Response {
-        $this->authService->logOut();
+        $this->authService->logOut(); // TODO: how can this function have access to the userTypeKey ??
 
         // redirect to home page, because home page doesn't need authentication
         return $response->withHeader('Location', '/')->withStatus(302);

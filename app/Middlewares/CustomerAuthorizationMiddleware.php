@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Middlewares;
 
+use App\Enums\UserType;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,7 +23,7 @@ class CustomerAuthorizationMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if(empty($_SESSION['customer'])) {
+        if(empty($_SESSION['userType']) || $_SESSION['userType'] !== UserType::Customer->value) {
             return $this->responseFactory->createResponse(302)->withHeader('Location', '/login');
         }
 

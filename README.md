@@ -27,6 +27,15 @@
 - on warehouse deletion cascade
 - on product deletion cascade
 
+# Rules
+| rule                                                                   | implementors                  |
+|------------------------------------------------------------------------|-------------------------------|
+| a customer email must be unique across the customers and admins tables | CreatCustomerRequestValidator |
+| an admin email must be unique across the customers and admins tables   |                               |
+| a guest can't access admin pages                                       | AdminAuthorizationMiddleware  |
+| a customer can't access admin pages                                    | AdminAuthorizationMiddleware  |
+| any logged in client can't access any logo in or registration forms    | GuestMiddleware               |
+
 # order status
 - Pending: The order has been received, but processing has not yet begun.
 - Processing: The order is being prepared for shipment, including tasks such as packaging and inventory verification.
