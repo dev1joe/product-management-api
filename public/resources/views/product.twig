@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/resources/css/styles.css">
+    <title>Product - Electronics Store</title>
+</head>
+<body>
+    {{ include('/elements/navbar.twig') }}
+    <!-- Product Details Section -->
+    <section class="product-details">
+        <div class="product-images">
+            <img id="main-image" src="https://productimages.hepsiburada.net/s/478/424-600/110000520387047.jpg" alt="Main Product Image">
+            <div class="thumbnail-images">
+                <img src="https://productimages.hepsiburada.net/s/478/424-600/110000520387047.jpg" alt="Thumbnail 1" onclick="switchImage('https://productimages.hepsiburada.net/s/478/424-600/110000520387047.jpg')">
+                <img src="https://productimages.hepsiburada.net/s/478/424-600/110000520387046.jpg" alt="Thumbnail 2" onclick="switchImage('https://productimages.hepsiburada.net/s/478/424-600/110000520387046.jpg')">
+                <img src="https://productimages.hepsiburada.net/s/478/424-600/110000520387048.jpg" alt="Thumbnail 3" onclick="switchImage('https://productimages.hepsiburada.net/s/478/424-600/110000520387048.jpg')">
+                <img src="https://productimages.hepsiburada.net/s/478/424-600/110000520387044.jpg" alt="Thumbnail 4" onclick="switchImage('https://productimages.hepsiburada.net/s/478/424-600/110000520387044.jpg')">
+            </div>
+        </div>
+        <div class="product-info">
+            <h1>Galaxy S23 FE 256 GB</h1>
+            <div class="rating">
+                ★★★★☆
+            </div>
+            <p class="price">$299.99</p>
+            <p class="description">
+                This is a detailed description of the product. It highlights the key features, benefits, and specifications of the product.
+            </p>
+            <ul class="specifications">
+                <li>Specification 1: Details</li>
+                <li>Specification 2: Details</li>
+                <li>Specification 3: Details</li>
+                <!-- Add more specifications as needed -->
+            </ul>
+            <div class="buttons-container">
+                   <button class="add-to-cart">Add to Cart</button>
+                   <button class="check">Check out</button>
+                   <button class="wish">add to WhishList</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section class="recommendations">
+            <h2>you may also like</h2>
+            <ul class="product-cards">
+                <li class="product-card">
+                    <img src="https://btech.com/media/catalog/product/2/8/28-l-solo_1.jpg" alt="Product 3">
+                    <div class="info">
+                        <h3>Product Title 1</h3>
+                        <div class="rating">
+                            ★★★★☆
+                        </div>
+                        <p class="price">$199.99</p>
+                   </div>
+                </li>
+                <li class="product-card">
+                    <img src="https://btech.com/media/catalog/product/s/h/sharp-split-air-conditioner-1-5-hp-cool-standard-dry-turbo-white-ah-a12yse-closed_2.jpg" alt="Product 2">
+                    <div class="info">
+                        <h3>Product Title 1</h3>
+                        <div class="rating">
+                            ★★★★☆
+                        </div>
+                        <p class="price">$199.99</p>
+                   </div>
+                </li>
+                <li class="product-card">
+                    <img src="https://btech.com/media/catalog/product/l/e/levant-fhd-t5300-ua43t5300auxtw-frontblack-229857917.jpg" alt="Product 2">
+                    <div class="info">
+                        <h3>Product Title 1</h3>
+                        <div class="rating">
+                            ★★★★☆
+                        </div>
+                        <p class="price">$199.99</p>
+                   </div>
+                </li>
+                <!-- Add more product cards as needed -->
+            </ul>
+        </section>
+    <script src ="app.js"></script>   
+</body>
+    

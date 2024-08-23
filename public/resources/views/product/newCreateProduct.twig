@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/resources/css/newProductForm.css">
+    <title>Create Product</title>
+</head>
+<body>
+<div class="form-container">
+    <h1>Create Product</h1>
+    <form action="/admin/view" method="POST" enctype="multipart/form-data" id="create-product-form">
+
+        <div class="name-container">
+            <input type="text" name="name" id="name" placeholder="Product Name" value="{{ old.name }}" required>
+            <div class="invalid-feedback">{{ errors.name | first }}</div>
+        </div>
+
+        <div class="price-container">
+            <input type="number" name="price" id="price" placeholder="Product Price in US Dollars"
+                   value="{{ old.price }}">
+            <div class="invalid-feedback">{{ errors.price | first }}</div>
+        </div>
+
+        <div class="photo-container">
+            <input type="file" name="photo" id="photo" required>
+            <div class="invalid-feedback">{{ errors.photo | first }}</div>
+        </div>
+
+        <div class="textarea-container">
+            <textarea name="description">{{ old.description ? old.description : "Product Description....." }}</textarea>
+            <div class="invalid-feedback">{{ errors.description | first }}</div>
+        </div>
+
+        <!-- new fields -->
+
+        <div class="select-manufacturer">
+            <select name="manufacturer" id="manufacturer-selector" required>
+                <option value="" selected disabled>-- select manufacturer --</option>
+                <option value="Apple">Apple</option>
+                <option value="Samsung">Samsung</option>
+            </select>
+            <div class="invalid-feedback">{{ errors.manufacturer | first }}</div>
+        </div>
+
+        <div class="create-manufacturer">
+            <input type="text" id="new-manufacturer-field" placeholder="New Manufacturer">
+            <div class="invalid-feedback">{{ errors.manufacturer | first }}</div>
+        </div>
+
+        <button class="submit-button">Create Manufacturer</button>
+
+        <div class="select-category">
+            <select name="category" id="category-selector" required>
+                <option value="" selected disabled>-- select category --</option>
+            </select>
+            <div class="invalid-feedback">{{ errors.category | first }}</div>
+        </div>
+
+        <div class="create-category">
+            <input type="text" id="new-category-field" placeholder="New Category">
+            <div class="invalid-feedback">{{ errors.category | first }}</div>
+        </div>
+
+        <button class="submit-button">Create Category</button>
+
+        <!-- end of form -->
+        <input type="submit" id="form-submit-button" class="submit-button" value="Submit" form="create-product-form">
+    </form>
+</div>
+<script src="/resources/js/createProductForm.js"></script>
+</body>
+</html>

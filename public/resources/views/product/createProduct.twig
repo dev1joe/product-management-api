@@ -9,7 +9,7 @@
 <body>
 <div class="form-container">
     <h1>Create Product</h1>
-    <form action="/admin/product" method="POST" enctype="multipart/form-data">
+    <form action="/admin/products" method="POST" enctype="multipart/form-data">
         <input type="text" name="name" placeholder="Product Name" value="{{ old.name }}" required>
         <div class="invalid-feedback">{{ errors.name | first }}</div>
 
@@ -29,10 +29,10 @@
         <input type="file" name="photo" required>
         <div class="invalid-feedback">{{ errors.photo | first }}</div>
 
-        <textarea name="description" cols="30" rows="8" maxlength="1000">{{ old.description ? old.description : "Product Description....." }}</textarea>
+        <textarea name="description">{{ old.description ? old.description : "Product Description....." }}</textarea>
         <div class="invalid-feedback">{{ errors.description | first }}</div>
 
-        <br><input type="submit" value="Submit">
+        <input type="submit" value="Submit">
     </form>
 </div>
 </body>

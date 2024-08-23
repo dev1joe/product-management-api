@@ -9,6 +9,10 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Views\Twig;
 
+/**
+ * - loads <strong> old data </strong> from session to twig global environment <br>
+ * - loads <strong> validation errors </strong> from session to twig global environment <br>
+ */
 class ValidationErrorsMiddleware implements MiddlewareInterface
 {
     public function __construct(

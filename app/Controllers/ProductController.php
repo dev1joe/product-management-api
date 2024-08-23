@@ -29,16 +29,35 @@ class ProductController
         private readonly ProductService $productService,
     ){
     }
+
+    public function productPage(Request $request, Response $response): Response {
+        return $this->twig->render($response, '/product.twig');
+    }
+
     // TODO: refactor to product service
     public function form(Request $request, Response $response): Response {
         $categories = $this->categoryService->fetchCategoryNames();
 
-        return $this->twig->render($response, '/product/createProduct.twig', ['categories' => $categories]);
+        return $this->twig->render($response, '/product/newCreateProduct.twig', ['categories' => $categories]);
         //TODO: missing the photo input field
     }
 
     public function fetchAll(Request $request, Response $response): Response {
-        $result = $this->productService->fetchAll();
+        $queryParams = $request->getQueryParams();
+
+        if(
+            sizeof($queryParams) > 0 &&
+            array_key_exists('page', $queryParams) &&
+            array_key_exists('limit', $queryParams)
+        ) {
+            $page = (int) $queryParams['page'];
+            $limit = (int) $queryParams['limit'];
+
+            $result = $this->productService->fetchPaginatedProducts($page, $limit);
+        } else {
+            $result = $this->productService->fetchAll();
+        }
+
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
@@ -65,10 +84,12 @@ class ProductController
         )->validate($request->getUploadedFiles())['photo'];
 
         $fileName = $file->getClientFilename();
+        $fileName = str_replace([' '], ['-'], $fileName);
 
-        $this->filesystem->write($fileName, $file->getStream()->getContents());
 
-        $relativeLocation = '/storage/'.$fileName;
+        $this->filesystem->write('/products/' . $fileName, $file->getStream()->getContents());
+
+        $relativeLocation = '/storage/products/'.$fileName;
         $product->setPhoto($relativeLocation);
 
         // category handling

@@ -1,0 +1,23 @@
+<div class="product-card">
+    <img class="product-img" src="{{ product.photo }}" alt="Product">
+    <div class="info">
+        <h4 class="product-name">{{ product.name }}</h4>
+    </div>
+    <div class="product-management-section">
+        <button type="button">
+            <a class="edit-anchor">
+                <span class="material-symbols-outlined">edit_square</span>
+            </a>
+        </button>
+        <button type="button">
+            <a class="archive-anchor">
+                <span class="material-symbols-outlined">archive</span>
+            </a>
+        </button>
+        <button type="button">
+            <a class="delete-anchor" data-id="">
+                <span class="material-symbols-outlined">delete</span>
+            </a>
+        </button>
+    </div>
+</div>

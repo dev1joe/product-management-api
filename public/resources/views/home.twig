@@ -3,89 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="resources/css/home.css">
+    <link rel="stylesheet" href="/resources/css/styles.css">
+    <link rel="stylesheet" href="/resources/css/elements/productCard.css">
     <title>Electronics Store</title>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-icons left">
-            <div class="navbar-logo">
-                <a href="#"><img src="resources/images/logo.png" alt="Logo"></a>
-            </div>
-            <p class="name">
-                WIND
-            </p>
-        </div>
-        
-        <div class="search-bar">
-            <input type="text" placeholder="Search for products...">
-            <button type="submit"><img src="resources/images/search.png" alt="Search"></button>
-        </div>
-
-        <div class="navbar-icons right">
-           <!-- <a href="#" class="icon-link"><img src="dollar.png" alt="Currency"></a>
-            <a href="#" class="icon-link"><img src="language.png" alt="Language"></a> -->
-            <a href="#" class="icon-link"><img src="resources/images/cart.png" alt="Cart"></a>
-            <a href="/wishlist" class="icon-link"><img src="resources/images/wishlist.png" alt="Wishlist"></a>
-            <a href="/profile" class="icon-link"><img src="resources/images/user.png" alt="Profile"></a>
-        </div>
-    </nav>
-    <nav class="sub-navbar">
-        <div class="dropdown">
-            <button class="dropbtn">Laptops</button>
-            <div class="dropdown-content">
-                <a href="#">Gaming Laptops</a>
-                <a href="#">Ultrabooks</a>
-                <a href="#">2-in-1 Laptops</a>
-                <a href="#">Business Laptops</a>
-                <a href="#">Chromebooks</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">Smartphones</button>
-            <div class="dropdown-content">
-                <a href="#">Flagship</a>
-                <a href="#">Mid-Range</a>
-                <a href="#">Budget</a>
-                <a href="#">Foldable</a>
-                <a href="#">Gaming</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">Cameras</button>
-            <div class="dropdown-content">
-                <a href="#">nikon</a>
-                <a href="#">canon</a>
-                <a href="#">lens</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">Home Appliances</button>
-            <div class="dropdown-content">
-                <a href="#">Refrigerators</a>
-                <a href="#">Washing Machines</a>
-                <a href="#">Microwave Ovens</a>
-                <a href="#">Air Conditioners</a>
-                <a href="#">Vacuum Cleaners</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">Accessories</button>
-            <div class="dropdown-content">
-                <a href="#">Headphones</a>
-                    <a href="#">Chargers</a>
-                    <a href="#">Phone Cases</a>
-                    <a href="#">Screen Protectors</a>
-                    <a href="#">Memory Cards</a>
-                    <a href="#">Power Banks</a>
-            </div>
-        </div>
-    </nav>
+    {{ include('/elements/navbar.twig') }}
     <div class="banner-container">
         <div class="banner-slides">
-            <div class="slide"><img src="https://btech.com/media/homecontent/banner/a/r/arab__web-banner__2368x800_ar_1.png" alt="Banner 1"></div>
-            <div class="slide"><img src="https://btech.com/media/homecontent/banner/u/p/upgrad_web_banner_arab_2_1.jpg" alt="Banner 2"></div>
-            <div class="slide"><img src="https://btech.com/media/homecontent/banner/2/3/2368x800_en.jpg" alt="Banner 3"></div>
+            <div class="slide"><img src="/storage/banners/banner-1.png" alt="Banner 1"></div>
+            <div class="slide"><img src="/storage/banners/banner-2.png" alt="Banner 2"></div>
+            <div class="slide"><img src="/storage/banners/banner-3.jpg" alt="Banner 3"></div>
         </div>
         <button class="banner-btn left" onclick="prevSlide()">&#10094;</button>
         <button class="banner-btn right" onclick="nextSlide()">&#10095;</button>
@@ -93,11 +21,11 @@
 
     <section class="products-section">
         <h2>New Products</h2>
-        <ul class="product-cards">
+        <div class="product-cards">
             {% for product in products %}
-                {{ include('/product/productCard.twig', {product: product}) }}
+                {{ include('/elements/customerProductCard.twig', {product: product}) }}
             {% endfor %}
-        </ul>
+        </div>
     </section>
 
     <!-- Top Selling Products Section -->

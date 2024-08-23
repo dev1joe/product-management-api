@@ -210,59 +210,15 @@ body {
 
 /* Product Cards Horizontal List */
 .product-cards {
-    display: flex;
     overflow-x: auto;
     list-style-type: none;
     padding: 0;
     margin: 0;
-}
 
-.product-cards li {
-    display: inline-block;
-    margin-right: 15px;
-}
-
-.product-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-.product-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px 5px 0 0;
-}
-
-.info {
-    padding: 15px;
-    text-align: center;
-}
-
-.product-card h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #333;
-}
-
-.rating {
-    font-size: 16px;
-    color: #FFD700;
-    margin-bottom: 10px;
-}
-
-.price {
-    font-size: 20px;
-    color: #28a745;
-    font-weight: bold;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min-content;
+    grid-column-gap: 10px;
 }
 
 /* Add a little spacing at the end of the product list */

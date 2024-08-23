@@ -11,6 +11,11 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Views\Twig;
 
+/**
+ * - saves <strong> old data </strong> in session <br>
+ * - saves <strong> validation errors </strong> in session <br>
+ * - redirects user to the <strong> referer </strong> <br>
+ */
 class ValidationExceptionMiddleware implements MiddlewareInterface
 {
     public function __construct(

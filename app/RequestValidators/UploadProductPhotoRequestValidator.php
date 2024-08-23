@@ -42,7 +42,7 @@ class UploadProductPhotoRequestValidator implements RequestValidatorInterface
 
         // 4. validate MIME type
         // validation using data sent by the client which can be spoofed
-        $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        $allowedMimeTypes = ['image/jpeg', 'image/png'];
 
         if(! in_array($uploadedFile->getClientMediaType(), $allowedMimeTypes)) {
             throw new ValidationException(['photo' => ['Invalid file type (client side validation)']]);

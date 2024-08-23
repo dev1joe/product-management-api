@@ -13,11 +13,13 @@ use App\Controllers\WarehouseController;
 use App\Middlewares\AdminAuthorizationMiddleware;
 use App\Middlewares\CustomerAuthorizationMiddleware;
 use App\Middlewares\GuestMiddleware;
+use App\Middlewares\ProfileMiddleware;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
 return function(App $app) {
     $app->get('/', [HomeController::class, 'index']);
+    $app->get('/products/{id}', [ProductController::class, 'productPage']);
 
     $app->group('', function (RouteCollectorProxy $group) {
         $group->get('/login', [AuthController::class, 'loginForm']);
@@ -30,9 +32,9 @@ return function(App $app) {
 
     // $app->get('/profile', [CustomerController::class, 'profile'])->add(AuthMiddleware::class);
 
-    //TODO: define routes group that will have the "customer authentication" middleware
+    $app->get('/profile', [CustomerController::class, 'profile'])->add(ProfileMiddleware::class);
+
     $app->group('', function (RouteCollectorProxy $group) {
-        $group->get('/profile', [CustomerController::class, 'profile']);
         $group->get('/cart', []);
         $group->get('/wishlist', [CustomerController::class, 'wishlist']);
         $group->post('/logout', [AuthController::class, 'logOut']);
@@ -40,39 +42,40 @@ return function(App $app) {
 
 
     $app->group('/admin', function(RouteCollectorProxy $group) {
-        $group->get('', [AdminController::class, 'profile']);
+        $group->get('', [AdminController::class, 'index']);
+        $group->post('/view', [AdminController::class, 'viewRequest']);
 
 
         // [________________________________________ product ________________________________________]
-       $group->get('/product/all', [ProductController::class, 'fetchAll']);
-       $group->get('/product/create', [ProductController::class, 'form']);
+       $group->get('/products', [ProductController::class, 'fetchAll']);
+       $group->get('/products/create', [ProductController::class, 'form']);
 
-       $group->post('/product', [ProductController::class, 'create']);
-       $group->post('/product/{id}', [ProductController::class, 'update']);
+       $group->post('/products', [ProductController::class, 'create']);
+       $group->post('/products/{id}', [ProductController::class, 'update']);
 
-       $group->delete('/product/{id}', [ProductController::class, 'delete']);
+       $group->delete('/products/{id}', [ProductController::class, 'delete']);
 
         // [________________________________________ category ________________________________________]
-       $group->get('/category/create', [CategoryController::class, 'form']);
-       $group->get('/category/all', [CategoryController::class, 'fetchAll']);
-       $group->get('/category/{id}', [CategoryController::class, 'fetchById']);
+       $group->get('/categories/create', [CategoryController::class, 'form']);
+       $group->get('/categories', [CategoryController::class, 'fetchAll']);
+       $group->get('/categories/{id}', [CategoryController::class, 'fetchById']);
 
-       $group->post('/category', [CategoryController::class, 'create']);
-       $group->post('/category/{id}', [CategoryController::class, 'update']);
+       $group->post('/categories', [CategoryController::class, 'create']);
+       $group->post('/categories/{id}', [CategoryController::class, 'update']);
 
-       $group->delete('/category/{id}', [CategoryController::class, 'delete']);
+       $group->delete('/categories/{id}', [CategoryController::class, 'delete']);
 
        // [________________________________________ warehouse ________________________________________]
-       $group->get('/warehouse/create', [WarehouseController::class, 'form']);
-       $group->get('/warehouse/all', [WarehouseController::class, 'fetchAll']);
-       $group->get('/warehouse/{id}', [WarehouseController::class, 'fetchById']);
+       $group->get('/warehouses/create', [WarehouseController::class, 'form']);
+       $group->get('/warehouses', [WarehouseController::class, 'fetchAll']);
+       $group->get('/warehouses/{id}', [WarehouseController::class, 'fetchById']);
 
-       $group->get('/warehouse/update/{id}', [WarehouseController::class, 'updateForm']);
+       $group->get('/warehouses/update/{id}', [WarehouseController::class, 'updateForm']);
 
-       $group->post('/warehouse', [WarehouseController::class, 'create']);
-       $group->post('/warehouse/{id}', [WarehouseController::class, 'update']);
+       $group->post('/warehouses', [WarehouseController::class, 'create']);
+       $group->post('/warehouses/{id}', [WarehouseController::class, 'update']);
 
-       $group->delete('/warehouse/{id}', [WarehouseController::class, 'delete']);
+       $group->delete('/warehouses/{id}', [WarehouseController::class, 'delete']);
 
         // [________________________________________ address ________________________________________]
        $group->get('/addresses', [AddressController::class, 'fetchAll']);
@@ -82,7 +85,7 @@ return function(App $app) {
        $group->get('/orders', [OrderController::class, 'fetchAll']);
 
         // [________________________________________ customer ________________________________________]
-       $group->get('/customer/all', [CustomerController::class, 'fetchAll']);
+       $group->get('/customers', [CustomerController::class, 'fetchAll']);
 
         // [________________________________________ files ________________________________________]
         $group->get('/upload/file', [FileController::class, 'form']);
