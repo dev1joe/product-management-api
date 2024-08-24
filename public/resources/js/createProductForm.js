@@ -1,8 +1,16 @@
-
+// category fields
 const categorySelector = document.getElementById('category-selector');
-const newCategoryField = document.getElementById('new-category-field');
+// const newCategoryField = document.getElementById('new-category-field');
+
+const categoryContainer = document.getElementById('create-category-field');
+const newCategoryField = categoryContainer.querySelector('input');
+const categoryErrorField = categoryContainer.querySelector('div');
+
+const createCategoryButton = document.getElementById('create-category-button');
+
 const manufacturerSelector = document.getElementById('manufacturer-selector');
 const newManufacturerField = document.getElementById('new-manufacturer-field');
+const createManufacturerButton = document.getElementById('create-manufacturer-button');
 
 /**
  * @param {string} route
@@ -19,6 +27,15 @@ function fetchEntities(route, container, entityName) {
                 console.log(`no ${entityName}(s) found`);
                 return;
             }
+
+            // reset container
+            const tmpOption = document.createElement('option');
+            tmpOption.textContent = `-- select ${entityName} --`;
+            tmpOption.setAttribute('selected', '');
+            tmpOption.setAttribute('disabled', '');
+
+            container.innerHTML = '';
+            container.appendChild(tmpOption);
 
             data.forEach(category => {
                 const optionElement = document.createElement('option');
@@ -37,12 +54,32 @@ function fetchCategories() {
 //TODO: add fetchManufacturers function
 
 //TODO: continue this function
-function createCategory() {
-    const categoryName = newCategoryField.value;
+/**
+ * @param {string} name
+ */
+function createCategory(name) {
+    categoryErrorField.innerHTML = '';
 
-    fetch('/admin/categories', {
+    fetch('/api/categories', {
         method: 'POST',
-        body: {'name': categoryName},
+        header: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({'name': name}),
+    }).then(response => {
+        if(response.ok) {
+            console.log('request accepted');
+
+            fetchCategories();
+        } else if(response.status === 400) {
+            console.log('validation error');
+
+            (response.json())
+                .then(errors => {
+                    console.log(errors);
+                    categoryErrorField.innerHTML = errors['name'];
+                })
+        }
     })
 }
 
@@ -50,3 +87,9 @@ window.onload = function() {
     fetchCategories();
     //TODO: add all functions that you need to run when page loads
 }
+
+createCategoryButton.addEventListener('click', () => {
+    console.log('submitting new category....');
+    console.log(newCategoryField.value);
+    createCategory(newCategoryField.value);
+})

@@ -92,7 +92,7 @@ form textarea {
     grid-row: 1;
     grid-column: 2;
 }
-.create-manufacturer {
+.create-manufacturer-field {
     grid-row: 2;
     grid-column: 2;
 }
@@ -105,7 +105,7 @@ form textarea {
     grid-row: 4;
     grid-column: 2;
 }
-.create-category {
+.create-category-field {
     grid-row: 5;
     grid-column: 2;
 }

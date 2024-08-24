@@ -29,9 +29,14 @@ return [
         $app = AppFactory::create();
 
         //adding routes and middlewares
-        $routes = require CONFIGS_PATH . '/routes.php';
+        $routes = require CONFIGS_PATH . '/routes/web.php';
         $routes($app);
 
+        // add api routes
+        $api = require CONFIGS_PATH . '/routes/api.php';
+        $api($app);
+
+        // add middlewares
         $middlewares = require CONFIGS_PATH . '/middlewares.php';
         $middlewares($app);
 

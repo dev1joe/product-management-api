@@ -9,7 +9,7 @@
 <body>
 <div class="form-container">
     <h1>Create Product</h1>
-    <form action="/admin/view" method="POST" enctype="multipart/form-data" id="create-product-form">
+    <form action="/admin/products" method="POST" enctype="multipart/form-data" id="create-product-form">
 
         <div class="name-container">
             <input type="text" name="name" id="name" placeholder="Product Name" value="{{ old.name }}" required>
@@ -43,12 +43,12 @@
             <div class="invalid-feedback">{{ errors.manufacturer | first }}</div>
         </div>
 
-        <div class="create-manufacturer">
+        <div class="create-manufacturer-field" id="create-manufacturer-field">
             <input type="text" id="new-manufacturer-field" placeholder="New Manufacturer">
             <div class="invalid-feedback">{{ errors.manufacturer | first }}</div>
         </div>
 
-        <button class="submit-button">Create Manufacturer</button>
+        <button type="button" class="submit-button" id="create-manufacturer-button">Create Manufacturer</button>
 
         <div class="select-category">
             <select name="category" id="category-selector" required>
@@ -57,12 +57,12 @@
             <div class="invalid-feedback">{{ errors.category | first }}</div>
         </div>
 
-        <div class="create-category">
+        <div class="create-category-field" id="create-category-field">
             <input type="text" id="new-category-field" placeholder="New Category">
             <div class="invalid-feedback">{{ errors.category | first }}</div>
         </div>
 
-        <button class="submit-button">Create Category</button>
+        <button type="button" class="submit-button" id="create-category-button">Create Category</button>
 
         <!-- end of form -->
         <input type="submit" id="form-submit-button" class="submit-button" value="Submit" form="create-product-form">

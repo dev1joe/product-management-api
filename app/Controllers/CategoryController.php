@@ -32,24 +32,20 @@ class CategoryController
         // get data
         $data = $request->getParsedBody();
 
+        if ($data === null) {
+            $data = json_decode($request->getBody()->getContents(), true); // Parse JSON manually
+        }
+
         // validate
         $validator = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class);
         $data = $validator->validate($data);
 
         // create the category
-        $category = new Category();
-        $category->setName($data['name']);
-        $category->setProductCount(0);
+        $category = $this->categoryService->create($data);
 
-        $this->entityManager->persist($category);
-        $this->entityManager->flush();
-
-        // return response
         // return $response->withHeader('Location', '/admin/category/all')->withStatus(302);
 
-        $message = ['massage' => 'category created successfully!'];
-        $response->getBody()->write(json_encode($message));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+         return $response;
     }
 
     public function fetchAll(Request $request, Response $response) {

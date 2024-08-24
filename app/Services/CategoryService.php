@@ -13,6 +13,17 @@ class CategoryService
     ){
     }
 
+    public function create(array $data): Category {
+        $category = new Category();
+        $category->setName($data['name']);
+        $category->setProductCount(0);
+
+        $this->entityManager->persist($category);
+        $this->entityManager->flush();
+
+        return $category;
+    }
+
     public function fetchAll(): array{
         return $this->entityManager->getRepository(Category::class)
             ->createQueryBuilder('c')->select('c')->getQuery()->getArrayResult();

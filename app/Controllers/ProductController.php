@@ -104,11 +104,7 @@ class ProductController
         $this->entityManager->flush();
 
         // return $response->withHeader('Location', '/admin/product/all')->withStatus(302);
-
-        // TODO: redirect to "all products page" when it's present
-        $message = ['massage' => 'product created successfully!'];
-        $response->getBody()->write(json_encode($message));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        return $response;
 
     }
 
