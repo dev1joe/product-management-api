@@ -1,9 +1,18 @@
+import {fetchCategories} from "./helperFunctions.js";
+
+// pagination settings
 let page = 1;
 const productPerPage = 10;
 const productsContainer = document.getElementById('content');
 
+// buttons
 const sidebarProductsButton = document.getElementById('products-button');
 const loadMoreProductsButton = document.getElementById('load-more-button');
+const createButton = document.getElementById('create-button')
+
+// filters
+const categorySelector = document.getElementById('category-selector');
+const sortingSelector = document.getElementById('sorting-selector');
 
 /**
  * @param {HTMLElement} activeButton
@@ -14,15 +23,48 @@ function updateSidebarButtons(activeButton) {
 }
 
 /**
- * @param {HTMLElement} buttonId
+ * @param {string} content
+ */
+function viewCreateButton(content) {
+    createButton.querySelector('input[type=submit]').setAttribute('value', content);
+
+    createButton.setAttribute('action', '/admin/products/create');
+    createButton.classList.remove('hidden');
+}
+
+function viewCategorySelector() {
+    categorySelector.classList.remove('hidden');
+
+    fetchCategories({container: categorySelector});
+}
+
+/**
+ * @param {array} options
+ */
+function viewSortSelector(options) {
+    // inserting options
+    options.forEach(option => {
+        if (typeof option === 'string') {
+
+            let optionElement = document.createElement('option');
+            optionElement.textContent = option;
+            optionElement.value = option;
+
+        } else if(option instanceof HTMLOptionElement) {
+            sortingSelector.appendChild(option);
+        }
+    });
+
+    // view the sort selector
+    sortingSelector.classList.remove('hidden');
+}
+
+/**
  * @param {int} page
  * @param {int} limit
  * @param {HTMLElement} container
  */
-function loadProducts(buttonId, page, limit, container) {
-    // highlight the clicked button
-    updateSidebarButtons(buttonId);
-
+function loadProducts(page, limit, container) {
     // show button
     loadMoreProductsButton.classList.remove('hidden')
 
@@ -63,11 +105,19 @@ function loadProducts(buttonId, page, limit, container) {
 }
 
 sidebarProductsButton.addEventListener('click', () => {
-    loadProducts(sidebarProductsButton, page, productPerPage, productsContainer);
+    // highlight the clicked button
+    updateSidebarButtons(sidebarProductsButton);
+
+    // activate filters
+    viewSortSelector(['Recommended', 'Lowest Price', 'Highest Price']);
+    viewCategorySelector();
+    viewCreateButton('Create Product');
+
+    loadProducts(page, productPerPage, productsContainer);
 });
 
 loadMoreProductsButton.addEventListener('click', () => {
     page++;
-    loadProducts(sidebarProductsButton, page, productPerPage, productsContainer);
+    loadProducts(page, productPerPage, productsContainer);
 })
 //TODO: categories button
