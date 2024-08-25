@@ -1,11 +1,16 @@
-import {fetchCategories} from "./helperFunctions.js";
+import {fetchCategories, loadProductCards, createChart} from "./helperFunctions.js";
+
+// getting container elements
+const container = document.getElementById('container');
+const popup = document.getElementById('popup');
 
 // pagination settings
 let page = 1;
 const productPerPage = 10;
-const productsContainer = document.getElementById('content');
+const contentsContainer = document.getElementById('content');
 
 // buttons
+const sidebarDashboardButton = document.getElementById('dashboard-button');
 const sidebarProductsButton = document.getElementById('products-button');
 const loadMoreProductsButton = document.getElementById('load-more-button');
 const createButton = document.getElementById('create-button')
@@ -22,14 +27,44 @@ function updateSidebarButtons(activeButton) {
     activeButton.classList.add('active');
 }
 
+function toggleBlur() {
+    //TODO: try to pass the element instance through providing the html element by declaring the onclick attribute
+}
+
 /**
  * @param {string} content
  */
 function viewCreateButton(content) {
-    createButton.querySelector('input[type=submit]').setAttribute('value', content);
-
-    createButton.setAttribute('action', '/admin/products/create');
+    createButton.textContent = content;
     createButton.classList.remove('hidden');
+
+    createButton.addEventListener('click', () => {
+        // show blur effect
+        container.classList.add('blurry');
+
+        // show popup window
+        fetch('/resources/views/elements/createProductForm.html')
+            .then(response => response.text())
+            .then(html => {
+                popup.querySelector('div.popup-content').innerHTML = html;
+                fetchCategories({container: popup.querySelector('#category-selector')})
+            })
+            .catch(error => {
+                console.error(error);
+            })
+
+        popup.classList.remove('hidden');
+
+        // activate popup button functionality
+        popup.querySelector('button.close-button').addEventListener('click', () => {
+            container.classList.remove('blurry');
+            popup.classList.add('hidden');
+        });
+    })
+
+
+    // createButton.querySelector('input[type=submit]').setAttribute('value', content);
+    // createButton.setAttribute('action', '/admin/products/create');
 }
 
 function viewCategorySelector() {
@@ -59,51 +94,6 @@ function viewSortSelector(options) {
     sortingSelector.classList.remove('hidden');
 }
 
-/**
- * @param {int} page
- * @param {int} limit
- * @param {HTMLElement} container
- */
-function loadProducts(page, limit, container) {
-    // show button
-    loadMoreProductsButton.classList.remove('hidden')
-
-    // if fetching the first page, then empty the container
-    if(page === 1) {
-        container.innerHTML = '';
-    }
-
-    fetch(`/admin/products?page=${page}&limit=${limit}`)
-        .then(response => response.json())
-        .then(data => {
-            //validate that there is data to show
-            if (data.length === 0) {
-                console.log('no more products to fetch');
-                loadMoreProductsButton.classList.add('hidden');
-                return;
-            }
-
-            fetch('/resources/views/elements/adminProductCard.twig')
-                .then(response => response.text())
-                .then(productCardHtml => {
-                    data.forEach(product => {
-                        // convert html to node
-                        const tmpDiv = document.createElement('div');
-                        tmpDiv.innerHTML = productCardHtml;
-                        const productCard = tmpDiv.firstChild;
-
-                        // add data to node
-                        productCard.querySelector('.product-img').setAttribute('src', product.photo);
-                        productCard.querySelector('.product-name').textContent = product.name;
-                        productCard.querySelector('button').setAttribute('data-id', product.id)
-
-                        // append to the container
-                        container.appendChild(productCard);
-                    })
-                })
-        })
-}
-
 sidebarProductsButton.addEventListener('click', () => {
     // highlight the clicked button
     updateSidebarButtons(sidebarProductsButton);
@@ -113,11 +103,51 @@ sidebarProductsButton.addEventListener('click', () => {
     viewCategorySelector();
     viewCreateButton('Create Product');
 
-    loadProducts(page, productPerPage, productsContainer);
+    loadProductCards(page, productPerPage, contentsContainer, loadMoreProductsButton);
 });
 
 loadMoreProductsButton.addEventListener('click', () => {
     page++;
-    loadProducts(page, productPerPage, productsContainer);
-})
-//TODO: categories button
+    loadProductCards(page, productPerPage, contentsContainer, loadMoreProductsButton);
+});
+
+// charts: fixed, data: fixed, container: dynamic
+// modify container to flex, set direction to column, and justify space between
+// append the two charts as children to the container.
+// and that's it
+/**
+ * @param {HTMLElement} container
+ */
+function loadAnalytics(container) {
+    // getting the container ready
+    const newContainer = document.createElement('div');
+    newContainer.style.display = 'grid';
+    newContainer.style.gridTemplateColumns = 'repeat(2, 1fr)';
+    newContainer.style.gridColumnGap = '20px';
+    newContainer.style.gridAutoFlow = 'row';
+    newContainer.style.gridAutoRows = 'fit-content';
+    newContainer.style.gridColumn = '1 / span all'
+    newContainer.style.gridRow = '1 / span all'
+    newContainer.style.height = '100%';
+    // container.style.justifyContent = 'space-between';
+
+    // appending charts
+    newContainer.appendChild(createChart('bar'));
+    newContainer.appendChild(createChart('line'));
+
+    // append new container
+    container.appendChild(newContainer);
+}
+
+sidebarDashboardButton.addEventListener('click', () => {
+    // highlight the clicked button
+    updateSidebarButtons(sidebarDashboardButton);
+
+    loadAnalytics(contentsContainer);
+});
+
+//TODO: categories button and it's associated functions
+
+window.onload = () => {
+    sidebarDashboardButton.click();
+}

@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,-50..200"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,-50..200"/>
     <link rel="stylesheet" href="/resources/css/elements/productCard.css">
     <title>Dashboard</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         html, body {
             height: 100%;
             margin: 0;
@@ -170,12 +174,17 @@
         }
 
         .window .content {
-            /* background-color: #d0d0d0; */
             flex-grow: 1;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            /* display: grid; */
+            /* grid-template-columns: repeat(5, 1fr); */
+            /* gap: 10px; */
             /* grid-auto-rows: min-content; */
-            gap: 10px;
+            /* background-color: #d0d0d0; */
+        }
+
+        canvas {
+            max-width: 90%;
+            max-height: 90%;
         }
 
         .load-more-button {
@@ -200,15 +209,42 @@
             border-radius: 5px;
             cursor: pointer;
             min-width: max-content;
+            font-size: 18px;
+        }
+
+        .popup {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            padding: 50px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.30);
+            background-color: white;
+            text-align: left;
+            transition: 0.5s;
+        }
+
+        .popup h2 {
+            margin: 15px;
+        }
+
+        .popup .popup-content {
+            margin: 10px 0;
         }
 
         .hidden {
             display: none;
         }
+        .blurry {
+            filter: blur(20px);
+            pointer-events: none;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" id="container">
     <div class="sidebar">
         <div class="header-box">
             <img src="/resources/images/logo.png" alt="company's logo">
@@ -254,9 +290,7 @@
                     <select id="sorting-selector" class="hidden">
                         <option selected disabled>-- Select Sorting --</option>
                     </select>
-                    <form class="hidden" id="create-button">
-                        <input type="submit" value="a button" class="submit-button">
-                    </form>
+                    <button type="button" class="submit-button hidden" id="create-button">a button</button>
                 </div>
             </div>
 
@@ -268,6 +302,14 @@
         <button type="button" id="load-more-button" class="load-more-button hidden">load more</button>
     </div>
 </div>
+<div id="popup" class="popup hidden">
+    <div class="popup-content">
+        <h2>Lorem ipsum dolor sit amet, consectetur.</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad adipisci aut blanditiis consequatur dicta ducimus eligendi exercitationem explicabo facere fugit id illo, ipsa ipsum magni nulla odio optio possimus quaerat quod quos recusandae reprehenderit repudiandae rerum soluta veritatis voluptas voluptatem voluptates. At blanditiis consequatur, cupiditate doloremque eligendi esse eum expedita ipsa libero maiores nulla pariatur porro recusandae sapiente tempore vero voluptatibus. Autem blanditiis consequuntur cum dicta eos fugiat laboriosam pariatur.</p>
+    </div>
+    <button type="button" class="submit-button close-button">Close</button>
+</div>
+<script type="module" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module" src="/resources/js/dashboard.js"></script>
 </body>
 </html>
