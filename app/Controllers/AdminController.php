@@ -17,16 +17,40 @@ class AdminController
     ){
     }
 
-    public function index(Request $request, Response $response): Response {
+    private function format(Response $response, string $window): Response {
         /** @var Administrator $admin */
         $admin = $this->authService->getAuthenticatedUser();
-        $userName = $admin->getFirstName() . ' ' . $admin->getLastName();
+
+        $options = [
+            'username' => $admin->getUsername(),
+            'email' => $admin->getEmail(),
+            'window' => $window,
+        ];
 
         return $this->twig->render(
             $response,
             '/admin/dashboard.twig',
-            ['username' => $userName, 'email' => $admin->getEmail()]
+            $options
         );
+    }
+
+    public function index(Request $request, Response $response): Response {
+        /** @var Administrator $admin */
+        $admin = $this->authService->getAuthenticatedUser();
+
+        return $this->twig->render(
+            $response,
+            '/admin/dashboard.twig',
+            ['username' => $admin->getUsername(), 'email' => $admin->getEmail()]
+        );
+    }
+
+    public function dashboardView(Request $request, Response $response): Response {
+        return $this->format($response, '/windows/analyticsWindow.twig');
+    }
+
+    public function productsView(Request $request, Response $response): Response {
+        return $this->format($response, '/windows/productsWindow.twig');
     }
 
     public function viewRequest(Request $request, Response $response): Response {

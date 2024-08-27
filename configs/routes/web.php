@@ -43,11 +43,12 @@ return function(App $app) {
 
     $app->group('/admin', function(RouteCollectorProxy $group) {
         $group->get('', [AdminController::class, 'index']);
+        $group->get('/dashboard', [AdminController::class, 'dashboardView']);
         $group->post('/view', [AdminController::class, 'viewRequest']);
 
 
         // [________________________________________ product ________________________________________]
-       $group->get('/products', [ProductController::class, 'fetchAll']);
+       $group->get('/products', [AdminController::class, 'productsView']);
        $group->get('/products/create', [ProductController::class, 'form']);
 
        $group->post('/products', [ProductController::class, 'create']);

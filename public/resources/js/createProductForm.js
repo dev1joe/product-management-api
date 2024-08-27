@@ -2,7 +2,7 @@ import {fetchCategories} from "./helperFunctions.js";
 import {createCategory} from "./helperFunctions.js";
 
 // category elements
-const categorySelector = document.getElementById('category-selector');
+const categorySelector = document.getElementById('filters-category-selector');
 
 const categoryContainer = document.getElementById('create-category-field');
 
@@ -19,8 +19,8 @@ const createManufacturerButton = document.getElementById('create-manufacturer-bu
 createCategoryButton.addEventListener('click', () => {
     console.log('submitting new category....');
     console.log(newCategoryField.value);
-    createCategory(newCategoryField.value, categoryErrorField);
+    createCategory(newCategoryField, categoryErrorField);
 })
 
-// fetchCategories({container: categorySelector});
+fetchCategories({container: categorySelector});
 //TODO: add all functions that you need to run when page loads

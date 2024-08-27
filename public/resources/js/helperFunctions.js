@@ -1,4 +1,4 @@
-const categorySelector = document.getElementById('category-selector');
+const categorySelector = document.getElementById('filters-category-selector');
 
 /**
  * @param {string} route
@@ -46,14 +46,17 @@ export function fetchEntities(route, container, entityName) {
  * @param {string} entityName
  */
 export function fetchCategories({
-                                    route = '/admin/categories',
+                                    route = '/api/categories',
                                     container = categorySelector,
                                     entityName = 'category'
                                 } = {}) {
     console.log('fetching categories....')
     fetchEntities(route, container, entityName);
 }
-
+//TODO: concerning fetching categories, it should be implemented in a different way (README)
+//a singleton pattern
+//categories should be fetched ONE time and cached
+//any thing that needs the categories data, reads it from the cache
 
 /**
  * @param {int} page
@@ -75,7 +78,7 @@ export function loadProductCards(page, limit, container, loadMoreButton) {
     newContainer.style.gridTemplateColumns = 'repeat(5, 1fr)';
     newContainer.style.gap = '10px';
 
-    fetch(`/admin/products?page=${page}&limit=${limit}`)
+    fetch(`/api/products?page=${page}&limit=${limit}`)
         .then(response => response.json())
         .then(data => {
             //validate that there is data to show
@@ -109,11 +112,14 @@ export function loadProductCards(page, limit, container, loadMoreButton) {
 }
 
 /**
- * @param {string} name
+ * @param {HTMLInputElement} field
  * @param {HTMLElement} errorField
  */
-export function createCategory(name, errorField) {
+export function createCategory(field, errorField) {
+    const name = field.value;
+
     errorField.innerHTML = '';
+    field.value = '';
 
     fetch('/api/categories', {
         method: 'POST',
@@ -139,33 +145,3 @@ export function createCategory(name, errorField) {
 }
 
 //TODO: add fetchManufacturers function
-
-/**
- * @param {HTMLElement} canvas
- * @param {string} type
- */
-export function createChart(type) {
-    const widget = document.createElement('div');
-    const chartElement = document.createElement('canvas');
-
-    new Chart(chartElement, {
-        type: type,
-        data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    return chartElement;
-}

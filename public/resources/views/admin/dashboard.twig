@@ -94,7 +94,8 @@
         }
 
         .material-symbols-outlined {
-            font-variation-settings: 'FILL' 1,
+            font-variation-settings:
+            'FILL' 1,
             'wght' 400,
             'GRAD' 0,
             'opsz' 30
@@ -163,14 +164,15 @@
             display: grid;
             grid-auto-flow: column;
             grid-auto-columns: min-content;
+            grid-auto-rows: min-content;
             grid-column-gap: 10px;
         }
 
-        select {
+        .filters-section select {
             padding: 10px;
-            /* width: 100%; */
             border: 1px solid #ccc;
             border-radius: 5px;
+            height: min-content;
         }
 
         .window .content {
@@ -216,9 +218,9 @@
             position: fixed;
             top: 40%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60%;
-            padding: 50px;
+            transform: translate(-50%, -40%);
+            width: 50%;
+            padding: 25px;
             box-shadow: 0 5px 30px rgba(0, 0, 0, 0.30);
             background-color: white;
             text-align: left;
@@ -227,6 +229,29 @@
 
         .popup h2 {
             margin: 15px;
+        }
+
+        .popup .another-button {
+            display: inline;
+            font: 18px bolder;
+            background-color: white;
+            aspect-ratio: 1;
+            min-width: 60px;
+            padding: 1px;
+            border: 1px solid black;
+            border-radius: 100px;
+            box-sizing: border-box;
+        }
+
+        .popup .close-button {
+            width: 100%;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            box-sizing: border-box;
+            font: 18px bolder;
         }
 
         .popup .popup-content {
@@ -256,60 +281,44 @@
         <input type="text" placeholder="Search">
         <button class="sidebar-button" id="dashboard-button" type="button">
             <span class="material-symbols-outlined">home</span>
-            <a href="/admin">Dashboard</a>
+            <a href="/admin/dashboard">Dashboard</a>
         </button>
         <button class="sidebar-button" id="products-button" type="button">
             <span class="material-symbols-outlined">inventory</span>
-            <a>Products</a>
+            <a href="/admin/products">Products</a>
         </button>
         <button class="sidebar-button" id="categories-button" type="button">
             <span class="material-symbols-outlined">category</span>
-            <a href="/admin">Categories</a>
+            <a href="/admin/categories">Categories</a>
         </button>
         <button class="sidebar-button" id="inventory-button" type="button">
             <span class="material-symbols-outlined">inventory_2</span>
-            <a href="/admin">inventory</a>
+            <a href="/admin/inventory">inventory</a>
         </button>
         <button class="sidebar-button" id="orders-button" type="button">
             <span class="material-symbols-outlined">conveyor_belt</span>
-            <a href="/admin">orders</a>
+            <a href="/admin/orders">orders</a>
         </button>
 
     </div>
     <div class="main">
         <div class="window">
-            <div class="header-box">
-                <div class="bread-crumbs">
-                    home > dashboard
-                </div>
-                <div class="filters-section">
-                    <select id="category-selector" class="hidden">
-                        <option selected disabled>-- Select Category --</option>
-                    </select>
-
-                    <select id="sorting-selector" class="hidden">
-                        <option selected disabled>-- Select Sorting --</option>
-                    </select>
-                    <button type="button" class="submit-button hidden" id="create-button">a button</button>
-                </div>
-            </div>
-
-            <div class="content" id="content">
-                <!-- content will be generated here -->
-            </div>
-
+            {{ include(window) }}
         </div>
         <button type="button" id="load-more-button" class="load-more-button hidden">load more</button>
     </div>
 </div>
 <div id="popup" class="popup hidden">
-    <div class="popup-content">
+    <div id="popup-content" class="popup-content">
         <h2>Lorem ipsum dolor sit amet, consectetur.</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad adipisci aut blanditiis consequatur dicta ducimus eligendi exercitationem explicabo facere fugit id illo, ipsa ipsum magni nulla odio optio possimus quaerat quod quos recusandae reprehenderit repudiandae rerum soluta veritatis voluptas voluptatem voluptates. At blanditiis consequatur, cupiditate doloremque eligendi esse eum expedita ipsa libero maiores nulla pariatur porro recusandae sapiente tempore vero voluptatibus. Autem blanditiis consequuntur cum dicta eos fugiat laboriosam pariatur.</p>
     </div>
-    <button type="button" class="submit-button close-button">Close</button>
+    <button type="button" id="close-button" class="close-button">Close</button>
 </div>
+<!-- <button type="button" class="another-button">X</button> -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="/resources/js/dashboard.js"></script>
+<script type="module" src="/resources/js/chart.js"></script>
+<script type="module" src="/resources/js/products.js"></script>
+<!-- <script type="module" src="/resources/js/dashboard.js"></script> -->
 </body>
 </html>

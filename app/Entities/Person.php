@@ -98,4 +98,9 @@ class Person implements AuthenticatableInterface
         $this->address = $address;
         return $this;
     }
+
+    public function getUsername(): string {
+        $username = $this->firstName . ' ' . $this->lastName;
+        return $username;
+    }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\DataObjects\ProductQueryParams;
 use App\Entities\Category;
 use App\Exceptions\MethodNotImplementedException;
 use App\RequestValidators\CreateProductRequestValidator;
@@ -39,25 +40,13 @@ class ProductController
         $categories = $this->categoryService->fetchCategoryNames();
 
         return $this->twig->render($response, '/product/newCreateProduct.twig', ['categories' => $categories]);
-        //TODO: missing the photo input field
     }
 
-    public function fetchAll(Request $request, Response $response): Response {
+    public function fetchAllPaginated(Request $request, Response $response): Response {
         $queryParams = $request->getQueryParams();
+        $queryParams = new ProductQueryParams($queryParams);
 
-        if(
-            sizeof($queryParams) > 0 &&
-            array_key_exists('page', $queryParams) &&
-            array_key_exists('limit', $queryParams)
-        ) {
-            $page = (int) $queryParams['page'];
-            $limit = (int) $queryParams['limit'];
-
-            $result = $this->productService->fetchPaginatedProducts($page, $limit);
-        } else {
-            $result = $this->productService->fetchAll();
-        }
-
+        $result = $this->productService->fetchPaginatedProducts($queryParams);
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');

@@ -1,4 +1,5 @@
-import {fetchCategories, loadProductCards, createChart} from "./helperFunctions.js";
+import {fetchCategories, loadProductCards} from "./helperFunctions.js";
+import {createChart} from "./chart.js";
 
 // getting container elements
 const container = document.getElementById('container');
@@ -16,8 +17,29 @@ const loadMoreProductsButton = document.getElementById('load-more-button');
 const createButton = document.getElementById('create-button')
 
 // filters
-const categorySelector = document.getElementById('category-selector');
-const sortingSelector = document.getElementById('sorting-selector');
+const categorySelector = document.getElementById('filters-category-selector');
+const sortingSelector = document.getElementById('filters-sorting-selector');
+
+function newFiltersObject() {
+    return {
+        'page': page,
+        'category': null,
+        'orderBy': null,
+    }
+}
+
+let filters = newFiltersObject();
+
+
+function applyFilters(url, filtersObject) {
+    const urlObject = new URL(url);
+
+    for(const key in filtersObject) {
+        if(filtersObject[key]) {
+            urlObject.searchParams.set(key, filtersObject[key]);
+        }
+    }
+}
 
 /**
  * @param {HTMLElement} activeButton
@@ -32,9 +54,24 @@ function toggleBlur() {
 }
 
 /**
- * @param {string} content
+ * @param {HTMLElement} button
  */
-function viewCreateButton(content) {
+function refresh(button) {
+    // reset page var to 1
+    page = 1;
+
+    // figure out what are the entities loaded and load them again
+    // pass a function to call and expect data from
+    // or maybe click the button to reload data
+    button.click();
+}
+
+/**
+ * @param {string} content
+ * @param {string} route to fetch the form that will appear when the button is clicked
+ * @param {HTMLElement} button the button that will be responsible for refreshing the page
+ */
+function viewCreateButton(content, route, button) {
     createButton.textContent = content;
     createButton.classList.remove('hidden');
 
@@ -42,8 +79,8 @@ function viewCreateButton(content) {
         // show blur effect
         container.classList.add('blurry');
 
-        // show popup window
-        fetch('/resources/views/elements/createProductForm.html')
+        // show the popup window
+        fetch(route)
             .then(response => response.text())
             .then(html => {
                 popup.querySelector('div.popup-content').innerHTML = html;
@@ -59,6 +96,7 @@ function viewCreateButton(content) {
         popup.querySelector('button.close-button').addEventListener('click', () => {
             container.classList.remove('blurry');
             popup.classList.add('hidden');
+            refresh(button);
         });
     })
 
@@ -71,6 +109,11 @@ function viewCategorySelector() {
     categorySelector.classList.remove('hidden');
 
     fetchCategories({container: categorySelector});
+
+    categorySelector.addEventListener('change', () => {
+        filters.category = categorySelector.value;
+        applyFilters('')
+    })
 }
 
 /**
@@ -101,7 +144,7 @@ sidebarProductsButton.addEventListener('click', () => {
     // activate filters
     viewSortSelector(['Recommended', 'Lowest Price', 'Highest Price']);
     viewCategorySelector();
-    viewCreateButton('Create Product');
+    viewCreateButton('Create Product', '/resources/views/elements/createProductForm.html', sidebarProductsButton);
 
     loadProductCards(page, productPerPage, contentsContainer, loadMoreProductsButton);
 });
