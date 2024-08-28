@@ -6,13 +6,13 @@
     </div>
     <div class="filters-section">
         <select id="filters-category-selector">
-            <option selected disabled>-- Select Category --</option>
+            <option value="null" selected>All Categories</option>
         </select>
 
         <select id="filters-sorting-selector">
             <option value="" selected>Recommended</option>
-            <option value="lowest-price">Lowest Price</option>
-            <option value="highest-price">Highest Price</option>
+            <option title="unitPriceCents" value="asc">Lowest Price</option>
+            <option title="unitPriceCents" value="desc">Highest Price</option>
         </select>
         <button type="button" class="submit-button" id="create-product-button">Create Product</button>
     </div>

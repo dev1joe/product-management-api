@@ -65,7 +65,7 @@ class AuthController
         }
 
         // redirect
-        $location = ($userTypeKey === UserType::Customer)? '/' : '/admin';
+        $location = ($userTypeKey === UserType::Customer)? '/' : '/admin/dashboard';
         return $response->withHeader('Location', $location)->withStatus(302);
     }
 

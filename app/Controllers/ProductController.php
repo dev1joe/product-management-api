@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\DataObjects\ProductQueryParams;
 use App\Entities\Category;
 use App\Exceptions\MethodNotImplementedException;
+use App\Exceptions\ValidationException;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UploadProductPhotoRequestValidator;
@@ -30,28 +31,7 @@ class ProductController
         private readonly ProductService $productService,
     ){
     }
-
-    public function productPage(Request $request, Response $response): Response {
-        return $this->twig->render($response, '/product.twig');
-    }
-
     // TODO: refactor to product service
-    public function form(Request $request, Response $response): Response {
-        $categories = $this->categoryService->fetchCategoryNames();
-
-        return $this->twig->render($response, '/product/newCreateProduct.twig', ['categories' => $categories]);
-    }
-
-    public function fetchAllPaginated(Request $request, Response $response): Response {
-        $queryParams = $request->getQueryParams();
-        $queryParams = new ProductQueryParams($queryParams);
-
-        $result = $this->productService->fetchPaginatedProducts($queryParams);
-
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
-    }
-
     public function create(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
 
@@ -95,6 +75,36 @@ class ProductController
         // return $response->withHeader('Location', '/admin/product/all')->withStatus(302);
         return $response;
 
+    }
+    public function form(Request $request, Response $response): Response {
+        $categories = $this->categoryService->fetchCategoryNames();
+
+        return $this->twig->render($response, '/product/newCreateProduct.twig', ['categories' => $categories]);
+    }
+    public function productPage(Request $request, Response $response): Response {
+        return $this->twig->render($response, '/product.twig');
+    }
+
+    public function fetchById(Request $request, Response $response, array $args): Response {
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            throw new ValidationException(['id' => ["id not found in route arguments"]]);
+        }
+
+        $product = $this->productService->fetchProductByIdAsArray($id);
+        $response->getBody()->write(json_encode($product));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function fetchAllPaginated(Request $request, Response $response): Response {
+        $queryParams = $request->getQueryParams();
+        $queryParams = new ProductQueryParams($queryParams);
+
+        $result = $this->productService->fetchPaginatedProducts($queryParams);
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function update(Request $request, Response $response, array $args): Response {

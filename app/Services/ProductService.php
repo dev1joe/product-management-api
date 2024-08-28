@@ -48,4 +48,15 @@ class ProductService
 
         return $query->getQuery()->getArrayResult();
     }
+
+    public function fetchProductByIdAsArray(int $id): array {
+        return $this->entityManager->getRepository(Product::class)
+            ->createQueryBuilder('p')
+            ->select('p', 'c')
+            ->leftJoin('p.category', 'c')
+            ->where('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

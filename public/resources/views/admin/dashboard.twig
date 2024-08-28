@@ -73,6 +73,10 @@
             margin-bottom: 20px;
         }
 
+        .header-box .submit-button {
+                margin: 0;
+        }
+
         input[type="text"], .sidebar-button {
             box-sizing: border-box;
             padding: 10px;
@@ -154,7 +158,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 10px;
 
             grid-template-rows: repeat(2, 1fr);
             grid-column-gap: 15px;
@@ -189,7 +192,7 @@
             max-height: 90%;
         }
 
-        .load-more-button {
+        .show-more-button {
             max-width: 200px;
             min-height: 30px;
             padding: 15px;
@@ -303,9 +306,11 @@
     </div>
     <div class="main">
         <div class="window">
-            {{ include(window) }}
+            {% if window %}
+                {{ include(window) }}
+            {% endif %}
         </div>
-        <button type="button" id="load-more-button" class="load-more-button hidden">load more</button>
+        <button type="button" id="show-more-button" class="show-more-button hidden">load more</button>
     </div>
 </div>
 <div id="popup" class="popup hidden">

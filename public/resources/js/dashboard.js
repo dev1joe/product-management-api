@@ -13,7 +13,7 @@ const contentsContainer = document.getElementById('content');
 // buttons
 const sidebarDashboardButton = document.getElementById('dashboard-button');
 const sidebarProductsButton = document.getElementById('products-button');
-const loadMoreProductsButton = document.getElementById('load-more-button');
+const loadMoreProductsButton = document.getElementById('show-more-button');
 const createButton = document.getElementById('create-button')
 
 // filters

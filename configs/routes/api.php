@@ -12,6 +12,7 @@ return function(App $app) {
 
     $app->group('/api', function(RouteCollectorProxy $group) {
         $group->get('/products', [ProductController::class, 'fetchAllPaginated']);
+        $group->get('/products/{id}', [ProductController::class, 'fetchById']);
         $group->get('/categories', [CategoryController::class, 'fetchAll']);
 
         $group->post('/categories', [CategoryController::class, 'create']);

@@ -2,22 +2,17 @@
     <img class="product-img" src="{{ product.photo }}" alt="Product">
     <div class="info">
         <h4 class="product-name">{{ product.name }}</h4>
+        <p class="price">${{ product.unitPriceCents / 100 }}</p>
     </div>
     <div class="product-management-section">
-        <button type="button">
-            <a class="edit-anchor">
-                <span class="material-symbols-outlined">edit_square</span>
-            </a>
+        <button type="button" id="edit-button">
+            <span class="material-symbols-outlined">edit_square</span>
         </button>
-        <button type="button">
-            <a class="archive-anchor">
-                <span class="material-symbols-outlined">archive</span>
-            </a>
+        <button type="button" id="archive-button">
+            <span class="material-symbols-outlined">archive</span>
         </button>
-        <button type="button">
-            <a class="delete-anchor" data-id="">
-                <span class="material-symbols-outlined">delete</span>
-            </a>
+        <button type="button" id="delete-button">
+            <span class="material-symbols-outlined">delete</span>
         </button>
     </div>
 </div>
