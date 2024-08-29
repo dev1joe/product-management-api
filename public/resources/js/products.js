@@ -1,4 +1,9 @@
-import {fetchProducts, getProductCard, fillCategoriesAsSelectorOptions} from "./products-helper.js";
+import {
+    fetchProducts,
+    getProductCard,
+    fillCategoriesAsSelectorOptions,
+    injectProductIntoForm
+} from "./products-helper.js";
 
 //______________DEFINITIONS
 
@@ -36,14 +41,20 @@ fillCategoriesAsSelectorOptions(filtersCategorySelector, categories);
 
 // fetch the create product form and inject it in the popup window
 // also make the form functional
-const popupWindow = document.getElementById('popup');
+const popupWindow = document.getElementById('popup-window');
 fetch('/resources/views/elements/createProductForm.html')
     .then(response => response.text())
     .then(html => {
         popupWindow.querySelector('#popup-content').innerHTML = html;
+
+        // activate close button
         popupWindow.querySelector('#close-button').addEventListener('click', () => {
             popupWindow.classList.add('hidden');
         });
+
+        //TODO: activate create category button
+
+
         fillCategoriesAsSelectorOptions(popupWindow.querySelector('#category-selector'), categories);
     });
 
@@ -64,8 +75,46 @@ run();
 
 //______________EVENT LISTENERS
 
+
 //TODO: handle edit and delete buttons
-// querySelectorAll or event.target.closest ??
+// will go with the event.target.closest approach for better performance
+productsContainer.addEventListener('click', function(event)  {
+   const editButton = event.target.closest('#edit-button');
+   const deleteButton = event.target.closest('#delete-button');
+
+   if(editButton) {
+       //TODO: handle click!
+       const productId = parseInt(editButton.getAttribute('data-id'));
+
+       fetch(`${fetchAllProductsRoute}/${productId}`)
+           .then(response => response.json())
+           .then(product => {
+               product = product[0];
+               console.log(product);
+               injectProductIntoForm(product, document.getElementById('create-product-form'), fetchAllProductsRoute);
+               popupWindow.classList.remove('hidden');
+           });
+
+   } else if(deleteButton) {
+       if(confirm('are you sure you want to delete this product ??')) {
+           console.log('admin wants to delete a product :(');
+
+           const productId = parseInt(deleteButton.getAttribute('data-id'));
+
+           const url = `${fetchAllProductsRoute}/${productId}`;
+           fetch(url, {
+               method: 'DELETE',
+           })
+               .then(response =>  {
+                   if(response.ok) {
+                       console.log('product deleted successfully');
+                       window.location.reload(); //TODO: remove reload
+                   }
+               })
+               .catch((error) => console.error(error));
+       }
+   }
+});
 
 // add event listener to show-more button
 showMoreProductsButton.addEventListener('click', function() {
@@ -86,6 +135,7 @@ const filtersSortSelector = document.getElementById('filters-sorting-selector');
 filtersSortSelector.addEventListener('change', function() {
     filters.orderBy = this.options[this.selectedIndex].getAttribute('title');
     filters.orderDir = this.value;
+    filters.page = 1;
     run();
 })
 

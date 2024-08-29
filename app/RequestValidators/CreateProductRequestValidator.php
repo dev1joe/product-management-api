@@ -20,6 +20,7 @@ class CreateProductRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
+        //TODO: require photo and manufacturer
         $v->rule('required', ['name', 'category', 'price', 'description']);
         $v->rule('regex', ['name', 'description'], '/^[A-Za-z0-9\-._,*:\r\n\s\t()]*$/');
         //TODO: I think I need to allow more characters

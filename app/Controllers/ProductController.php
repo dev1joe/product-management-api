@@ -46,7 +46,7 @@ class ProductController
         $product->setUnitPriceCents($data['price']);
         $product->setDescription($data['description']);
 
-        // photo handling
+        // photo handling //TODO: extract to fileService ??
         /** @var UploadedFileInterface $file */
         $file = $this->requestValidatorFactory->make(
             UploadProductPhotoRequestValidator::class
@@ -120,10 +120,15 @@ class ProductController
         }
 
         $product->setName($data['name']);
-        $product->setPhoto($data['photo']); //TODO: photo handling
         $product->setDescription($data['description']);
         $product->setUnitPriceCents($data['price']); // price already handled by the request validator
 
+        //TODO: photo handling
+        if(array_key_exists('photo', $data)) {
+
+        }
+
+        // category change handling
         $currentCategory = $product->getCategory();
 
         /** @var Category $newCategory */
@@ -161,7 +166,9 @@ class ProductController
             return $response->withStatus(404);
         }
 
-        ($product->getCategory())->decrementProductCount(1);
+        $category = $product->getCategory();
+        $category->decrementProductCount(1);
+        $this->entityManager->persist($category);
 
         $this->entityManager->remove($product);
         $this->entityManager->flush();

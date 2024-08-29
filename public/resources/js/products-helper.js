@@ -40,8 +40,6 @@ function fillProductCard(card, product) {
  * @param {HTMLButtonElement} showMoreButton let the function control the button's visibility
  */
 export function fetchProducts({route = '/api/products', filters, card, container, showMoreButton} = {}) {
-    console.log(card);
-
     const url = applyFilters(filters, route);
 
     fetch(url)
@@ -106,4 +104,46 @@ export function fillCategoriesAsSelectorOptions(container, categories) {
 
         container.appendChild(optionElement);
     });
+}
+
+/**
+ * @param {Object} product
+ * @param {HTMLElement} form
+ * @param {string} productUpdateRoute
+ */
+export function injectProductIntoForm(product, form, productUpdateRoute) {
+    form.querySelector('#name').value = product.name;
+    form.querySelector('#price').value =  product.unitPriceCents / 100;
+    form.querySelector('textarea').textContent = product.description;
+    form.querySelector('#category-selector').value = product.category.id;
+    form.querySelector('#manufacturer-selector').value = 'Apple';
+
+    // form behavior handling
+    form.setAttribute('action', `${productUpdateRoute}/${product.id}`);
+
+    // photo field is not required any more
+    //TODO: add image preview section in product form + better handling
+    form.querySelector('#photo').removeAttribute('required');
+
+    // changing form behavior
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        const url = this.action;
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if(response.ok) {
+                    console.log('product updated successfully!')
+                    window.location.reload(); //TODO: remove reload
+                }
+            })
+            .catch((error) => console.error(error));
+    })
+
+
 }
