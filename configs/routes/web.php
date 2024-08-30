@@ -57,8 +57,8 @@ return function(App $app) {
        $group->delete('/products/{id}', [ProductController::class, 'delete']);
 
         // [________________________________________ category ________________________________________]
+       $group->get('/categories', [AdminController::class, 'categoryView']);
        $group->get('/categories/create', [CategoryController::class, 'form']);
-       $group->get('/categories', [CategoryController::class, 'fetchAll']);
        $group->get('/categories/{id}', [CategoryController::class, 'fetchById']);
 
        $group->post('/categories', [CategoryController::class, 'create']);

@@ -2,13 +2,13 @@ import {
     fetchProducts,
     getProductCard,
     fillCategoriesAsSelectorOptions,
-    injectProductIntoForm
+    injectProductIntoForm, resetForm, asynchronousFormSubmission
 } from "./products-helper.js";
 
 //______________DEFINITIONS
 
-const fetchAllProductsRoute = '/api/products';
-const fetchAllCategoriesRoute = '/api/categories';
+const productsApi = '/api/products';
+const categoriesApi = '/api/categories';
 const productCardRoute = '/resources/views/elements/adminProductCard.twig';
 const productCard = await getProductCard(productCardRoute);
 const productsContainer = document.getElementById('products-container');
@@ -27,7 +27,7 @@ let filters = {
 // fetch categories
 // cache them (save them in an array for now)
 let categories;
-let response = await fetch(fetchAllCategoriesRoute);
+let response = await fetch(categoriesApi);
 if(! response.ok) {
     console.error('error fetching categories');
 } else {
@@ -39,32 +39,50 @@ if(! response.ok) {
 const filtersCategorySelector = document.getElementById('filters-category-selector');
 fillCategoriesAsSelectorOptions(filtersCategorySelector, categories);
 
-// fetch the create product form and inject it in the popup window
-// also make the form functional
+// activate create product form
 const popupWindow = document.getElementById('popup-window');
 fetch('/resources/views/elements/createProductForm.html')
     .then(response => response.text())
     .then(html => {
         popupWindow.querySelector('#popup-content').innerHTML = html;
-
-        // activate close button
         popupWindow.querySelector('#close-button').addEventListener('click', () => {
+            const form = popupWindow.querySelector('#create-product-form');
+            resetForm(form);
             popupWindow.classList.add('hidden');
-        });
-
+        })
         //TODO: activate create category button
-
 
         fillCategoriesAsSelectorOptions(popupWindow.querySelector('#category-selector'), categories);
     });
+
+// // activate update product form
+// const filledPopupWindow = document.getElementById('filled-popup-window');
+// fetch('/resources/views/elements/updateProductForm.html')
+//     .then(response => response.text())
+//     .then(html => {
+//        filledPopupWindow.querySelector('#filled-popup-content').innerHTML = html;
+//         fillCategoriesAsSelectorOptions(filledPopupWindow.querySelector('#updated-category-selector'), categories);
+//     });
+//
+// // activate close button
+// popupWindow.querySelector('#close-button').addEventListener('click', () => {
+//     popupWindow.classList.add('hidden');
+// });
+
+document.querySelectorAll('.close-button').forEach(button => {
+    button.addEventListener('click', () => {
+        button.parentElement.classList.add('hidden');
+    })
+})
 
 //______________RUN
 
 function run() {
     console.log('running......')
+    document.getElementById('products-button').classList.add('active');
 
     fetchProducts({
-        route: fetchAllProductsRoute,
+        route: productsApi,
         filters: filters,
         card: productCard,
         container: productsContainer,
@@ -75,8 +93,7 @@ run();
 
 //______________EVENT LISTENERS
 
-
-//TODO: handle edit and delete buttons
+// handling edit and delete buttons
 // will go with the event.target.closest approach for better performance
 productsContainer.addEventListener('click', function(event)  {
    const editButton = event.target.closest('#edit-button');
@@ -86,12 +103,20 @@ productsContainer.addEventListener('click', function(event)  {
        //TODO: handle click!
        const productId = parseInt(editButton.getAttribute('data-id'));
 
-       fetch(`${fetchAllProductsRoute}/${productId}`)
+       fetch(`${productsApi}/${productId}`)
            .then(response => response.json())
            .then(product => {
                product = product[0];
                console.log(product);
-               injectProductIntoForm(product, document.getElementById('create-product-form'), fetchAllProductsRoute);
+
+               const form = popupWindow.querySelector('#create-product-form');
+               if(! form) {
+                   console.error('form not found!');
+                   return;
+               }
+
+               injectProductIntoForm(product, form, productsApi);
+               asynchronousFormSubmission(form);
                popupWindow.classList.remove('hidden');
            });
 
@@ -101,7 +126,7 @@ productsContainer.addEventListener('click', function(event)  {
 
            const productId = parseInt(deleteButton.getAttribute('data-id'));
 
-           const url = `${fetchAllProductsRoute}/${productId}`;
+           const url = `${productsApi}/${productId}`;
            fetch(url, {
                method: 'DELETE',
            })
@@ -143,4 +168,7 @@ filtersSortSelector.addEventListener('change', function() {
 const createProductButton = document.getElementById('create-product-button');
 createProductButton.addEventListener('click', () => {
     popupWindow.classList.remove('hidden');
+    const form = popupWindow.querySelector('#create-product-form');
+    form.setAttribute('action', productsApi);
+    asynchronousFormSubmission(form);
 });

@@ -26,7 +26,7 @@ export function createChart(type) {
     });
 
     return chartElement;
-};
+}
 
 /**
  * @param {HTMLElement} container
@@ -40,5 +40,6 @@ export function loadAnalytics(container) {
 
 const chartsContainer = document.getElementById('charts-container');
 window.onload = function() {
+    document.getElementById('dashboard-button').classList.add('active');
     loadAnalytics(chartsContainer);
 }

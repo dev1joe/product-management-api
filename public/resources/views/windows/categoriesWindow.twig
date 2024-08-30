@@ -1,0 +1,51 @@
+<div class="header-box">
+    <div class="bread-crumbs">
+        Home > Products
+    </div>
+    <div class="filters-section">
+        <select id="filters-category-selector">
+            <option value="null" selected>All Categories</option>
+        </select>
+
+        <select id="filters-sorting-selector">
+            <option value="" selected>Recommended</option>
+            <option title="unitPriceCents" value="asc">Lowest Price</option>
+            <option title="unitPriceCents" value="desc">Highest Price</option>
+        </select>
+        <button type="button" class="submit-button" id="create-product-button">Create Product</button>
+    </div>
+</div>
+
+<div class="content" id="content">
+    <!-- new content here -->
+    <div id="categories-container" style="
+        height: 100%;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-auto-rows: min-content;
+        gap: 10px;
+    ">
+        <div class="category-card">
+
+            <img src="/storage/categories/phones.jpeg" alt="" class="category-img">
+
+            <div class="info">
+                <h4 class="category-name">Smart Phones</h4>
+                <h4 class="product-count">4 registered products</h4>
+            </div>
+
+            <div class="category-management-section">
+                <button type="button" id="edit-button">
+                    <span class="material-symbols-outlined">edit_square</span>
+                </button>
+                <button type="button" id="archive-button">
+                    <span class="material-symbols-outlined">archive</span>
+                </button>
+                <button type="button" id="delete-button">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

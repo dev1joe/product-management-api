@@ -37,7 +37,7 @@ class UploadProductPhotoRequestValidator implements RequestValidatorInterface
         $filename = $uploadedFile->getClientFilename();
 
         if (! preg_match('/^[a-zA-Z0-9\s._-]+$/', $filename)) {
-            throw new ValidationException(['receipt' => ['Invalid filename']]);
+            throw new ValidationException(['photo' => ['Invalid filename']]);
         }
 
         // 4. validate MIME type

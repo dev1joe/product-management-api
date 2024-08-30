@@ -35,6 +35,10 @@ class ProductController
     public function create(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
 
+        if(array_key_exists('photo', $request->getUploadedFiles())) {
+            $data['photo'] = $request->getUploadedFiles()['photo'];
+        }
+
         // $response->getBody()->write(json_encode($data));
         // return $response->withHeader('Content-Type', 'application/json');
 
@@ -48,9 +52,7 @@ class ProductController
 
         // photo handling //TODO: extract to fileService ??
         /** @var UploadedFileInterface $file */
-        $file = $this->requestValidatorFactory->make(
-            UploadProductPhotoRequestValidator::class
-        )->validate($request->getUploadedFiles())['photo'];
+        $file = $data['photo'];
 
         $fileName = $file->getClientFilename();
         $fileName = str_replace([' '], ['-'], $fileName);

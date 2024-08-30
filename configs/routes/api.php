@@ -13,6 +13,8 @@ return function(App $app) {
     $app->group('/api', function(RouteCollectorProxy $group) {
         $group->get('/products', [ProductController::class, 'fetchAllPaginated']);
         $group->get('/products/{id}', [ProductController::class, 'fetchById']);
+
+        $group->post('/products', [ProductController::class, 'create']);
         $group->post('/products/{id}', [ProductController::class, 'update']);
         $group->delete('/products/{id}', [ProductController::class, 'delete']);
 

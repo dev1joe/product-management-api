@@ -1,30 +1,30 @@
 <h1 class="form-title">Create Product</h1>
-<form action="/admin/products" method="POST" enctype="multipart/form-data" class="product-form" id="create-product-form">
+<form action="/admin/products" method="POST" enctype="multipart/form-data" class="product-form" id="update-product-form">
 
     <div class="name-container">
-        <input type="text" name="name" id="name" placeholder="Product Name" required>
+        <input type="text" name="updated-name" id="updated-name" placeholder="Product Name" required>
         <div class="invalid-feedback"></div>
     </div>
 
     <div class="price-container">
-        <input type="number" name="price" id="price" placeholder="Product Price in US Dollars">
+        <input type="number" name="updated-price" id="updated-price" placeholder="Product Price in US Dollars">
         <div class="invalid-feedback"></div>
     </div>
 
     <div class="photo-container">
-        <input type="file" name="photo" id="photo" required>
+        <input type="file" name="updated-photo" id="updated-photo" required>
         <div class="invalid-feedback"></div>
     </div>
 
     <div class="textarea-container">
-        <textarea name="description" id="description" class="description">Product Details......</textarea>
+        <textarea name="updated-description">Product Details......</textarea>
         <div class="invalid-feedback"></div>
     </div>
 
     <!-- new fields -->
 
     <div class="select-manufacturer">
-        <select name="manufacturer" id="manufacturer-selector" class="manufacturer-selector" required>
+        <select name="updated-manufacturer" id="updated-manufacturer-selector" class="manufacturer-selector" required>
             <option value="" selected disabled>-- select manufacturer --</option>
             <option value="Apple">Apple</option>
             <option value="Samsung">Samsung</option>
@@ -40,7 +40,7 @@
     <button type="button" class="submit-button" id="create-manufacturer-button">Create Manufacturer</button>
 
     <div class="select-category">
-        <select name="category" id="category-selector" class="category-selector" required>
+        <select name="updated-category" id="updated-category-selector" class="category-selector" required>
             <option value="" selected disabled>-- select category --</option>
         </select>
         <div class="invalid-feedback"></div>

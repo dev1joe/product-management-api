@@ -17,7 +17,7 @@ class AdminController
     ){
     }
 
-    private function format(Response $response, string $window): Response {
+    private function format(Response $response, string $window, array $scripts = []): Response {
         /** @var Administrator $admin */
         $admin = $this->authService->getAuthenticatedUser();
 
@@ -25,6 +25,7 @@ class AdminController
             'username' => $admin->getUsername(),
             'email' => $admin->getEmail(),
             'window' => $window,
+            'scripts' => $scripts
         ];
 
         return $this->twig->render(
@@ -46,11 +47,26 @@ class AdminController
     }
 
     public function dashboardView(Request $request, Response $response): Response {
-        return $this->format($response, '/windows/analyticsWindow.twig');
+        $scripts = [
+            'jsDeliver-charts' => ['src' => 'https://cdn.jsdelivr.net/npm/chart.js'],
+            'my-charts' => ['src' => '/resources/js/chart.js'],
+        ];
+
+        return $this->format($response, '/windows/analyticsWindow.twig', $scripts);
     }
 
     public function productsView(Request $request, Response $response): Response {
-        return $this->format($response, '/windows/productsWindow.twig');
+        $scripts = [
+            'products-script' => ['src' => '/resources/js/products.js'],
+        ];
+
+        return $this->format($response, '/windows/productsWindow.twig', $scripts);
+    }
+
+    public function categoryView(Request $request, Response $response): Response {
+        //TODO: category page scripts here
+
+        return $this->format($response, '/windows/categoriesWindow.twig');
     }
 
     public function viewRequest(Request $request, Response $response): Response {

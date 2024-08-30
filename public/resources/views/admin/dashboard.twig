@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,-50..200"/>
     <link rel="stylesheet" href="/resources/css/elements/productCard.css">
+    <link rel="stylesheet" href="/resources/css/productForm.css">
     <title>Dashboard</title>
     <style>
         * {
@@ -255,6 +256,7 @@
             padding: 15px;
             box-sizing: border-box;
             font: 18px bolder;
+            cursor: pointer;
         }
 
         .popup .popup-content {
@@ -320,10 +322,19 @@
     </div>
     <button type="button" id="close-button" class="close-button">Close</button>
 </div>
+<div id="filled-popup-window" class="popup hidden">
+    <div id="filled-popup-content" class="popup-content">
+        <h2>Lorem ipsum dolor sit amet, consectetur.</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad adipisci aut blanditiis consequatur dicta ducimus eligendi exercitationem explicabo facere fugit id illo, ipsa ipsum magni nulla odio optio possimus quaerat quod quos recusandae reprehenderit repudiandae rerum soluta veritatis voluptas voluptatem voluptates. At blanditiis consequatur, cupiditate doloremque eligendi esse eum expedita ipsa libero maiores nulla pariatur porro recusandae sapiente tempore vero voluptatibus. Autem blanditiis consequuntur cum dicta eos fugiat laboriosam pariatur.</p>
+    </div>
+    <button type="button" id="close-button" class="close-button">Close</button>
+</div>
 <!-- <button type="button" class="another-button">X</button> -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script type="module" src="/resources/js/chart.js"></script>
-<script type="module" src="/resources/js/products.js"></script>
+{% if scripts %}
+    {% for script in scripts %}
+        <script type="module" src={{ script.src }}></script>
+    {% endfor %}
+{% endif %}
 <!-- <script type="module" src="/resources/js/dashboard.js"></script> -->
 </body>
 </html>

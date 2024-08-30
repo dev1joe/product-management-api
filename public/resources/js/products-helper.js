@@ -124,26 +124,70 @@ export function injectProductIntoForm(product, form, productUpdateRoute) {
     // photo field is not required any more
     //TODO: add image preview section in product form + better handling
     form.querySelector('#photo').removeAttribute('required');
+}
 
-    // changing form behavior
-    form.addEventListener('submit', function(event) {
+/**
+ * @param {HTMLFormElement} form
+ */
+export function asynchronousFormSubmission(form) {
+    form.addEventListener('submit', async function (event) {
         event.preventDefault();
 
         const formData = new FormData(this);
 
         const url = this.action;
-        fetch(url, {
+        const request = new Request(url, {
             method: 'POST',
             body: formData,
-        })
-            .then(response => {
-                if(response.ok) {
-                    console.log('product updated successfully!')
-                    window.location.reload(); //TODO: remove reload
-                }
-            })
-            .catch((error) => console.error(error));
+        });
+
+        const response = await fetch(request);
+
+        // remove past validation errors
+        const validationFields = form.querySelectorAll('div.invalid-feedback');
+        validationFields.forEach(field => field.textContent = '');
+
+        if(response.ok) {
+            console.log('form submitted successfully!');
+            window.location.reload(); //TODO: remove reload
+        } else {
+            const errors = await response.json();
+            console.error(errors);
+            displayValidationErrors(form, errors);
+        }
+
     })
+}
 
+/**
+ * @param {HTMLFormElement} form
+ */
+export function resetForm(form) {
+    form.reset();
+    form.setAttribute('action', '');
 
+    const textarea = form.querySelector('textarea');
+    if(textarea) {
+        textarea.textContent = 'Product Details......';
+    }
+}
+
+/**
+ * @param {HTMLFormElement} form
+ * @param {Object|Array} errors
+ */
+function displayValidationErrors(form, errors) {
+    console.log('displaying validation errors......')
+
+    for(const fieldName in errors) {
+        console.log(fieldName);
+        const field = form.querySelector(`[name=${fieldName}]`);
+
+        if(field) {
+            const parent = field.parentElement;
+            parent.querySelector('div.invalid-feedback').textContent = errors[fieldName];
+        } else {
+            console.error(`${fieldName} field not found`);
+        }
+    }
 }
