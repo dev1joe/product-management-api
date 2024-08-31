@@ -1,5 +1,5 @@
 /**
- * @param {string} api
+ * @param {string|URL} api
  * @param {string} format
  * @returns {Promise<string|null>}
  */
@@ -52,4 +52,22 @@ export async function fetchHtml(api, container = null) {
     let tmpDiv = document.createElement('div');
     tmpDiv.innerHTML = html;
     return tmpDiv.firstChild;
+}
+
+/**
+ * @param {object} filters
+ * @param {string} route
+ */
+export function applyFilters(filters, route) {
+    const url = new URL(route, window.location.origin);
+
+    // Add all active filters to the URL as query parameters
+    for (const key in filters) {
+        if (filters[key]) {
+            url.searchParams.set(key, filters[key]);
+        }
+    }
+
+    // console.log(url);
+    return url;
 }

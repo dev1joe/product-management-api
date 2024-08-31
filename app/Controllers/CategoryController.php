@@ -55,6 +55,27 @@ class CategoryController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    public function fetchAllPaginated(Request $request, Response $response): Response {
+        $queryParams = $request->getQueryParams();
+
+        // I need two parameters, orderBy and orderDir, can't use only one
+        if(
+            sizeof($queryParams) === 2 &&
+            array_key_exists('orderDir', $queryParams) &&
+            in_array(strtolower($queryParams['orderDir']), ['asc', 'desc']) &&
+            array_key_exists('orderBy', $queryParams) &&
+            in_array($queryParams['orderBy'], ['productCount', 'name'])
+        ) {
+            // fetch paginated
+            $result = $this->categoryService->fetchPaginatedCategories($queryParams);
+        } else {
+            $result = $this->categoryService->fetchAll();
+        }
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
     public function fetchById(Request $request, Response $response, array $args): Response {
         $id = (int) $args['id'];
         $arrayCategory = $this->entityManager->getRepository(Category::class)

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use App\Controllers\CategoryController;
 use App\Controllers\ProductController;
-use App\Middlewares\AjaxValidationExceptionMiddleware;
+use App\Middlewares\AjaxHandleExceptionsMiddleware;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -11,6 +11,7 @@ return function(App $app) {
     //TODO: all js fetch requests should be requesting api routes
 
     $app->group('/api', function(RouteCollectorProxy $group) {
+        //[___________________________ products ___________________________]
         $group->get('/products', [ProductController::class, 'fetchAllPaginated']);
         $group->get('/products/{id}', [ProductController::class, 'fetchById']);
 
@@ -18,7 +19,9 @@ return function(App $app) {
         $group->post('/products/{id}', [ProductController::class, 'update']);
         $group->delete('/products/{id}', [ProductController::class, 'delete']);
 
-        $group->get('/categories', [CategoryController::class, 'fetchAll']);
+        //[___________________________ categories ___________________________]
+        $group->get('/categories', [CategoryController::class, 'fetchAllPaginated']);
         $group->post('/categories', [CategoryController::class, 'create']);
-    })->add(AjaxValidationExceptionMiddleware::class);
+        $group->delete('/categories/{id}', [CategoryController::class, 'delete']);
+    })->add(AjaxHandleExceptionsMiddleware::class);
 };

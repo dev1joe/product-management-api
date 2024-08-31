@@ -100,6 +100,9 @@ class ProductController
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
+        //TODO: wrong queryParams values can throw errors
+        // either errors should be handled or queryParams should be validated
+
         $queryParams = $request->getQueryParams();
         $queryParams = new ProductQueryParams($queryParams);
 

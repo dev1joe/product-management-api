@@ -29,8 +29,26 @@ class CategoryService
             ->createQueryBuilder('c')->select('c')->getQuery()->getArrayResult();
     }
 
+    /**
+     * assumes that query parameters exit and validated
+     * @param array $queryParams
+     * @return array
+     */
+    public function fetchPaginatedCategories(array $queryParams): array {
+        return $this->entityManager->getRepository(Category::class)
+            ->createQueryBuilder('c')
+            ->select('c')
+            ->orderBy('c.' . $queryParams['orderBy'], $queryParams['orderDir'])
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     public function fetchCategoryNames(): array {
         return $this->entityManager->getRepository(Category::class)->createQueryBuilder('c')
             ->select('c.id', 'c.name')->getQuery()->getArrayResult();
     }
+
+    //TODO: recalculate connections
+    // count how many products associated with each category and check if category->productCount is wrong or not
+    // if wrong change it
 }

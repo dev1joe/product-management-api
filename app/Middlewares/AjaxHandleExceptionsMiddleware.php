@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class AjaxValidationExceptionMiddleware implements MiddlewareInterface
+class AjaxHandleExceptionsMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private readonly ResponseFactoryInterface $responseFactory
@@ -26,6 +26,12 @@ class AjaxValidationExceptionMiddleware implements MiddlewareInterface
 
             $response = $this->responseFactory->createResponse(400)->withHeader('Content-Type', 'application/json');
             $response->getBody()->write(json_encode($e->errors));
+            return $response;
+
+        } catch (\RuntimeException $e) {
+            // handling other exception assuming that other exceptions are server errors
+            $response = $this->responseFactory->createResponse(500)->withHeader('Content-Type', 'application/json');
+            $response->getBody()->write(json_encode($e->getMessage()));
             return $response;
         }
     }
