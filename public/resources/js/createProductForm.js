@@ -1,5 +1,5 @@
-import {fetchCategories} from "./helperFunctions.js";
-import {createCategory} from "./helperFunctions.js";
+import {fetchData} from "./helperFunctions.js";
+import {createCategory, fillCategoriesAsSelectorOptions} from "./products-helper.js";
 
 // category elements
 const categorySelector = document.getElementById('filters-category-selector');
@@ -22,5 +22,5 @@ createCategoryButton.addEventListener('click', () => {
     createCategory(newCategoryField, categoryErrorField);
 })
 
-fetchCategories({container: categorySelector});
-//TODO: add all functions that you need to run when page loads
+let categories = await fetchData('/api/categories', 'json');
+fillCategoriesAsSelectorOptions(categorySelector, categories)

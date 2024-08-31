@@ -1,5 +1,3 @@
-import {fetchCategories, loadProductCards} from "./helperFunctions.js";
-import {createChart} from "./chart.js";
 
 // getting container elements
 const container = document.getElementById('container');

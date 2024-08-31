@@ -1,23 +1,33 @@
 .category-card {
     min-width: 300px;
-    aspect-ratio: 1;
-    padding: 0 0 10px 0;
     overflow: hidden;
-
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
 
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: flex-start;
     flex-shrink: 0;
 }
 
 .category-card img {
-    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+h1, h2, h3, h4 {
+    margin: 0;
+}
+
+.lower-half {
+    height: 35%;
+    padding: 10px 15px;
 }
 
 .info {
-    padding: 0 15px;
+    text-align: start;
 }
 
 .category-name {
@@ -25,11 +35,17 @@
     margin: 0;
 }
 
+.number {
+    color: #007BFF;
+}
+
 .category-management-section {
+    padding: 0 15px;
+
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
-    margin: 15px 0;
+    margin-top: 15px;
 }
 
 .material-symbols-outlined {

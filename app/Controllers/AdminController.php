@@ -64,9 +64,12 @@ class AdminController
     }
 
     public function categoryView(Request $request, Response $response): Response {
-        //TODO: category page scripts here
+        $scripts = [
+            'categories-script' => ['src' => '/resources/js/categories.js'],
+        ];
 
-        return $this->format($response, '/windows/categoriesWindow.twig');
+
+        return $this->format($response, '/windows/categoriesWindow.twig', $scripts);
     }
 
     public function viewRequest(Request $request, Response $response): Response {

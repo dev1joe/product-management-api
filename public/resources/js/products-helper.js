@@ -191,3 +191,40 @@ function displayValidationErrors(form, errors) {
         }
     }
 }
+
+
+/**
+ * @param {HTMLInputElement} field
+ * @param {HTMLElement} errorField
+ * @param {string} categoriesApi
+ */
+// export function createCategory(field, errorField, categoriesApi ) {
+//     const name = field.value;
+//
+//     errorField.innerHTML = '';
+//
+//     fetch(categoriesApi, {
+//         method: 'POST',
+//         header: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({'name': name}),
+//     }).then(response => {
+//         if (response.ok) {
+//             console.log('request accepted');
+//             field.value = '';
+//
+//             fetchData(categoriesApi, 'json')
+//         } else if (response.status === 400) {
+//             console.log('validation error');
+//
+//             (response.json())
+//                 .then(errors => {
+//                     console.log(errors);
+//                     errorField.innerHTML = errors['name'];
+//                 })
+//         }
+//     })
+// }
+
+//TODO: add fetchManufacturers function
