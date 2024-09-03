@@ -4,15 +4,22 @@ declare(strict_types=1);
 namespace App\Entities;
 
 use App\Contracts\AuthenticatableInterface;
+use App\Entities\Traits\HasSoftDelete;
+use App\Entities\Traits\HasTimestamps;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\MappedSuperclass;
 use Doctrine\ORM\Mapping\OneToOne;
 
 #[MappedSuperclass]
+#[HasLifecycleCallbacks]
 class Person implements AuthenticatableInterface
 {
+    use HasTimestamps;
+    use HasSoftDelete;
     #[Id, Column, GeneratedValue]
     private int $id;
     #[Column(name: 'first_name')]
@@ -21,11 +28,11 @@ class Person implements AuthenticatableInterface
     private string $middleName;
     #[Column(name: 'last_name')]
     private string $lastName;
-    #[Column]
+    #[Column(unique: true)]
     private string $email;
     #[Column]
     private string $password;
-    #[OneToOne]
+    #[OneToOne, JoinColumn(name: 'address_id', nullable: true, onDelete: 'RESTRICT')]
     private Address $address;
 
     public function getId(): int

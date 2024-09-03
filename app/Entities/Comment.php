@@ -3,23 +3,29 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Entities\Traits\HasTimestamps;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'comments')]
+#[HasLifecycleCallbacks]
 class Comment
 {
+    use HasTimestamps;
     #[Id, Column, GeneratedValue]
     private int $id;
 
-    #[ManyToOne, JoinColumn(onDelete: 'SET NULL')]
-    private Customer|null $customer;
+    #[ManyToOne, JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Customer $customer;
+    // the customer will be nullable in case the customer deleted there account
+    // this is an option that can be changed according to the application policies
 
     #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
     private Product $product;

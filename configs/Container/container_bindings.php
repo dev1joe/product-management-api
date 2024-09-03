@@ -4,8 +4,10 @@ declare(strict_types=1);
 use App\Config;
 use App\Contracts\AuthServiceInterface;
 use App\Enums\StorageDriver;
+use App\EventListeners\ProductListener;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\AuthService;
+use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
@@ -67,7 +69,13 @@ return [
             isDevMode: $config->get('app_env') == 'development'
         );
 
-        return new EntityManager($conn, $ormSetup);
+        // Event manager //TODO: event listeners vs event subscribers
+        $eventManager = new EventManager();
+
+        $productListener = new ProductListener();
+        $eventManager->addEventSubscriber($productListener);
+
+        return new EntityManager($conn, $ormSetup, $eventManager);
     },
     RequestValidatorFactory::class => function(ContainerInterface $container) {
         return new RequestValidatorFactory($container);

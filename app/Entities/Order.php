@@ -3,19 +3,23 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Entities\Traits\HasTimestamps;
 use App\Enums\OrderStatus;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'orders')]
+#[HasLifecycleCallbacks]
 class Order
 {
+    use HasTimestamps;
     #[Id, Column, GeneratedValue]
     private int $id;
 

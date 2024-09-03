@@ -28,13 +28,13 @@
 - on product deletion cascade
 
 # Rules
-| rule                                                                   | implementors                  |
-|------------------------------------------------------------------------|-------------------------------|
-| a customer email must be unique across the customers and admins tables | CreatCustomerRequestValidator |
-| an admin email must be unique across the customers and admins tables   |                               |
-| a guest can't access admin pages                                       | AdminAuthorizationMiddleware  |
-| a customer can't access admin pages                                    | AdminAuthorizationMiddleware  |
-| any logged in client can't access any logo in or registration forms    | GuestMiddleware               |
+| rule                                                                            | implementors                  |
+|---------------------------------------------------------------------------------|-------------------------------|
+| person (customer/admin) email must be unique across customers and admins tables | CreatCustomerRequestValidator |
+| a guest can't access admin pages                                                | AdminAuthorizationMiddleware  |
+| a customer can't access admin pages                                             | AdminAuthorizationMiddleware  |
+| any logged in client can't access any login or registration forms               | GuestMiddleware               |
+| for any person, max phone number length is 20 characters                        | Customer & Admin entities     |
 
 # order status
 - Pending: The order has been received, but processing has not yet begun.
@@ -58,6 +58,13 @@
 - Each new middleware layer surrounds any existing middleware layers. The concentric structure expands outwardly as additional middleware layers are added.
 - The last middleware layer added is the first to be executed. 
 
+## Doctrine
+### Doctrine database abstraction layer (DBAL) types
+- check them [here](https://www.doctrine-project.org/projects/doctrine-dbal/en/4.1/reference/types.html)
+
+### ORM meta-data using attributes
+- check attributes reference [here](https://www.doctrine-project.org/projects/doctrine-orm/en/3.2/reference/attributes-reference.html)
+
 ### Why specify the "Entity" and "Table" attributes ??
   - Entity attribute is required, it marks a PHP class as an entity to be persisted in the DB
   - while Table attribute is optional, it describes the table the entity is persisted in
@@ -74,6 +81,7 @@
 - chatGpt: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
 - third migration corrected that mistake
 
+## other
 ### accepting a file in HTML form tag
 - I found that I need to define `enctype` attribute with value `multipart/form-data` to be able to send files to the server
 - but why is that ?? and what does the new terminology mean ?

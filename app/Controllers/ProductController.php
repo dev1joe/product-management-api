@@ -47,8 +47,9 @@ class ProductController
 
         $product = new Product();
         $product->setName($data['name']);
-        $product->setUnitPriceCents($data['price']);
+        $product->setUnitPriceInCents($data['price']);
         $product->setDescription($data['description']);
+        $product->setManufacturer($data['manufacturer']);
 
         // photo handling //TODO: extract to fileService ??
         /** @var UploadedFileInterface $file */
@@ -66,8 +67,8 @@ class ProductController
         // category handling
         /** @var Category $category */
         $category = $data['category'];
-        $category->incrementProductCount(1);
-        $this->entityManager->persist($category);
+//        $category->incrementProductCount(1);
+//        $this->entityManager->persist($category);
 
         $product->setCategory($category);
 
@@ -126,7 +127,7 @@ class ProductController
 
         $product->setName($data['name']);
         $product->setDescription($data['description']);
-        $product->setUnitPriceCents($data['price']); // price already handled by the request validator
+        $product->setUnitPriceInCents($data['price']); // price already handled by the request validator
 
         //TODO: photo handling
         if(array_key_exists('photo', $data)) {

@@ -13,6 +13,9 @@ class Administrator extends Person
     #[Column]
     private string $ssn;
 
+    #[Column(name: 'phone_number', length: 20)]
+    private string $phoneNumber;
+
     public function getSsn(): string
     {
         return $this->ssn;
@@ -21,6 +24,17 @@ class Administrator extends Person
     public function setSsn(string $ssn): Administrator
     {
         $this->ssn = $ssn;
+        return $this;
+    }
+
+    public function getPhoneNumber(): string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(string $phoneNumber): Administrator
+    {
+        $this->phoneNumber = $phoneNumber;
         return $this;
     }
 

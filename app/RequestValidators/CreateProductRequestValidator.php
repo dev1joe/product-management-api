@@ -5,6 +5,7 @@ namespace App\RequestValidators;
 
 use App\Contracts\RequestValidatorInterface;
 use App\Entities\Category;
+use App\Entities\Manufacturer;
 use App\Exceptions\ValidationException;
 use Doctrine\ORM\EntityManager;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
@@ -21,8 +22,8 @@ class CreateProductRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
-        //TODO: require photo and manufacturer
-        $v->rule('required', ['name', 'category', 'price', 'description']);
+        //TODO: require photo
+        $v->rule('required', ['name', 'category', 'price', 'description', 'manufacturer']);
         $v->rule('regex', ['name', 'description'], '/^[A-Za-z0-9\-._,*:\r\n\s\t()]*$/');
         //TODO: I think I need to allow more characters
         $v->rule('lengthMax', 'description', 1000);
@@ -48,6 +49,22 @@ class CreateProductRequestValidator implements RequestValidatorInterface
             return true;
 
         }, 'category')->message('category not found');
+
+        // manufacturer handling
+        $v->rule('integer', 'manufacturer');
+
+        $v->rule(function($field, $value, $params, $fields) use(&$data) {
+            /** @var Manufacturer $manufacturer */
+            $manufacturer = $this->entityManager->find(Manufacturer::class, (int) $value);
+
+            if(! $manufacturer) {
+                return false;
+            }
+
+            $data['manufacturer'] = $manufacturer;
+            return true;
+
+        }, 'manufacturer')->message('manufacturer not found');
 
         // photo handling
         if(array_key_exists('photo', $data)) {

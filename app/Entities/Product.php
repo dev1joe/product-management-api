@@ -3,29 +3,38 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Entities\Traits\HasSoftDelete;
+use App\Entities\Traits\HasTimestamps;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'products')]
+#[HasLifecycleCallbacks]
 class Product
 {
+    use HasTimestamps;
+    use HasSoftDelete;
     #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]
     private string $name;
     #[Column(type: Types::STRING, length: 1000)]
     private string $description;
-    #[ManyToOne]
+    #[ManyToOne, JoinColumn(name: 'category_id', onDelete: 'RESTRICT')]
     private Category $category;
-    #[Column] // TODO: it should be the path of the photo
+    #[ManyToOne, JoinColumn(name: 'manufacturer_id', onDelete: 'RESTRICT')]
+    private Manufacturer $manufacturer;
+    #[Column]
     private string $photo;
-    #[Column(name: "unit_price_cents")]
-    private int $unitPriceCents;
+    #[Column(name: "unit_price_in_cents")]
+    private int $unitPriceInCents;
     #[Column(name: "avg_rating", type: Types::DECIMAL, precision: 2, scale: 1, options: ["default" => 0])]
     private float $avgRating = 0;
 
@@ -73,6 +82,17 @@ class Product
         return $this;
     }
 
+    public function getManufacturer(): Manufacturer
+    {
+        return $this->manufacturer;
+    }
+
+    public function setManufacturer(Manufacturer $manufacturer): Product
+    {
+        $this->manufacturer = $manufacturer;
+        return $this;
+    }
+
     public function getPhoto(): string
     {
         return $this->photo;
@@ -84,14 +104,14 @@ class Product
         return $this;
     }
 
-    public function getUnitPriceCents(): float
+    public function getUnitPriceInCents(): float
     {
-        return $this->unitPriceCents;
+        return $this->unitPriceInCents;
     }
 
-    public function setUnitPriceCents(int $unitPriceCents): Product
+    public function setUnitPriceInCents(int $unitPriceInCents): Product
     {
-        $this->unitPriceCents = $unitPriceCents;
+        $this->unitPriceInCents = $unitPriceInCents;
         return $this;
     }
 

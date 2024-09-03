@@ -35,11 +35,11 @@ class ProductService
         }
 
         if($params->minPriceInCents) {
-            $query->andWhere('p.unitPriceCents > :min')->setParameter('min', $params->minPriceInCents);
+            $query->andWhere('p.unitPriceInCents > :min')->setParameter('min', $params->minPriceInCents);
         }
 
         if($params->maxPriceInCents) {
-            $query->andWhere('p.unitPriceCents < :max')->setParameter('max', $params->maxPriceInCents);
+            $query->andWhere('p.unitPriceInCents < :max')->setParameter('max', $params->maxPriceInCents);
         }
 
         $query->setFirstResult($offset)

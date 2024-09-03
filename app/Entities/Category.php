@@ -2,21 +2,27 @@
 declare(strict_types=1);
 
 namespace App\Entities;
+use App\Entities\Traits\HasTimestamps;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'categories')]
+#[HasLifecycleCallbacks]
 class Category
 {
+    use HasTimestamps;
     #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]
     private string $name;
-    #[Column(name: 'product_count')]
-    private int $productCount;
+    #[Column]
+    private string $image;
+    #[Column(name: 'product_count', options: ['default' => 0])]
+    private int $productCount = 0;
 
     public function getId(): int
     {
