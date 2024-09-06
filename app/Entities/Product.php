@@ -28,9 +28,9 @@ class Product
     #[Column(type: Types::STRING, length: 1000)]
     private string $description;
     #[ManyToOne, JoinColumn(name: 'category_id', onDelete: 'RESTRICT')]
-    private Category $category;
+    private ?Category $category;
     #[ManyToOne, JoinColumn(name: 'manufacturer_id', onDelete: 'RESTRICT')]
-    private Manufacturer $manufacturer;
+    private ?Manufacturer $manufacturer;
     #[Column]
     private string $photo;
     #[Column(name: "unit_price_in_cents")]
@@ -71,7 +71,7 @@ class Product
         return $this;
     }
 
-    public function getCategory(): Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -82,7 +82,7 @@ class Product
         return $this;
     }
 
-    public function getManufacturer(): Manufacturer
+    public function getManufacturer(): ?Manufacturer
     {
         return $this->manufacturer;
     }
@@ -104,7 +104,7 @@ class Product
         return $this;
     }
 
-    public function getUnitPriceInCents(): float
+    public function getUnitPriceInCents(): int
     {
         return $this->unitPriceInCents;
     }

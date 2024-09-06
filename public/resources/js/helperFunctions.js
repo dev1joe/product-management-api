@@ -43,6 +43,7 @@ export async function fetchHtml(api, container = null) {
     let response = await fetch(api);
 
     let html = await response.text();
+    // console.log(html);
 
     if(container) {
         container.innerHTML = html;

@@ -1,6 +1,6 @@
 import {
     fetchProducts,
-    fillCategoriesAsSelectorOptions,
+    fillEntitiesAsSelectorOptions,
     injectProductIntoForm,
     resetForm,
     asynchronousFormSubmission,
@@ -12,10 +12,12 @@ import {fetchData, fetchHtml} from "./helperFunctions.js";
 
 const productsApi = '/api/products';
 const categoriesApi = '/api/categories';
+const manufacturersApi = '/api/manufacturers/names';
 const productCardRoute = '/resources/views/elements/adminProductCard.twig';
 const productCard = await fetchHtml(productCardRoute);
 const productsContainer = document.getElementById('products-container');
 const showMoreProductsButton = document.getElementById('show-more-button');
+const filtersSortSelector = document.getElementById('filters-sorting-selector');
 
 let filters = {
     page: 1,
@@ -30,10 +32,11 @@ let filters = {
 // fetch categories
 // cache them (save them in an array for now)
 let categories = await fetchData(categoriesApi, 'json');
+let manufacturers = await fetchData(manufacturersApi, 'json');
 
 // fill category selector with categories
 const filtersCategorySelector = document.getElementById('filters-category-selector');
-fillCategoriesAsSelectorOptions(filtersCategorySelector, categories);
+fillEntitiesAsSelectorOptions(filtersCategorySelector, categories);
 
 // put create create product form in the DOM
 const popupWindow = document.getElementById('popup-window');
@@ -53,20 +56,23 @@ popupWindow.querySelector('#close-button').addEventListener('click', () => {
 
 // activate create product form
 let categorySelector = createProductForm.querySelector('#category-selector');
-fillCategoriesAsSelectorOptions(categorySelector, categories);
+fillEntitiesAsSelectorOptions(categorySelector, categories);
+
+let manufacturerSelector = createProductForm.querySelector('#manufacturer-selector');
+fillEntitiesAsSelectorOptions(manufacturerSelector, manufacturers);
 
 //TODO: activate create category button
 
-
-document.querySelectorAll('.close-button').forEach(button => {
-    button.addEventListener('click', () => {
-        button.parentElement.classList.add('hidden');
-    })
+//______________RUN
+// sort selector: already populated, make it functional then
+filtersSortSelector.addEventListener('change', function () {
+    filters.orderBy = this.options[this.selectedIndex].getAttribute('data-name');
+    filters.orderDir = this.options[this.selectedIndex].getAttribute('data-dir');
+    filters.page = 1;
+    run();
 })
 
-//______________RUN
-
-function run() {
+export function run() {
     console.log('running......')
     document.getElementById('products-button').classList.add('active');
 
@@ -79,7 +85,25 @@ function run() {
     });
 }
 
-run();
+export function resetPage() {
+    resetForm(createProductForm);
+    popupWindow.classList.add('hidden');
+
+    filters = filters = {
+        page: 1,
+        limit: 10,
+        category: null,
+        orderBy: null,
+        orderDir: null,
+    };
+
+    //TODO: modify sorting to bring last updated first
+    filtersSortSelector.value = 'last-updated';
+    const changeEvent = new Event('change');
+    filtersSortSelector.dispatchEvent(changeEvent);
+}
+
+resetPage();
 
 //______________EVENT LISTENERS
 
@@ -90,7 +114,6 @@ productsContainer.addEventListener('click', function (event) {
     const deleteButton = event.target.closest('#delete-button');
 
     if (editButton) {
-        //TODO: handle click!
         const productId = parseInt(editButton.getAttribute('data-id'));
 
         fetch(`${productsApi}/${productId}`)
@@ -145,21 +168,13 @@ filtersCategorySelector.addEventListener('change', function () {
 });
 
 
-// sort selector: already populated, make it functional then
-const filtersSortSelector = document.getElementById('filters-sorting-selector');
-filtersSortSelector.addEventListener('change', function () {
-    filters.orderBy = this.options[this.selectedIndex].getAttribute('title');
-    filters.orderDir = this.value;
-    filters.page = 1;
-    run();
-})
-
 // add event listener to create button
 const createProductButton = document.getElementById('create-product-button');
 createProductButton.addEventListener('click', () => {
     popupWindow.classList.remove('hidden');
     const form = popupWindow.querySelector('#create-product-form');
     form.setAttribute('action', productsApi);
+    form.enctype = 'multipart/form-data';
     asynchronousFormSubmission(form);
 });
 
@@ -189,7 +204,7 @@ createCategoryButton.addEventListener('click', async function()  {
                 field.value = '';
 
                 categories = await fetchData(categoriesApi, 'json');
-                fillCategoriesAsSelectorOptions(categorySelector, categories);
+                fillEntitiesAsSelectorOptions(categorySelector, categories);
             } else if (response.status === 400) {
                 console.log('validation error');
 
@@ -202,3 +217,24 @@ createCategoryButton.addEventListener('click', async function()  {
         })
 
 })
+
+// create product form: show image if a one is chosen
+const imageInput = createProductForm.querySelector('input[type=file]');
+const imageContainer = createProductForm.parentElement.querySelector('div.image-container');
+
+if(imageInput && imageContainer) {
+
+    imageInput.addEventListener('change', function(event) {
+        const image = event.target.files[0];
+
+        if(image) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imageContainer.classList.remove('hidden');
+                imageContainer.style.backgroundImage = `url('${e.target.result}')`;
+            }
+            reader.readAsDataURL(image);
+        }
+    })
+
+}

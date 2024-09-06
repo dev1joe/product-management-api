@@ -30,6 +30,8 @@ class AjaxHandleExceptionsMiddleware implements MiddlewareInterface
 
         } catch (\RuntimeException $e) {
             // handling other exception assuming that other exceptions are server errors
+            error_log($e->getMessage());
+
             $response = $this->responseFactory->createResponse(500)->withHeader('Content-Type', 'application/json');
             $response->getBody()->write(json_encode($e->getMessage()));
             return $response;

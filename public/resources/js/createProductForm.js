@@ -1,5 +1,5 @@
 import {fetchData} from "./helperFunctions.js";
-import {createCategory, fillCategoriesAsSelectorOptions} from "./products-helper.js";
+import {createCategory, fillEntitiesAsSelectorOptions} from "./products-helper.js";
 
 // category elements
 const categorySelector = document.getElementById('filters-category-selector');
@@ -23,4 +23,4 @@ createCategoryButton.addEventListener('click', () => {
 })
 
 let categories = await fetchData('/api/categories', 'json');
-fillCategoriesAsSelectorOptions(categorySelector, categories)
+fillEntitiesAsSelectorOptions(categorySelector, categories)

@@ -1,6 +1,25 @@
 h1.form-title {
     margin: 0 0 20px 0;
 }
+.form-container {
+    width: max-content;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+}
+
+.image-container {
+    width: 300px;
+    /* background-color: #666; */
+    margin-right: 10px;
+    padding: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.hidden {
+    display: none;
+}
 
 .product-form {
     display: grid;

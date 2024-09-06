@@ -12,7 +12,10 @@ use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UploadProductPhotoRequestValidator;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Entities\Product;
@@ -27,11 +30,16 @@ class ProductController
         private readonly Twig $twig,
         private readonly CategoryService $categoryService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
-        private readonly Filesystem $filesystem,
         private readonly ProductService $productService,
     ){
     }
     // TODO: refactor to product service
+
+    /**
+     * @throws OptimisticLockException
+     * @throws FilesystemException
+     * @throws ORMException
+     */
     public function create(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
 
@@ -45,39 +53,10 @@ class ProductController
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
         $data = $validator->validate($data);
 
-        $product = new Product();
-        $product->setName($data['name']);
-        $product->setUnitPriceInCents($data['price']);
-        $product->setDescription($data['description']);
-        $product->setManufacturer($data['manufacturer']);
+        $this->productService->create($data);
 
-        // photo handling //TODO: extract to fileService ??
-        /** @var UploadedFileInterface $file */
-        $file = $data['photo'];
-
-        $fileName = $file->getClientFilename();
-        $fileName = str_replace([' '], ['-'], $fileName);
-
-
-        $this->filesystem->write('/products/' . $fileName, $file->getStream()->getContents());
-
-        $relativeLocation = '/storage/products/'.$fileName;
-        $product->setPhoto($relativeLocation);
-
-        // category handling
-        /** @var Category $category */
-        $category = $data['category'];
-//        $category->incrementProductCount(1);
-//        $this->entityManager->persist($category);
-
-        $product->setCategory($category);
-
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
-
-        // return $response->withHeader('Location', '/admin/product/all')->withStatus(302);
-        return $response;
-
+        $response->getBody()->write(json_encode(['message' => 'product created successfully!']));
+        return $response->withHeader('Content-Type','application/json')->withStatus(200);
     }
     public function form(Request $request, Response $response): Response {
         $categories = $this->categoryService->fetchCategoryNames();
@@ -113,53 +92,40 @@ class ProductController
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws FilesystemException
+     */
     public function update(Request $request, Response $response, array $args): Response {
-        $data = $this->requestValidatorFactory->make(CreateProductRequestValidator::class)
-            ->validate($request->getParsedBody());
+        $data = $request->getParsedBody();
+        $uploadedFiles = $request->getUploadedFiles();
+
+        if(isset($uploadedFiles['photo'])) {
+            $data['photo'] = $request->getUploadedFiles()['photo'];
+        }
+
+        $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
+        $data = $validator->validate($data);
 
         $id = (int) $args['id'];
-        /** @var Product $product */
-        $product = $this->entityManager->find(Product::class, $id);
+        $product = $this->productService->fetchProductById($id);
 
         if(! $product) {
             return $response->withStatus(404);
         }
 
-        $product->setName($data['name']);
-        $product->setDescription($data['description']);
-        $product->setUnitPriceInCents($data['price']); // price already handled by the request validator
-
-        //TODO: photo handling
-        if(array_key_exists('photo', $data)) {
-
+        [$isChanged, $message] = $this->productService->update($id, $data);
+        if($isChanged) {
+            $status = 200;
+            // $message = 'product updated successfully';
+        } else {
+            $status = 400;
+            // $message = 'product information not changed';
         }
 
-        // category change handling
-        $currentCategory = $product->getCategory();
-
-        /** @var Category $newCategory */
-        $newCategory = $data['category'];
-
-        if($currentCategory->getId() !== $newCategory->getId()) {
-            $currentCategory->decrementProductCount(1);
-
-            $product->setCategory($newCategory);
-            $newCategory->incrementProductCount(1);
-
-            $this->entityManager->persist($currentCategory);
-            $this->entityManager->persist($newCategory);
-        }
-
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
-
-        $message = [
-            'message' => 'Product updated successfully!',
-            'updatedProductId' => $id
-        ];
-
-        $response->getBody()->write(json_encode($message));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        $response->getBody()->write(json_encode(['message' => $message]));
+        return $response->withHeader('Content-Type','application/json')->withStatus($status);
     }
 
     public function delete(Request $request, Response $response, array $args): Response {
@@ -172,9 +138,9 @@ class ProductController
             return $response->withStatus(404);
         }
 
-        $category = $product->getCategory();
-        $category->decrementProductCount(1);
-        $this->entityManager->persist($category);
+//        $category = $product->getCategory();
+//        $category->decrementProductCount(1);
+//        $this->entityManager->persist($category);
 
         $this->entityManager->remove($product);
         $this->entityManager->flush();

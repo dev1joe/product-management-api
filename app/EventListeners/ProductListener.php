@@ -20,36 +20,47 @@ class ProductListener implements EventSubscriber
     }
 
     public function postPersist(LifecycleEventArgs $args) {
+        // TODO: this only handles the newly assigned category, what about the old category, how to decrement it's counter ???
         $entity = $args->getObject();
+        $entityManager = $args->getObjectManager();
 
         if($entity instanceof Product) {
             $category = $entity->getCategory();
-            $category->incrementProductCount(1);
+            if($category) {
+                $category->incrementProductCount(1);
+                $entityManager->persist($category);
+            }
 
             $manufacturer = $entity->getManufacturer();
-            $manufacturer->incrementProductCount(1);
+            if($manufacturer) {
+                $manufacturer->incrementProductCount(1);
+                $entityManager->persist($manufacturer);
+            }
 
-            $entityManager = $args->getObjectManager();
-            $entityManager->persist($category);
-            $entityManager->persist($manufacturer);
-            // TODO: test if you need to flush or not
+            // TODO: activate `cascade: ['persist']` in product-category relationship
+            $entityManager->flush();
         }
     }
 
     public function postRemove(LifecycleEventArgs $args) {
         $entity = $args->getObject();
+        $entityManager = $args->getObjectManager();
 
         if($entity instanceof Product) {
             $category = $entity->getCategory();
-            $category->decrementProductCount(1);
+            if($category) {
+                $category->decrementProductCount(1);
+                $entityManager->persist($category);
+            }
 
             $manufacturer = $entity->getManufacturer();
-            $manufacturer->decrementProductCount(1);
+            if($manufacturer) {
+                $manufacturer->decrementProductCount(1);
+                $entityManager->persist($manufacturer);
+            }
 
-            $entityManager = $args->getObjectManager();
-            $entityManager->persist($category);
-            $entityManager->persist($manufacturer);
-            // TODO: test if you need to flush or not
+            // TODO: activate `cascade: ['persist']` in product-category relationship
+            $entityManager->flush();
         }
     }
 }

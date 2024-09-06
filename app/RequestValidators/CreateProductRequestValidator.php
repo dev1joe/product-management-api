@@ -9,6 +9,7 @@ use App\Entities\Manufacturer;
 use App\Exceptions\ValidationException;
 use Doctrine\ORM\EntityManager;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
+use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 
 class CreateProductRequestValidator implements RequestValidatorInterface
@@ -30,9 +31,19 @@ class CreateProductRequestValidator implements RequestValidatorInterface
 
         // price handling
         $v->rule('numeric', 'price');
-        $price = (int) $data['price'];
-        $price *= 100;
-        $data['price'] =$price;
+        $v->rule(function($field, $value, $params, $fields) {
+            $price = (float) $value;
+
+            if($price == 0 || $price < 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }, "price")->message("price must be positive");
+
+//        $price = (float) $data['price'];
+//        $price *= 100;
+//        $data['price'] = (int) $price;
 
         // category handling
         $v->rule('integer', 'category');
@@ -50,8 +61,8 @@ class CreateProductRequestValidator implements RequestValidatorInterface
 
         }, 'category')->message('category not found');
 
-        // manufacturer handling
-        $v->rule('integer', 'manufacturer');
+         // manufacturer handling
+         $v->rule('integer', 'manufacturer');
 
         $v->rule(function($field, $value, $params, $fields) use(&$data) {
             /** @var Manufacturer $manufacturer */
@@ -68,6 +79,7 @@ class CreateProductRequestValidator implements RequestValidatorInterface
 
         // photo handling
         if(array_key_exists('photo', $data)) {
+            /** @var UploadedFileInterface $uploadedFile */
             $uploadedFile = $data['photo'];
 
             // validate that there are no upload errors

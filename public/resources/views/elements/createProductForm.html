@@ -1,5 +1,7 @@
 <h1 class="form-title">Create Product</h1>
-<form action="/admin/products" method="POST" enctype="multipart/form-data" class="product-form" id="create-product-form">
+<div class="form-container">
+    <div class="image-container hidden"></div>
+    <form action="/admin/products" method="POST" enctype="multipart/form-data" class="product-form" id="create-product-form">
 
     <div class="name-container">
         <input type="text" name="name" id="name" placeholder="Product Name" required>
@@ -12,7 +14,7 @@
     </div>
 
     <div class="photo-container">
-        <input type="file" name="photo" id="photo" required>
+        <input type="file" name="photo" id="photo" accept="image/*" required>
         <div class="invalid-feedback"></div>
     </div>
 
@@ -24,10 +26,8 @@
     <!-- new fields -->
 
     <div class="select-manufacturer">
-        <select name="manufacturer" id="manufacturer-selector" class="manufacturer-selector" required>
+        <select name="manufacturer" id="manufacturer-selector" class="manufacturer-selector">
             <option value="" selected disabled>-- select manufacturer --</option>
-            <option value="Apple">Apple</option>
-            <option value="Samsung">Samsung</option>
         </select>
         <div class="invalid-feedback"></div>
     </div>
@@ -56,3 +56,4 @@
     <!-- end of form -->
     <input type="submit" id="form-submit-button" class="submit-button" value="Submit" form="create-product-form">
 </form>
+</div>

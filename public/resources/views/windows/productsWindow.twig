@@ -10,9 +10,9 @@
         </select>
 
         <select id="filters-sorting-selector">
-            <option value="" selected>Recommended</option>
-            <option title="unitPriceInCents" value="asc">Lowest Price</option>
-            <option title="unitPriceInCents" value="desc">Highest Price</option>
+            <option data-name="updatedAt" data-dir="desc" value="last-updated" selected>Last Updated</option>
+            <option data-name="unitPriceInCents" data-dir="asc" value="lowest-price">Lowest Price</option>
+            <option data-name="unitPriceInCents" data-dir="desc" value="highest-price">Highest Price</option>
         </select>
         <button type="button" class="submit-button" id="create-product-button">Create Product</button>
     </div>

@@ -1,4 +1,5 @@
 import {applyFilters} from "./helperFunctions.js";
+import {resetPage, run} from "./products.js";
 
 /**
  * @param {string} route
@@ -21,7 +22,7 @@ function fillProductCard(card, product) {
     card.querySelector('.product-img').setAttribute('src', product.photo);
     card.querySelector('.product-name').textContent = product.name;
     card.querySelector('button').setAttribute('data-id', product.id)
-    card.querySelector('.price').textContent = `$${(product.unitPriceCents / 100)}`;
+    card.querySelector('.price').textContent = `$${(product.unitPriceInCents / 100)}`;
 
     // handling edit button
     const editButton = card.querySelector('#edit-button');
@@ -43,10 +44,15 @@ function fillProductCard(card, product) {
  */
 export function fetchProducts({route = '/api/products', filters, card, container, showMoreButton} = {}) {
     const url = applyFilters(filters, route);
+    // console.log(url);
 
     fetch(url)
         .then(response => response.json())
         .then(data => {
+
+            if(filters.page === 1) {
+                container.innerHTML = '';
+            }
 
             if(data.length === 0) {
                 console.log('no more products');
@@ -55,9 +61,6 @@ export function fetchProducts({route = '/api/products', filters, card, container
             }
             showMoreButton.classList.remove('hidden');
 
-            if(filters.page === 1) {
-                container.innerHTML = '';
-            }
             // console.log(data);
 
             data.forEach(product => {
@@ -77,13 +80,13 @@ export function fetchProducts({route = '/api/products', filters, card, container
 
 /**
  * @param {HTMLSelectElement} container
- * @param {Array} categories
+ * @param {Array} entities
  */
-export function fillCategoriesAsSelectorOptions(container, categories) {
-    categories.forEach(category => {
+export function fillEntitiesAsSelectorOptions(container, entities) {
+    entities.forEach(e => {
         const optionElement = document.createElement('option');
-        optionElement.textContent = category.name;
-        optionElement.value = category.id;
+        optionElement.textContent = e.name;
+        optionElement.value = e.id;
 
         container.appendChild(optionElement);
     });
@@ -96,10 +99,26 @@ export function fillCategoriesAsSelectorOptions(container, categories) {
  */
 export function injectProductIntoForm(product, form, productUpdateRoute) {
     form.querySelector('#name').value = product.name;
-    form.querySelector('#price').value =  product.unitPriceCents / 100;
+    form.querySelector('#price').value =  product.unitPriceInCents / 100;
     form.querySelector('textarea').textContent = product.description;
-    form.querySelector('#category-selector').value = product.category.id;
-    form.querySelector('#manufacturer-selector').value = 'Apple';
+
+    if(product.manufacturer) {
+        form.querySelector('#manufacturer-selector').value = product.manufacturer.id;
+    }
+
+    if(product.category) {
+        form.querySelector('#category-selector').value = product.category.id;
+    }
+
+    // product image preview
+    if(product.photo) {
+        const imagePreview = form.parentElement.querySelector('div.image-container');
+
+        if(imagePreview) {
+            imagePreview.classList.remove('hidden');
+            imagePreview.style.backgroundImage = `url(\'${product.photo}\')`;
+        }
+    }
 
     // form behavior handling
     form.setAttribute('action', `${productUpdateRoute}/${product.id}`);
@@ -117,6 +136,21 @@ export function asynchronousFormSubmission(form) {
         event.preventDefault();
 
         const formData = new FormData(this);
+        console.log(formData);
+
+        // loop over form data entries
+            // if you find a photo key and there is no files uploaded
+                // remove it
+
+        for(let [key, value] of formData.entries()) {
+            if(key === 'photo') {
+                const fileInput = form.querySelector('input[type=file]');
+
+                if(! fileInput.files.length) {
+                    formData.delete('photo');
+                }
+            }
+        }
 
         const url = this.action;
         const request = new Request(url, {
@@ -132,11 +166,23 @@ export function asynchronousFormSubmission(form) {
 
         if(response.ok) {
             console.log('form submitted successfully!');
-            window.location.reload(); //TODO: remove reload
+            try{
+                const messages = await response.json();
+                console.log(messages)
+            } catch(e){}
+
+            // window.location.reload();
+            resetPage()
         } else {
-            const errors = await response.json();
-            console.error(errors);
-            displayValidationErrors(form, errors);
+            const status = response.status;
+
+            const responseErrors = await response.json();
+            console.error(responseErrors);
+
+            // if validation exception display it
+            if(status === 400) {
+                displayValidationErrors(form, responseErrors);
+            }
         }
 
     })
@@ -147,12 +193,24 @@ export function asynchronousFormSubmission(form) {
  */
 export function resetForm(form) {
     form.reset();
+
     form.setAttribute('action', '');
 
     const textarea = form.querySelector('textarea');
     if(textarea) {
         textarea.textContent = 'Product Details......';
     }
+
+    const imagePreview = form.parentElement.querySelector('div.image-container');
+    if(imagePreview) {
+        imagePreview.removeAttribute('background-image');
+        imagePreview.classList.add('hidden');
+    }
+
+    const errorFields = form.querySelectorAll('div.invalid-feedback');
+    errorFields.forEach(field => {
+        field.textContent = '';
+    })
 }
 
 /**
@@ -168,7 +226,7 @@ function displayValidationErrors(form, errors) {
 
         if(field) {
             const parent = field.parentElement;
-            parent.querySelector('div.invalid-feedback').textContent = errors[fieldName];
+            parent.querySelector('div.invalid-feedback').textContent = errors[fieldName][0];
         } else {
             console.error(`${fieldName} field not found`);
         }
