@@ -187,7 +187,7 @@ class ProductService
 
         if($product->getDescription() !== $data['description']) {
             $isChanged = true;
-            $message = $message . 'describtion changed ';
+            $message = $message . 'description changed ';
             $product->setDescription($data['description']);
         }
 

@@ -47,6 +47,7 @@ await fetchHtml(
 );
 
 const createProductForm = popupWindow.querySelector('form#create-product-form');
+asynchronousFormSubmission(createProductForm)
 // popupWindow.querySelector('#popup-content').appendChild(createProductForm);
 
 popupWindow.querySelector('#close-button').addEventListener('click', () => {
@@ -89,6 +90,8 @@ export function resetPage() {
     resetForm(createProductForm);
     popupWindow.classList.add('hidden');
 
+    // when `fetchProducts` function finds that the page is 1,
+    // it clears the container first
     filters = filters = {
         page: 1,
         limit: 10,
@@ -97,7 +100,8 @@ export function resetPage() {
         orderDir: null,
     };
 
-    //TODO: modify sorting to bring last updated first
+    // modify sorting to bring last updated first
+    // change in sorting triggers tha run function
     filtersSortSelector.value = 'last-updated';
     const changeEvent = new Event('change');
     filtersSortSelector.dispatchEvent(changeEvent);
@@ -105,7 +109,7 @@ export function resetPage() {
 
 resetPage();
 
-//______________EVENT LISTENERS
+//______________OTHER EVENT LISTENERS
 
 // handling edit and delete buttons
 // will go with event.target.closest approach for better performance
@@ -122,14 +126,12 @@ productsContainer.addEventListener('click', function (event) {
                 product = product[0];
                 console.log(product);
 
-                const form = popupWindow.querySelector('#create-product-form');
-                if (!form) {
-                    console.error('form not found!');
-                    return;
+                const fileInput = createProductForm.querySelector('input[type=file]');
+                if(fileInput) {
+                    fileInput.removeAttribute('required');
                 }
 
-                injectProductIntoForm(product, form, productsApi);
-                asynchronousFormSubmission(form);
+                injectProductIntoForm(product, createProductForm, productsApi);
                 popupWindow.classList.remove('hidden');
             });
 
@@ -146,7 +148,8 @@ productsContainer.addEventListener('click', function (event) {
                 .then(response => {
                     if (response.ok) {
                         console.log('product deleted successfully');
-                        window.location.reload(); //TODO: remove reload
+                        // window.location.reload();
+                        resetPage()
                     }
                 })
                 .catch((error) => console.error(error));
@@ -171,11 +174,16 @@ filtersCategorySelector.addEventListener('change', function () {
 // add event listener to create button
 const createProductButton = document.getElementById('create-product-button');
 createProductButton.addEventListener('click', () => {
+    resetForm(createProductForm);
+    createProductForm.action = productsApi;
+    createProductForm.enctype = 'multipart/form-data'; // just making sure
+
+    const fileInput = createProductForm.querySelector('input[type=file]');
+    if(fileInput) {
+        fileInput.setAttribute('required', '');
+    }
+
     popupWindow.classList.remove('hidden');
-    const form = popupWindow.querySelector('#create-product-form');
-    form.setAttribute('action', productsApi);
-    form.enctype = 'multipart/form-data';
-    asynchronousFormSubmission(form);
 });
 
 // add event listener to create category button

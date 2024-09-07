@@ -122,10 +122,6 @@ export function injectProductIntoForm(product, form, productUpdateRoute) {
 
     // form behavior handling
     form.setAttribute('action', `${productUpdateRoute}/${product.id}`);
-
-    // photo field is not required any more
-    //TODO: add image preview section in product form + better handling
-    form.querySelector('#photo').removeAttribute('required');
 }
 
 /**
@@ -139,14 +135,14 @@ export function asynchronousFormSubmission(form) {
         console.log(formData);
 
         // loop over form data entries
-            // if you find a photo key and there is no files uploaded
-                // remove it
-
         for(let [key, value] of formData.entries()) {
+
+            // if you find a photo key and there is no files uploaded
             if(key === 'photo') {
                 const fileInput = form.querySelector('input[type=file]');
 
                 if(! fileInput.files.length) {
+                    // remove it
                     formData.delete('photo');
                 }
             }
