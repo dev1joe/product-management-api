@@ -7,6 +7,7 @@ use App\Contracts\RequestValidatorInterface;
 use App\Entities\Category;
 use App\Entities\Manufacturer;
 use App\Exceptions\ValidationException;
+use App\Services\FileService;
 use Doctrine\ORM\EntityManager;
 use League\MimeTypeDetection\FinfoMimeTypeDetector;
 use Psr\Http\Message\UploadedFileInterface;
@@ -16,6 +17,7 @@ class CreateProductRequestValidator implements RequestValidatorInterface
 {
     public function __construct(
         private readonly EntityManager $entityManager,
+        private readonly FileService $fileService,
     ){
     }
 
@@ -80,47 +82,15 @@ class CreateProductRequestValidator implements RequestValidatorInterface
         // photo handling
         if(array_key_exists('photo', $data)) {
             /** @var UploadedFileInterface $uploadedFile */
-            $uploadedFile = $data['photo'];
+            $file = $data['photo'];
 
-            // validate that there are no upload errors
-            if($uploadedFile->getError() !== UPLOAD_ERR_OK) {
-                throw new ValidationException(['photo' => ['Failed to upload photo']]);
-            }
-
-            // 2. validate file's size
-            $maxFileSize = 5 * 1024 * 1024;
-
-            if($uploadedFile->getSize() > $maxFileSize) {
-                throw new ValidationException(['photo' => ['Maximum allowed size is 5 MBs']]);
-            }
-
-            // 3. validate file's name
-            $filename = $uploadedFile->getClientFilename();
-
-            if (! preg_match('/^[a-zA-Z0-9\s._-]+$/', $filename)) {
-                throw new ValidationException(['photo' => ['Invalid filename']]);
-            }
-
-            // 4. validate MIME type
-            // validation using data sent by the client which can be spoofed
-            $allowedMimeTypes = ['image/jpeg', 'image/png'];
-
-            if(! in_array($uploadedFile->getClientMediaType(), $allowedMimeTypes)) {
-                throw new ValidationException(['photo' => ['Invalid file type (client side validation)']]);
-            }
-
-            // validation using a Flysystem MIME type detector
-            // you can also use the built-in fInfo function BTW
-            // it can figure out the file extension or the file mime type
-            $tmpFilePath = $uploadedFile->getStream()->getMetadata('uri');
-            $detector = new FinfoMimeTypeDetector();
-            $mimeType = $detector->detectMimeType($tmpFilePath, $uploadedFile->getStream()->getContents());
-            $uploadedFile->getStream()->rewind();
-
-            if(! in_array($mimeType, $allowedMimeTypes)) {
-                throw new ValidationException(['photo' => ['Invalid file type (server side validation)']]);
-            }
-
+            $this->fileService->validateFile(
+                $file,
+                'photo',
+                5,
+                '/^[a-zA-Z0-9\s._-]+$/',
+                ['image/png', 'image/jpeg']
+            );
         }
 
         if(! $v->validate()) {

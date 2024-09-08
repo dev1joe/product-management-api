@@ -17,7 +17,7 @@ class AdminController
     ){
     }
 
-    private function format(Response $response, string $window, array $scripts = []): Response {
+    private function format(Response $response, string $window, array $stylesheets, array $scripts = []): Response {
         /** @var Administrator $admin */
         $admin = $this->authService->getAuthenticatedUser();
 
@@ -25,6 +25,7 @@ class AdminController
             'username' => $admin->getUsername(),
             'email' => $admin->getEmail(),
             'window' => $window,
+            'stylesheets' => $stylesheets,
             'scripts' => $scripts
         ];
 
@@ -35,6 +36,7 @@ class AdminController
         );
     }
 
+    //TODO: useless function
     public function index(Request $request, Response $response): Response {
         /** @var Administrator $admin */
         $admin = $this->authService->getAuthenticatedUser();
@@ -47,29 +49,39 @@ class AdminController
     }
 
     public function dashboardView(Request $request, Response $response): Response {
+        $stylesheets = [];
         $scripts = [
             'jsDeliver-charts' => ['src' => 'https://cdn.jsdelivr.net/npm/chart.js'],
             'my-charts' => ['src' => '/resources/js/chart.js'],
         ];
 
-        return $this->format($response, '/windows/analyticsWindow.twig', $scripts);
+        return $this->format($response, '/windows/analyticsWindow.twig', $stylesheets, $scripts);
     }
 
     public function productsView(Request $request, Response $response): Response {
+        $stylesheets = [
+            ['name' => 'productCard.css', 'url' => '/resources/css/productCard.css'],
+            ['name' => 'productForm.css', 'url' => '/resources/css/productForm.css'],
+        ];
+
         $scripts = [
             'products-script' => ['src' => '/resources/js/products.js'],
         ];
 
-        return $this->format($response, '/windows/productsWindow.twig', $scripts);
+        return $this->format($response, '/windows/productsWindow.twig', $stylesheets, $scripts);
     }
 
     public function categoryView(Request $request, Response $response): Response {
+        $stylesheets = [
+            ['name' => 'categoryCard.css', 'url' => '/resources/css/categoryCard.css'],
+            ['name' => 'categoryForm.css', 'url' => '/resources/css/categoryForm.css'],
+        ];
+
         $scripts = [
             'categories-script' => ['src' => '/resources/js/categories.js'],
         ];
 
-
-        return $this->format($response, '/windows/categoriesWindow.twig', $scripts);
+        return $this->format($response, '/windows/categoriesWindow.twig', $stylesheets, $scripts);
     }
 
     public function viewRequest(Request $request, Response $response): Response {

@@ -32,8 +32,11 @@ class CategoryController
         // get data
         $data = $request->getParsedBody();
 
-        if ($data === null) {
-            $data = json_decode($request->getBody()->getContents(), true); // Parse JSON manually
+        // get image
+        $uploadedFiles = $request->getUploadedFiles();
+
+        if(isset($uploadedFiles['image'])) {
+            $data['image'] = $uploadedFiles['image'];
         }
 
         // validate

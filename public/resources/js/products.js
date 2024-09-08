@@ -2,18 +2,21 @@ import {
     fetchProducts,
     fillEntitiesAsSelectorOptions,
     injectProductIntoForm,
-    resetForm,
-    asynchronousFormSubmission,
 } from "./products-helper.js";
 
-import {fetchData, fetchHtml} from "./helperFunctions.js";
+import {
+    fetchData,
+    fetchHtml,
+    resetForm,
+    asynchronousFormSubmission
+} from "./helperFunctions.js";
 
 //______________DEFINITIONS
 
 const productsApi = '/api/products';
 const categoriesApi = '/api/categories';
 const manufacturersApi = '/api/manufacturers/names';
-const productCardRoute = '/resources/views/elements/adminProductCard.twig';
+const productCardRoute = '/resources/views/elements/adminProductCard.html';
 const productCard = await fetchHtml(productCardRoute);
 const productsContainer = document.getElementById('products-container');
 const showMoreProductsButton = document.getElementById('show-more-button');
@@ -38,22 +41,29 @@ let manufacturers = await fetchData(manufacturersApi, 'json');
 const filtersCategorySelector = document.getElementById('filters-category-selector');
 fillEntitiesAsSelectorOptions(filtersCategorySelector, categories);
 
-// put create create product form in the DOM
+// put create product form in the DOM
 const popupWindow = document.getElementById('popup-window');
 
+//TODO: in createProductForm: make the first child a container not a heading tag
+// or add a query parameter to the fetchHtml function so that the function returns the result of the query
 await fetchHtml(
     '/resources/views/elements/createProductForm.html',
     popupWindow.querySelector('#popup-content')
 );
 
 const createProductForm = popupWindow.querySelector('form#create-product-form');
-asynchronousFormSubmission(createProductForm)
+const imageContainer = popupWindow.querySelector('div.image-container');
+asynchronousFormSubmission(createProductForm, resetPage);
 // popupWindow.querySelector('#popup-content').appendChild(createProductForm);
 
 popupWindow.querySelector('#close-button').addEventListener('click', () => {
-    resetForm(createProductForm);
+    try {
+        resetForm(createProductForm, imageContainer);
+    } catch(e) {
+        console.error(e);
+    }
     popupWindow.classList.add('hidden');
-})
+});
 
 // activate create product form
 let categorySelector = createProductForm.querySelector('#category-selector');
@@ -87,7 +97,7 @@ export function run() {
 }
 
 export function resetPage() {
-    resetForm(createProductForm);
+    resetForm(createProductForm, imageContainer);
     popupWindow.classList.add('hidden');
 
     // when `fetchProducts` function finds that the page is 1,
@@ -174,7 +184,7 @@ filtersCategorySelector.addEventListener('change', function () {
 // add event listener to create button
 const createProductButton = document.getElementById('create-product-button');
 createProductButton.addEventListener('click', () => {
-    resetForm(createProductForm);
+    resetForm(createProductForm, imageContainer);
     createProductForm.action = productsApi;
     createProductForm.enctype = 'multipart/form-data'; // just making sure
 
@@ -228,7 +238,6 @@ createCategoryButton.addEventListener('click', async function()  {
 
 // create product form: show image if a one is chosen
 const imageInput = createProductForm.querySelector('input[type=file]');
-const imageContainer = createProductForm.parentElement.querySelector('div.image-container');
 
 if(imageInput && imageContainer) {
 

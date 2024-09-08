@@ -102,7 +102,7 @@ class ProductController
         $uploadedFiles = $request->getUploadedFiles();
 
         if(isset($uploadedFiles['photo'])) {
-            $data['photo'] = $request->getUploadedFiles()['photo'];
+            $data['photo'] = $uploadedFiles['photo'];
         }
 
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);

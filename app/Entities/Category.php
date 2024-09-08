@@ -40,6 +40,17 @@ class Category
         return $this;
     }
 
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): Category
+    {
+        $this->image = $image;
+        return $this;
+    }
+
     public function getProductCount(): int
     {
         return $this->productCount;

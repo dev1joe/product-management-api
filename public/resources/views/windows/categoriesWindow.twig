@@ -4,12 +4,12 @@
     </div>
     <div class="filters-section">
         <select id="filters-sorting-selector">
-            <option value="" selected>Recommended</option>
-            <option title="name" value="asc">Alphabetically</option>
-            <option title="productCount" value="asc">Lowest Product Count</option>
-            <option title="productCount" value="desc">Highest Product Count</option>
+            <option data-name="updatedAt" data-dir="desc" value="last-updated">Last updated</option>
+            <option data-name="name" data-dir="asc" value="alphabetically">Alphabetically</option>
+            <option data-name="productCount" data-dir="asc" value="lowest-product-count">Lowest Product Count</option>
+            <option data-name="productCount" data-dir="desc" value="highest-product-count">Highest Product Count</option>
         </select>
-        <button type="button" class="submit-button" id="create-product-button">Create Category</button>
+        <button type="button" class="submit-button" id="create-category-button">Create Category</button>
     </div>
 </div>
 
