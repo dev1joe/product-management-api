@@ -110,12 +110,11 @@ class ProductController
 
         $id = (int) $args['id'];
         $product = $this->productService->fetchProductById($id);
-
         if(! $product) {
             return $response->withStatus(404);
         }
 
-        [$isChanged, $message] = $this->productService->update($id, $data);
+        [$isChanged, $message] = $this->productService->update($product, $data);
         if($isChanged) {
             $status = 200;
             // $message = 'product updated successfully';

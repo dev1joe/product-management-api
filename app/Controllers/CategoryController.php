@@ -3,21 +3,16 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Entities\Category;
-use App\Exceptions\MethodNotImplementedException;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\CategoryService;
-use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
 
 class CategoryController
 {
-    // TODO: refactor to category service
     public function __construct(
-        private readonly EntityManager $entityManager,
         private readonly Twig $twig,
         private readonly RequestValidatorFactory $requestValidatorFactory,
         private readonly CategoryService $categoryService,
@@ -67,7 +62,7 @@ class CategoryController
             array_key_exists('orderDir', $queryParams) &&
             in_array(strtolower($queryParams['orderDir']), ['asc', 'desc']) &&
             array_key_exists('orderBy', $queryParams) &&
-            in_array($queryParams['orderBy'], ['productCount', 'name'])
+            in_array($queryParams['orderBy'], ['productCount', 'name', 'createdAt', 'updatedAt'])
         ) {
             // fetch paginated
             $result = $this->categoryService->fetchPaginatedCategories($queryParams);
@@ -81,17 +76,7 @@ class CategoryController
 
     public function fetchById(Request $request, Response $response, array $args): Response {
         $id = (int) $args['id'];
-        $arrayCategory = $this->entityManager->getRepository(Category::class)
-            ->createQueryBuilder('c')
-            ->select('c')
-            ->where('c.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery()->getArrayResult();
-
-
-        if(sizeof($arrayCategory) < 1) {
-            return $response->withStatus(404);
-        }
+        $arrayCategory = $this->categoryService->fetchByIdAsArray($id);
 
         $response->getBody()->write(json_encode($arrayCategory));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
@@ -99,14 +84,12 @@ class CategoryController
 
     public function delete(Request $request, Response $response, array $args): Response {
         $id = (int) $args['id'];
-        $category = $this->entityManager->find(Category::class, $id);
-
+        $category = $this->categoryService->fetchById($id);
         if(! $category) {
             return $response->withStatus(404);
         }
 
-        $this->entityManager->remove($category);
-        $this->entityManager->flush();
+        $this->categoryService->delete($category);
 
         $successMessage = [
             'message' => 'Category deleted successfully',
@@ -119,23 +102,24 @@ class CategoryController
 
     public function update(Request $request, Response $response, array $args): Response {
         // get and validate data FIRST
-        $data = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class)
-            ->validate($request->getParsedBody());
+        $data = $request->getParsedBody();
+        $uploadedFiles = $request->getUploadedFiles();
+
+        if(isset($uploadedFiles['image'])) {
+            $data['image'] = $uploadedFiles['image'];
+        }
+
+        $validator = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class);
+        $data = $validator->validate($data);
 
         $id = (int) $args['id'];
-
-        /** @var Category $category */
-        $category = $this->entityManager->find(Category::class, $id);
-
+        $category = $this->categoryService->fetchById($id);
         if(! $category) {
             return $response->withStatus(404);
         }
 
         // real update
-        $category->setName($data['name']);
-
-        $this->entityManager->persist($category);
-        $this->entityManager->flush();
+        $this->categoryService->update($category, $data);
 
         $message = [
             'message' => 'category updated successfully!',

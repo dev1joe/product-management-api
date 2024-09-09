@@ -46,10 +46,11 @@ const popupWindow = document.getElementById('popup-window');
 
 //TODO: in createProductForm: make the first child a container not a heading tag
 // or add a query parameter to the fetchHtml function so that the function returns the result of the query
-await fetchHtml(
-    '/resources/views/elements/createProductForm.html',
-    popupWindow.querySelector('#popup-content')
-);
+
+// await fetchHtml(
+//     '/resources/views/elements/createProductForm.html',
+//     popupWindow.querySelector('#popup-content')
+// );
 
 const createProductForm = popupWindow.querySelector('form#create-product-form');
 const imageContainer = popupWindow.querySelector('div.image-container');
@@ -111,7 +112,7 @@ export function resetPage() {
     };
 
     // modify sorting to bring last updated first
-    // change in sorting triggers tha run function
+    // change in sorting triggers the run function
     filtersSortSelector.value = 'last-updated';
     const changeEvent = new Event('change');
     filtersSortSelector.dispatchEvent(changeEvent);

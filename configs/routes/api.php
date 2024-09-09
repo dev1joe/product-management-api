@@ -24,6 +24,7 @@ return function(App $app) {
         //TODO: a route for fetching all categories with all data and a router for all categories but only names and ids
         $group->get('/categories', [CategoryController::class, 'fetchAllPaginated']);
         $group->post('/categories', [CategoryController::class, 'create']);
+        $group->post('/categories/{id}', [CategoryController::class, 'update']);
         $group->delete('/categories/{id}', [CategoryController::class, 'delete']);
 
         //[___________________________ categories ___________________________]

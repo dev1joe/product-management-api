@@ -201,3 +201,12 @@ function displayValidationErrors(form, errors) {
         }
     }
 }
+
+/**
+ * @param {int} id
+ * @param {Array<Object>} array
+ * @returns {Object}
+ */
+export function findEntityById(id, array) {
+    return array.find(category => category.id === id);
+}

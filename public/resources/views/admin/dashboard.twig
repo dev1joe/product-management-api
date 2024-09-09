@@ -321,8 +321,17 @@
 </div>
 <div id="popup-window" class="hidden">
     <div id="popup-content" class="popup-content">
+    {% if popupForm %}
+        {{ include(popupForm) }}
+    {% else %}
         <h2>Lorem ipsum dolor sit amet, consectetur.</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad adipisci aut blanditiis consequatur dicta ducimus eligendi exercitationem explicabo facere fugit id illo, ipsa ipsum magni nulla odio optio possimus quaerat quod quos recusandae reprehenderit repudiandae rerum soluta veritatis voluptas voluptatem voluptates. At blanditiis consequatur, cupiditate doloremque eligendi esse eum expedita ipsa libero maiores nulla pariatur porro recusandae sapiente tempore vero voluptatibus. Autem blanditiis consequuntur cum dicta eos fugiat laboriosam pariatur.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad adipisci aut blanditiis consequatur dicta ducimus</p>
+        <p>eligendi exercitationem explicabo facere fugit id illo, ipsa ipsum magni nulla odio optio possimus quaerat quod </p>
+        <p>quos recusandae reprehenderit repudiandae rerum soluta veritatis voluptas voluptatem voluptates. At blanditiis consequatur. </p>
+        <p>cupiditate doloremque eligendi esse eum expedita ipsa libero maiores nulla pariatur porro recusandae sapiente tempore vero voluptatibus.</p>
+        <p>Autem blanditiis consequuntur cum dicta eos fugiat laboriosam pariatur.</p>
+    {% endif %}
+
     </div>
     <button type="button" id="close-button" class="close-button">Close</button>
 </div>

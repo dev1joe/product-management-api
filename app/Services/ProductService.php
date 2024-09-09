@@ -123,8 +123,7 @@ class ProductService
      * @throws FilesystemException
      * @throws ORMException
      */
-    public function update(int $id, array $data): array {
-        $product = $this->fetchProductById($id);
+    public function update(Product $product, array $data): array {
         $isChanged = false;
         $message = '';
 

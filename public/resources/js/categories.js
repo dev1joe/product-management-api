@@ -5,6 +5,7 @@ import {
     resetForm,
     injectImageInputInContainer,
     asynchronousFormSubmission,
+    findEntityById,
 } from "./helperFunctions.js";
 
 //______________DEFINITIONS
@@ -39,7 +40,11 @@ document.getElementById('categories-button').classList.add('active');
     // inject category data in the card
     categories.forEach(c => {
         let card = categoryCard.cloneNode(true);
-        card.querySelector('.category-img').setAttribute('src', '/storage/categories/1280x720.svg');
+
+        /** @var {string} imageSource*/
+        const imageSource = (c.image)? c.image : '/storage/categories/1280x720.svg';
+
+        card.querySelector('.category-img').setAttribute('src', imageSource);
         card.querySelector('.category-name').textContent = c.name;
         card.querySelector('.number').textContent = c.productCount;
         card.querySelector('#edit-button').setAttribute('data-id', c.id);
@@ -67,10 +72,10 @@ resetPage();
 
 //______________EVENT LISTENERS
 // fetch and inject "create category" form
-await fetchHtml(
-    '/resources/views/elements/createCategoryForm.html',
-    popupWindow.querySelector('div#popup-content')
-);
+// await fetchHtml(
+//     '/resources/views/elements/createCategoryForm.html',
+//     popupWindow.querySelector('div#popup-content')
+// );
 
 const createCategoryForm = popupWindow.querySelector('form#create-category-form');
 asynchronousFormSubmission(createCategoryForm, resetPage);
@@ -107,6 +112,13 @@ categoriesContainer.addEventListener('click', function(event) {
 
     if(editButton) {
         //TODO: handle edit button
+        const id = parseInt(editButton.getAttribute('data-id'));
+        // console.log(`searching for category ${id}`);
+
+        const currentCategory = findEntityById(id, categories);
+        //console.log(currentCategory);
+        injectCategoryIntoForm(currentCategory, createCategoryForm, categoriesApi);
+        popupWindow.classList.remove('hidden');
     } else if(deleteButton) {
         //TODO: handle delete restrictions (view it in the frontend)
         if(confirm('delete category, are you sure ?')) {
@@ -124,6 +136,7 @@ categoriesContainer.addEventListener('click', function(event) {
                         console.error(response.statusText);
                     } else {
                         console.log('category deleted successfully');
+                        resetPage();
                     }
                 })
                 .catch(error => console.log(error));
@@ -131,3 +144,15 @@ categoriesContainer.addEventListener('click', function(event) {
     }
 })
 
+function injectCategoryIntoForm(category, form, categoriesApi) {
+    form.querySelector('#name').value = category.name;
+
+    if(category.image) {
+        const imagePreview = form.querySelector('#image');
+
+        imagePreview.style.backgroundImage = `url(\'${category.image}\')`;
+        imagePreview.classList.remove('hidden');
+    }
+
+    form.action = `${categoriesApi}/${category.id}`;
+}
