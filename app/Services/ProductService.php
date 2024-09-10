@@ -69,7 +69,7 @@ class ProductService
     }
 
     public function fetchPaginatedProducts(ProductQueryParams $params): array {
-        // calculate offset
+        // calculate page
         $offset = ($params->page - 1) * $params->limit;
 
         // execute query and return result
@@ -197,5 +197,14 @@ class ProductService
         }
 
         return [$isChanged, 'no fields changed'];
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    public function delete(Product $product): void {
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
     }
 }

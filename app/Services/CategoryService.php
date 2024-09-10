@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\CategoryQueryParams;
 use App\Entities\Category;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
@@ -50,14 +51,14 @@ class CategoryService
 
     /**
      * assumes that query parameters exit and validated
-     * @param array $queryParams
+     * @param CategoryQueryParams $queryParams
      * @return array
      */
-    public function fetchPaginatedCategories(array $queryParams): array {
+    public function fetchPaginatedCategories(CategoryQueryParams $queryParams): array {
         return $this->entityManager->getRepository(Category::class)
             ->createQueryBuilder('c')
             ->select('c')
-            ->orderBy('c.' . $queryParams['orderBy'], $queryParams['orderDir'])
+            ->orderBy('c.' . $queryParams->orderBy, $queryParams->orderDir)
             ->getQuery()
             ->getArrayResult();
     }
@@ -113,7 +114,7 @@ class CategoryService
      * @throws OptimisticLockException
      * @throws ORMException
      */
-    public function delete(Category $category) {
+    public function delete(Category $category): void {
         $this->entityManager->remove($category);
         $this->entityManager->flush();
     }

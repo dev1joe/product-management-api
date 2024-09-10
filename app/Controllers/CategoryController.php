@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\DataObjects\CategoryQueryParams;
+use App\Exceptions\MissingQueryParamsException;
+use App\Exceptions\ValidationException;
+use App\QueryValidators\CategoryQueryValidator;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\CategoryService;
@@ -54,21 +58,16 @@ class CategoryController
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
-        $queryParams = $request->getQueryParams();
+        $queryParams = new CategoryQueryParams($request->getQueryParams());
 
-        // I need two parameters, orderBy and orderDir, can't use only one
-        if(
-            sizeof($queryParams) === 2 &&
-            array_key_exists('orderDir', $queryParams) &&
-            in_array(strtolower($queryParams['orderDir']), ['asc', 'desc']) &&
-            array_key_exists('orderBy', $queryParams) &&
-            in_array($queryParams['orderBy'], ['productCount', 'name', 'createdAt', 'updatedAt'])
-        ) {
-            // fetch paginated
+        try {
+            (new CategoryQueryValidator())->validate($queryParams);
             $result = $this->categoryService->fetchPaginatedCategories($queryParams);
-        } else {
+
+        } catch (ValidationException|MissingQueryParamsException $e) {
             $result = $this->categoryService->fetchAll();
         }
+        // any other exception will pop into my face, haha.
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');

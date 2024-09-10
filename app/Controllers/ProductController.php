@@ -6,7 +6,9 @@ namespace App\Controllers;
 use App\DataObjects\ProductQueryParams;
 use App\Entities\Category;
 use App\Exceptions\MethodNotImplementedException;
+use App\Exceptions\MissingQueryParamsException;
 use App\Exceptions\ValidationException;
+use App\QueryValidators\ProductQueryValidator;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UploadProductPhotoRequestValidator;
@@ -26,14 +28,12 @@ use Slim\Views\Twig;
 class ProductController
 {
     public function __construct(
-        private readonly EntityManager $entityManager,
         private readonly Twig $twig,
         private readonly CategoryService $categoryService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
         private readonly ProductService $productService,
     ){
     }
-    // TODO: refactor to product service
 
     /**
      * @throws OptimisticLockException
@@ -80,13 +80,20 @@ class ProductController
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
-        //TODO: wrong queryParams values can throw errors
-        // either errors should be handled or queryParams should be validated
+        $queryParams = new ProductQueryParams($request->getQueryParams());
 
-        $queryParams = $request->getQueryParams();
-        $queryParams = new ProductQueryParams($queryParams);
-
-        $result = $this->productService->fetchPaginatedProducts($queryParams);
+        try {
+            (new ProductQueryValidator())->validate($queryParams);
+            $result = $this->productService->fetchPaginatedProducts($queryParams);
+        } catch(ValidationException|MissingQueryParamsException $e) {
+            $result = $this->productService->fetchAll();
+        }
+        //TODO: do not fetch all
+        //TODO: 404 response for missing query parameters exception
+        //TODO: xxx response for validation exception
+        //TODO: xxx response for ORM\QueryException
+        //TODO: exception handling
+        //TODO: same todos for category
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
@@ -130,9 +137,7 @@ class ProductController
     public function delete(Request $request, Response $response, array $args): Response {
         $id = (int) $args['id'];
 
-        /** @var Product $product */
-        $product = $this->entityManager->find(Product::class, $id);
-
+        $product = $this->productService->fetchProductById($id);
         if(! $product) {
             return $response->withStatus(404);
         }
@@ -140,9 +145,7 @@ class ProductController
 //        $category = $product->getCategory();
 //        $category->decrementProductCount(1);
 //        $this->entityManager->persist($category);
-
-        $this->entityManager->remove($product);
-        $this->entityManager->flush();
+        $this->productService->delete($product);
 
         $successMessage = [
             'message' => 'Product deleted successfully',
