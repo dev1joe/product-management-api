@@ -55,12 +55,19 @@ class CategoryService
      * @return array
      */
     public function fetchPaginatedCategories(CategoryQueryParams $queryParams): array {
-        return $this->entityManager->getRepository(Category::class)
+        $query = $this->entityManager->getRepository(Category::class)
             ->createQueryBuilder('c')
-            ->select('c')
-            ->orderBy('c.' . $queryParams->orderBy, $queryParams->orderDir)
-            ->getQuery()
-            ->getArrayResult();
+            ->select('c');
+
+            if($queryParams->orderBy) {
+                $query->orderBy('c.' . $queryParams->orderBy, $queryParams->orderDir);
+            }
+
+            if($queryParams->limit) {
+                $query->setMaxResults($queryParams->limit);
+            }
+
+            return $query->getQuery()->getArrayResult();
     }
 
     public function fetchCategoryNames(): array {

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,-50..200"/>
+
+    {% if stylesheets %}
+    {% for sheet in stylesheets %}
+    <link rel="stylesheet" href="{{ sheet.url }}">
+    {% endfor %}
+    {% endif %}
+
+</head>
+<body>
+{% if navbar %}
+{{ include(navbar) }}
+{% endif %}
+<div class="container" id="container">
+    <div class="sidebar">
+        <div class="filter-card">
+            <h4 class="bread-crumbs">Home > Products</h4>
+            <p class="small-text light-gray">100 items</p>
+        </div>
+
+        <div class="filter-card">
+            <div class="card-head">
+                <h4>Category</h4>
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+            </div>
+            <div class="card-tail">
+                <select id="filters-category-selector">
+                    <option value="null" selected>All Categories</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <div class="card-head">
+                <h4>Sort By</h4>
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+            </div>
+            <div class="card-tail">
+                <select id="filters-sorting-selector">
+                    <option data-name="updatedAt" data-dir="desc" value="last-updated" selected>Last Updated
+                    </option>
+                    <option data-name="unitPriceInCents" data-dir="asc" value="lowest-price">Lowest Price</option>
+                    <option data-name="unitPriceInCents" data-dir="desc" value="highest-price">Highest Price
+                    </option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <div class="card-head">
+                <h4>Price</h4>
+                <span class="material-symbols-outlined">keyboard_arrow_down</span>
+            </div>
+            <div class="card-tail">
+                <div class="price-range-component">
+                    <div class="price-inputs">
+                        <div>$ <input type="number"></div>
+                        <div>$ <input type="number"></div>
+                    </div>
+                    <div class="price-slider"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="window">
+            <div class="content" id="content">
+                <!-- new content here -->
+                <div id="products-container"></div>
+            </div>
+        </div>
+        <button type="button" id="show-more-button" class="show-more-button hidden">load more</button>
+    </div>
+</div>
+<div id="popup-window" class="hidden">
+    <div id="popup-content" class="popup-content">
+        {% if popupForm %}
+            {{ include(popupForm) }}
+        {% else %}
+            <h2>Lorem ipsum dolor sit amet, consectetur.</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad adipisci aut blanditiis consequatur dicta
+                ducimus</p>
+            <p>eligendi exercitationem explicabo facere fugit id illo, ipsa ipsum magni nulla odio optio possimus
+                quaerat quod </p>
+            <p>quos recusandae reprehenderit repudiandae rerum soluta veritatis voluptas voluptatem voluptates. At
+                blanditiis consequatur. </p>
+            <p>cupiditate doloremque eligendi esse eum expedita ipsa libero maiores nulla pariatur porro recusandae
+                sapiente tempore vero voluptatibus.</p>
+            <p>Autem blanditiis consequuntur cum dicta eos fugiat laboriosam pariatur.</p>
+        {% endif %}
+
+    </div>
+    <button type="button" id="close-button" class="close-button">Close</button>
+</div>
+
+<!-- <button type="button" class="another-button">X</button> -->
+
+{% if scripts %}
+{% for script in scripts %}
+<script type="module" src={{ script.src }}></script>
+{% endfor %}
+{% endif %}
+
+</body>
+</html>

@@ -16,9 +16,12 @@ use App\Middlewares\GuestMiddleware;
 use App\Middlewares\ProfileMiddleware;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 
 return function(App $app) {
     $app->get('/', [HomeController::class, 'index']);
+    $app->get('/products', [HomeController::class, 'products']);
     $app->get('/products/{id}', [ProductController::class, 'productPage']);
 
     $app->group('', function (RouteCollectorProxy $group) {
@@ -42,7 +45,11 @@ return function(App $app) {
 
 
     $app->group('/admin', function(RouteCollectorProxy $group) {
-        $group->get('', [AdminController::class, 'index']);
+        $group->get('', function(Request $request, Response $response) {
+            return $response
+                ->withHeader('Location', '/admin/dashboard')
+                ->withStatus(302);
+        });
         $group->get('/dashboard', [AdminController::class, 'dashboardView']);
         $group->post('/view', [AdminController::class, 'viewRequest']);
 

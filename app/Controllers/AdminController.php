@@ -17,6 +17,11 @@ class AdminController
     ){
     }
 
+    private array $globalStylesheets = [
+        ['name' => 'pagination.css', 'url' => '/resources/css/pagination.css'],
+        ['name' => 'windows.css', 'url' => '/resources/css/windows.css'],
+    ];
+
     private function formatResponse(
         Response $response,
         string $window,
@@ -26,6 +31,8 @@ class AdminController
     ): Response {
         /** @var Administrator $admin */
         $admin = $this->authService->getAuthenticatedUser();
+
+        $stylesheets = array_merge($this->globalStylesheets, $stylesheets);
 
         $options = [
             'username' => $admin->getUsername(),
@@ -57,17 +64,18 @@ class AdminController
 
     public function dashboardView(Request $request, Response $response): Response {
         $stylesheets = [];
+
         $scripts = [
             'jsDeliver-charts' => ['src' => 'https://cdn.jsdelivr.net/npm/chart.js'],
             'my-charts' => ['src' => '/resources/js/chart.js'],
         ];
 
         return $this->formatResponse(
-            $response,
-            '/windows/analyticsWindow.twig',
-            '',
-            $stylesheets,
-            $scripts
+            response: $response,
+            window: '/windows/analyticsWindow.twig',
+            popupForm: '',
+            stylesheets: $stylesheets,
+            scripts: $scripts
         );
     }
 
@@ -82,11 +90,12 @@ class AdminController
         ];
 
         return $this->formatResponse(
-            $response,
-            '/windows/productsWindow.twig',
-            '/elements/createProductForm.html',
-            $stylesheets,
-            $scripts);
+            response: $response,
+            window: '/windows/productsWindow.twig',
+            popupForm: '/elements/createProductForm.html',
+            stylesheets: $stylesheets,
+            scripts: $scripts
+        );
     }
 
     public function categoryView(Request $request, Response $response): Response {
@@ -100,11 +109,12 @@ class AdminController
         ];
 
         return $this->formatResponse(
-            $response,
-            '/windows/categoriesWindow.twig',
-            '/elements/createCategoryForm.html',
-            $stylesheets,
-            $scripts);
+            response: $response,
+            window: '/windows/categoriesWindow.twig',
+            popupForm: '/elements/createCategoryForm.html',
+            stylesheets: $stylesheets,
+            scripts: $scripts
+        );
     }
 
     public function viewRequest(Request $request, Response $response): Response {

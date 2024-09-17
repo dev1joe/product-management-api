@@ -74,7 +74,7 @@ class ProductController
             throw new ValidationException(['id' => ["id not found in route arguments"]]);
         }
 
-        $product = $this->productService->fetchProductByIdAsArray($id);
+        $product = $this->productService->fetchByIdAsArray($id);
         $response->getBody()->write(json_encode($product));
         return $response->withHeader('Content-Type', 'application/json');
     }
@@ -116,7 +116,7 @@ class ProductController
         $data = $validator->validate($data);
 
         $id = (int) $args['id'];
-        $product = $this->productService->fetchProductById($id);
+        $product = $this->productService->fetchById($id);
         if(! $product) {
             return $response->withStatus(404);
         }
@@ -137,7 +137,7 @@ class ProductController
     public function delete(Request $request, Response $response, array $args): Response {
         $id = (int) $args['id'];
 
-        $product = $this->productService->fetchProductById($id);
+        $product = $this->productService->fetchById($id);
         if(! $product) {
             return $response->withStatus(404);
         }

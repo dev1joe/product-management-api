@@ -1,5 +1,4 @@
 import {applyFilters} from "./helperFunctions.js";
-import {resetPage, run} from "./products.js";
 
 /**
  * @param {string} route
@@ -21,16 +20,12 @@ export async function getProductCard(route) {
 function fillProductCard(card, product) {
     card.querySelector('.product-img').setAttribute('src', product.photo);
     card.querySelector('.product-name').textContent = product.name;
-    card.querySelector('button').setAttribute('data-id', product.id)
     card.querySelector('.price').textContent = `$${(product.unitPriceInCents / 100)}`;
 
-    // handling edit button
-    const editButton = card.querySelector('#edit-button');
-    editButton.setAttribute('data-id', product.id);
-
-    // handling delete button
-    const deleteButton = card.querySelector('#delete-button');
-    deleteButton.setAttribute('data-id', product.id);
+    const buttons = card.querySelectorAll('button');
+    buttons.forEach(b => {
+        b.setAttribute('data-id', product.id);
+    });
 
     return card;
 }
@@ -44,7 +39,7 @@ function fillProductCard(card, product) {
  */
 export function fetchProducts({route = '/api/products', filters, card, container, showMoreButton} = {}) {
     const url = applyFilters(filters, route);
-    // console.log(url);
+    console.log(url);
 
     fetch(url)
         .then(response => response.json())
@@ -61,7 +56,7 @@ export function fetchProducts({route = '/api/products', filters, card, container
             }
             showMoreButton.classList.remove('hidden');
 
-            // console.log(data);
+            console.log(data);
 
             data.forEach(product => {
                 // add data to node
@@ -75,21 +70,6 @@ export function fetchProducts({route = '/api/products', filters, card, container
         .catch((error) => {
             console.error(error);
         });
-}
-
-
-/**
- * @param {HTMLSelectElement} container
- * @param {Array} entities
- */
-export function fillEntitiesAsSelectorOptions(container, entities) {
-    entities.forEach(e => {
-        const optionElement = document.createElement('option');
-        optionElement.textContent = e.name;
-        optionElement.value = e.id;
-
-        container.appendChild(optionElement);
-    });
 }
 
 /**

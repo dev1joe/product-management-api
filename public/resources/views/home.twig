@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/resources/css/styles.css">
-    <link rel="stylesheet" href="/resources/css/elements/productCard.css">
     <title>Electronics Store</title>
+
+    <link rel="stylesheet" href="/resources/css/home.css">
+    <link rel="stylesheet" href="/resources/css/productCard.css">
+    {% if stylesheets %}
+    {% for sheet in stylesheets %}
+    <link rel="stylesheet" href="{{ sheet.url }}">
+    {% endfor %}
+    {% endif %}
 </head>
 <body>
     {{ include('/elements/navbar.twig') }}
@@ -18,6 +24,32 @@
         <button class="banner-btn left" onclick="prevSlide()">&#10094;</button>
         <button class="banner-btn right" onclick="nextSlide()">&#10095;</button>
     </div>
+
+    <section class="categories-section">
+        <div class="categories-container">
+            {% if categories %}
+                {% for category in categories %}
+
+                    {% set image = (category.image)? category.image : defaultCategory %}
+                    <a href="/products?category={{ category.id }}">
+                        <!-- TODO: the link -->
+                        <div class="category-card">
+                            <img src="{{ image }}" class="category-image">
+                            <p class="category-title">{{ category.name }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% endif %}
+
+            <a href="/products">
+                <div class="category-card">
+                    <img src="/storage/other/view-all.svg" class="category-image">
+                    <p class="category-title">View All Products</p>
+                </div>
+            </a>
+
+        </div>
+    </section>
 
     <section class="products-section">
         <h2>New Products</h2>

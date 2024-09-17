@@ -1,6 +1,5 @@
 import {
     fetchProducts,
-    fillEntitiesAsSelectorOptions,
     injectProductIntoForm,
 } from "./products-helper.js";
 
@@ -8,7 +7,8 @@ import {
     fetchData,
     fetchHtml,
     resetForm,
-    asynchronousFormSubmission
+    asynchronousFormSubmission,
+    fillEntitiesAsSelectorOptions
 } from "./helperFunctions.js";
 
 //______________DEFINITIONS
@@ -16,8 +16,7 @@ import {
 const productsApi = '/api/products';
 const categoriesApi = '/api/categories';
 const manufacturersApi = '/api/manufacturers/names';
-const productCardRoute = '/resources/views/elements/adminProductCard.html';
-const productCard = await fetchHtml(productCardRoute);
+const productCard = await fetchHtml('/resources/views/elements/adminProductCard.html');
 const productsContainer = document.getElementById('products-container');
 const showMoreProductsButton = document.getElementById('show-more-button');
 const filtersSortSelector = document.getElementById('filters-sorting-selector');

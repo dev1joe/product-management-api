@@ -109,12 +109,24 @@ class ProductService
             ->getQuery();
     }
 
-    public function fetchProductByIdAsArray(int $id): array {
+    public function fetchByIdAsArray(int $id): array {
         return $this->fetchProduct($id)->getArrayResult();
     }
 
-    public function fetchProductById(int $id): ?Product {
+    public function fetchById(int $id): ?Product {
         return $this->fetchProduct($id)->getOneOrNullResult();
+    }
+
+    public function fetchByCategory(int $id): array {
+        return $this->entityManager->getRepository(Product::class)
+            ->createQueryBuilder('p')
+            ->select('p', 'c', 'm')
+            ->leftJoin('p.category', 'c')
+            ->leftJoin('p.manufacturer', 'm')
+            ->where('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getArrayResult();
     }
 
     /**

@@ -52,6 +52,11 @@
 // TODO: check stripe
 
 # Learning
+## PHP
+### Heredoc & Nowdoc
+- Heredoc encloses the result in <strong>double</strong> quotes, meaning that <strong>it can have variables inside</strong>.
+- Nowdoc encloses the result in <strong>single</strong> quotes, it can NOT have variables inside.
+
 
 ## Slim Framework
 ### Middlewares

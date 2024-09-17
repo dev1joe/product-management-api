@@ -12,10 +12,10 @@ export async function fetchData(api, format) {
     } else {
         let data;
 
-        if(format === 'json') {
-            data = await response.json();
-        } else if(format === 'text') {
+        if(format === 'text') {
             data = await response.text();
+        } else {
+            data = await response.json();
         }
 
         return data;
@@ -126,6 +126,7 @@ export function injectImageInputInContainer(imageInput, container) {
  * @param {Function} resetPageFunction
  */
 export function asynchronousFormSubmission(form, resetPageFunction) {
+    console.trace();
     form.addEventListener('submit', async function (event) {
         event.preventDefault();
 
@@ -167,6 +168,9 @@ export function asynchronousFormSubmission(form, resetPageFunction) {
 
             // window.location.reload();
             resetPageFunction()
+
+            const imageContainer = form.parentElement.parentElement.querySelector('div.image-container');
+            resetForm(form, imageContainer);
         } else {
             const status = response.status;
 
@@ -209,4 +213,23 @@ function displayValidationErrors(form, errors) {
  */
 export function findEntityById(id, array) {
     return array.find(category => category.id === id);
+}
+
+/**
+ * @param {HTMLSelectElement} container
+ * @param {Array} entities
+ */
+export function fillEntitiesAsSelectorOptions(container, entities) {
+    entities.forEach(e => {
+        const optionElement = document.createElement('option');
+        optionElement.textContent = e.name;
+        optionElement.value = e.id;
+
+        container.appendChild(optionElement);
+    });
+}
+
+export function clearQueryParams() {
+    const url = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, url);
 }
