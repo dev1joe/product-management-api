@@ -64,8 +64,24 @@
 
     <div class="main">
         <div class="window">
-            {% if window %}
-            {{ include(window) }}
+            {% if filters %}
+            <div class="header-box">
+                <div class="text-section">
+                    <h4 class="bread-crumbs">Home > Products</h4>
+                    <p class="small-text light-gray">
+                        <span id="meta-count">100</span> items
+                    </p>
+                </div>
+                <div class="filters-section">
+                    {% for f in filters %}
+                    {{ include(f) }}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if containerId %}
+            <div id="{{ containerId }}"></div>
             {% endif %}
         </div>
         <button type="button" id="show-more-button" class="show-more-button hidden">load more</button>

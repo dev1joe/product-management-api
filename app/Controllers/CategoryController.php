@@ -69,8 +69,20 @@ class CategoryController
         }
         // any other exception will pop into my face, haha.
 
-        $response->getBody()->write(json_encode($result));
+        $data = [
+            'categories' => $result,
+            'metadata' => []
+        ];
+
+        $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function fetchNames(Request $request, Response $response): Response {
+        $result = $this->categoryService->fetchIdsNames();
+
+        $response->getBody()->write(json_encode($result));
+        return $response;
     }
 
     public function fetchById(Request $request, Response $response, array $args): Response {

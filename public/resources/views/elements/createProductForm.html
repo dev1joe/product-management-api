@@ -2,59 +2,60 @@
 <h1 class="form-title">Create Product</h1>
 <div class="form-container">
     <div class="image-container hidden"></div>
-    <form action="/admin/products" method="POST" enctype="multipart/form-data" class="product-form" id="create-product-form">
+    <form action="/admin/products" method="POST" enctype="multipart/form-data" class="product-form"
+          id="create-product-form">
 
-    <div class="name-container">
-        <input type="text" name="name" id="name" placeholder="Product Name" required>
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="name-container">
+            <input type="text" name="name" id="name" placeholder="Product Name" required>
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <div class="price-container">
-        <input type="number" name="price" id="price" placeholder="Product Price in US Dollars">
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="price-container">
+            <input type="number" name="price" id="price" placeholder="Product Price in US Dollars">
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <div class="photo-container">
-        <input type="file" name="photo" id="photo" accept="image/*" required>
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="photo-container">
+            <input type="file" name="photo" id="photo" accept="image/*" required>
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <div class="textarea-container">
-        <textarea name="description" id="description" class="description">Product Details......</textarea>
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="textarea-container">
+            <textarea name="description" id="description" class="description">Product Details......</textarea>
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <!-- new fields -->
+        <!-- new fields -->
 
-    <div class="select-manufacturer">
-        <select name="manufacturer" id="manufacturer-selector" class="manufacturer-selector" required>
-            <option value="" selected disabled>-- select manufacturer --</option>
-        </select>
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="select-manufacturer">
+            <select name="manufacturer" id="manufacturer-selector" class="manufacturer-selector" required>
+                <option value="" selected disabled>-- select manufacturer --</option>
+            </select>
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <div class="create-manufacturer-field" id="create-manufacturer-field">
-        <input type="text" id="new-manufacturer-field" placeholder="New Manufacturer">
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="create-manufacturer-field" id="create-manufacturer-field">
+            <input type="text" id="new-manufacturer-field" placeholder="New Manufacturer">
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <button type="button" class="submit-button" id="create-manufacturer-button">Create Manufacturer</button>
+        <button type="button" class="submit-button" id="create-manufacturer-button">Create Manufacturer</button>
 
-    <div class="select-category">
-        <select name="category" id="category-selector" class="category-selector" required>
-            <option value="" selected disabled>-- select category --</option>
-        </select>
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="select-category">
+            <select name="category" id="category-selector" class="category-selector" required>
+                <option value="" selected disabled>-- select category --</option>
+            </select>
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <div class="create-category-field" id="create-category-field">
-        <input type="text" id="new-category-field" placeholder="New Category">
-        <div class="invalid-feedback"></div>
-    </div>
+        <div class="create-category-field" id="create-category-field">
+            <input type="text" id="new-category-field" placeholder="New Category">
+            <div class="invalid-feedback"></div>
+        </div>
 
-    <button type="button" class="submit-button" id="create-category-button">Create Category</button>
+        <button type="button" class="submit-button" id="create-category-button">Create Category</button>
 
-    <!-- end of form -->
-    <input type="submit" id="form-submit-button" class="submit-button" value="Submit" form="create-product-form">
-</form>
+        <!-- end of form -->
+        <input type="submit" id="form-submit-button" class="submit-button" value="Submit" form="create-product-form">
+    </form>
 </div>

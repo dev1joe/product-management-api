@@ -1,5 +1,5 @@
 import {fetchData} from "./helperFunctions.js";
-import {createCategory, fillEntitiesAsSelectorOptions} from "./products-helper.js";
+import {createCategory, fillEntitiesAsSelectorOptions} from "./productsHelper.js";
 
 // category elements
 const categorySelector = document.getElementById('filters-category-selector');

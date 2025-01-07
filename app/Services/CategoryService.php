@@ -70,7 +70,7 @@ class CategoryService
             return $query->getQuery()->getArrayResult();
     }
 
-    public function fetchCategoryNames(): array {
+    public function fetchIdsNames(): array {
         return $this->entityManager->getRepository(Category::class)->createQueryBuilder('c')
             ->select('c.id', 'c.name')->getQuery()->getArrayResult();
     }

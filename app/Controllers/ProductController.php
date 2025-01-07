@@ -59,7 +59,7 @@ class ProductController
         return $response->withHeader('Content-Type','application/json')->withStatus(200);
     }
     public function form(Request $request, Response $response): Response {
-        $categories = $this->categoryService->fetchCategoryNames();
+        $categories = $this->categoryService->fetchIdsNames();
 
         return $this->twig->render($response, '/product/newCreateProduct.twig', ['categories' => $categories]);
     }
@@ -85,8 +85,10 @@ class ProductController
         try {
             (new ProductQueryValidator())->validate($queryParams);
             $result = $this->productService->fetchPaginatedProducts($queryParams);
+            $metadata = $this->productService->fetchPaginationMetadata($queryParams);
         } catch(ValidationException|MissingQueryParamsException $e) {
             $result = $this->productService->fetchAll();
+            $metadata = $this->productService->fetchPaginationMetadata(null);
         }
         //TODO: do not fetch all
         //TODO: 404 response for missing query parameters exception
@@ -95,7 +97,10 @@ class ProductController
         //TODO: exception handling
         //TODO: same todos for category
 
-        $response->getBody()->write(json_encode($result));
+        $response->getBody()->write(json_encode([
+            'products' => $result,
+            'metadata' => $metadata,
+        ]));
         return $response->withHeader('Content-Type', 'application/json');
     }
 

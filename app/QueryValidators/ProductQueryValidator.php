@@ -16,11 +16,11 @@ class ProductQueryValidator implements QueryValidatorInterface
         // TODO: Implement validate() method.
         /** @var ProductQueryParams $query */
 
-        if(! $query->page || $query->page < 0) {
+        if(! $query->page || $query->page < 1) {
             throw new ValidationException([]);
         }
 
-        if(! $query->limit || $query->limit < 0) {
+        if(! $query->limit || $query->limit < 1) {
             throw new ValidationException([]);
         }
 
@@ -34,11 +34,11 @@ class ProductQueryValidator implements QueryValidatorInterface
             throw new ValidationException([]);
         }
 
-        if($query->categoryId && $query->categoryId < 0) {
+        if($query->categoryId !== null && $query->categoryId < 0) {
             throw new ValidationException([]);
         }
 
-        if($query->minPriceInCents && $query->minPriceInCents < 0) {
+        if($query->minPriceInCents !== null && $query->minPriceInCents < 0) {
             throw new ValidationException([]);
         }
 

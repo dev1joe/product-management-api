@@ -23,7 +23,6 @@ return function(App $app) {
     $app->get('/', [HomeController::class, 'index']);
     $app->get('/products', [HomeController::class, 'products']);
     $app->get('/products/{id}', [ProductController::class, 'productPage']);
-
     $app->group('', function (RouteCollectorProxy $group) {
         $group->get('/login', [AuthController::class, 'loginForm']);
         $group->post('/login', [AuthController::class, 'logIn']);

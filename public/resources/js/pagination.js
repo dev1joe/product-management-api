@@ -6,8 +6,9 @@ import {
 } from "./helperFunctions.js";
 
 import {
+    displayProducts,
     fetchProducts,
-} from "./products-helper.js";
+} from "./productsHelper.js";
 
 //______________DEFINITIONS
 const productsApi = '/api/products';
@@ -16,41 +17,32 @@ const productsContainer = document.getElementById('products-container');
 
 const filtersSortSelector = document.getElementById('filters-sorting-selector');
 const filtersCategorySelector = document.getElementById('filters-category-selector');
+const filtersManufacturerSelector = document.getElementById('manufacturer-selector');
+
+const filtersMinPrice = document.getElementById('filters-min-price');
+const filtersMaxPrice = document.getElementById('filters-max-price');
+
 const showMoreProductsButton = document.getElementById('show-more-button');
 
 let filters = {
     page: 1,
     limit: 10,
     category: null,
+    manufacturer: null,
     orderBy: null,
     orderDir: null,
 }
 
-// TODO: handle other filtering elements (price range selector for example)
-
-//______________HELPER LOGIC
-// fetching and caching categories
-const categoriesApi = '/api/categories';
-const categories = await fetchData(categoriesApi, 'json')
-
-// filling category selector
-fillEntitiesAsSelectorOptions(filtersCategorySelector, categories);
-
-// activate category selector
-filtersCategorySelector.addEventListener('change', function () {
-    console.log('category selector changed, fetching new results.....')
-    filters.category = this.value;
-    filters.page = 1;
-    runPagination();
-});
-
-showMoreProductsButton.addEventListener('click', function() {
-    filters.page++;
-    runPagination();
-})
+//______________CACHE
+let categories;
+let manufacturers;
 
 //______________RUN
-// sort selector: already populated, make it functional then
+
+//______________Filtering Sorting Selector Component
+// it is very important, fetching the main data (products) depend on it.
+// that's why it's handled before the other filtering components
+// it's already populated, make it functional then
 filtersSortSelector.addEventListener('change', function () {
     filters.orderBy = this.options[this.selectedIndex].getAttribute('data-name');
     filters.orderDir = this.options[this.selectedIndex].getAttribute('data-dir');
@@ -58,16 +50,22 @@ filtersSortSelector.addEventListener('change', function () {
     runPagination();
 });
 
-function runPagination() {
+async function runPagination() {
     console.log('running......')
 
-    fetchProducts({
-        route: productsApi,
-        filters: filters,
-        card: productCard,
-        container: productsContainer,
-        showMoreButton: showMoreProductsButton
-    });
+    if(filters.page === 1) {
+        productsContainer.innerHTML = '';
+    }
+    try {
+        let data = await fetchProducts(productsApi, filters, showMoreProductsButton);
+
+        let fetchedProducts = data['products'];
+        let metadata = data['metadata'];
+
+        displayProducts(fetchedProducts, productCard, productsContainer);
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 export function resetPage() {
@@ -104,6 +102,50 @@ if(queryParams.size > 0) {
 
     clearQueryParams();
 } else {
+    // this will be most used with customer pagination
     // TODO: fetch (best selling / newly added / best offers) instead of fetching all
     resetPage();
 }
+
+
+// TODO: handle other filtering elements (price range selector for example)
+//______________ACTIVATE FILTERING
+
+//______________Filters Category Selector Component
+// if(filtersCategorySelector) {
+//     // activate category selector
+//     filtersCategorySelector.addEventListener('change', function () {
+//         console.log('category selector changed, fetching new results.....')
+//         filters.category = this.value;
+//         filters.page = 1;
+//         runPagination();
+//     });
+// } else {
+//     console.error('category selector not found!');
+// }
+
+//______________Filters Manufacturer Selector Component
+if(filtersManufacturerSelector) {
+    const manufacturersApi = '/api/manufacturers/names';
+    manufacturers = await fetchData(manufacturersApi, 'json')
+
+    fillEntitiesAsSelectorOptions(filtersManufacturerSelector, manufacturers);
+
+    filtersManufacturerSelector.addEventListener('change', function () {
+        console.log('manufacturer selector changed, fetching new results.....')
+        filters.manufacturer = this.value;
+        filters.page = 1;
+        runPagination();
+    });
+} else {
+    console.error('manufacturer selector not found!');
+}
+
+//______________Show More Button Component
+showMoreProductsButton.addEventListener('click', function() {
+    filters.page++;
+    runPagination();
+});
+
+// price filtering
+// first I need to fetch metadata, or compute metadata !

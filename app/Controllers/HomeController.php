@@ -73,21 +73,28 @@ class HomeController
     }
 
     public function products(Request $request, Response $response): Response {
+        $options = [
+            'navbar' => '/elements/navbar.twig',
+            'filters' => [
+                ['name' => 'Category', 'component' => '/components/filtersCategorySelector.twig'],
+                ['name' => 'Sort By', 'component' => '/components/filtersSortSelector.twig'],
+                ['name' => 'Price Range', 'component' => '/components/filtersPriceRange.twig'],
+            ],
+            'stylesheets' => [
+                ['name' => 'navbar.css', 'url' => '/resources/css/navbar.css'],
+                ['name' => 'pagination.css', 'url' => '/resources/css/pagination.css'],
+                ['name' => 'windows.css', 'url' => '/resources/css/windows.css'],
+                ['name' => 'productCard.css', 'url' => '/resources/css/productCard.css'],
+            ],
+            'scripts' => [
+                'products-script' => ['src' => '/resources/js/pagination.js'],
+            ]
+        ];
+
         return $this->twig->render(
             response: $response,
             template: 'pagination.twig',
-            data: [
-                'navbar' => '/elements/navbar.twig',
-                'stylesheets' => [
-                    ['name' => 'navbar.css', 'url' => '/resources/css/navbar.css'],
-                    ['name' => 'pagination.css', 'url' => '/resources/css/pagination.css'],
-                    ['name' => 'windows.css', 'url' => '/resources/css/windows.css'],
-                    ['name' => 'productCard.css', 'url' => '/resources/css/productCard.css'],
-                ],
-                'scripts' => [
-                    'products-script' => ['src' => '/resources/js/pagination.js'],
-                ]
-            ]
+            data: $options
         );
     }
 }

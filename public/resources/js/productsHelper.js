@@ -1,4 +1,4 @@
-import {applyFilters} from "./helperFunctions.js";
+import {applyFilters, fetchData, fillEntitiesAsSelectorOptions} from "./helperFunctions.js";
 
 /**
  * @param {string} route
@@ -31,45 +31,56 @@ function fillProductCard(card, product) {
 }
 
 /**
- * @param {RequestInfo | URL} url used to fetch data
+ * @param {string} route used to fetch data
  * @param {Object} filters
- * @param {Node} card product front-end
- * @param {HTMLElement} container to show data in
  * @param {HTMLButtonElement} showMoreButton let the function control the button's visibility
+ * @returns Promise<Object<Object>|null>
  */
-export function fetchProducts({route = '/api/products', filters, card, container, showMoreButton} = {}) {
-    const url = applyFilters(filters, route);
-    console.log(url);
+export async function fetchProducts(route, filters, showMoreButton) {
+    try {
+        const url = applyFilters(filters, route);
+        console.log(url);
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
+        let response = await fetch(url);
 
-            if(filters.page === 1) {
-                container.innerHTML = '';
-            }
+        if (response.ok) {
+            let data = await response.json();
 
-            if(data.length === 0) {
+            if(data.hasOwnProperty('products') && data['products'].length === 0) {
                 console.log('no more products');
                 showMoreButton.classList.add('hidden');
                 return;
             }
-            showMoreButton.classList.remove('hidden');
 
+            showMoreButton.classList.remove('hidden');
             console.log(data);
 
-            data.forEach(product => {
-                // add data to node
-                let cardCopy = card.cloneNode(true);
-                fillProductCard(cardCopy, product);
+            return data;
+        } else {
+            console.error(response.status, response.statusText);
+            return null;
+        }
+    } catch(error) {
+        console.error(error);
+        return null;
+    }
+}
 
-                // append to the container
-                container.appendChild(cardCopy);
-            })
-        })
-        .catch((error) => {
-            console.error(error);
-        });
+/**
+ * @param {Array<Object>} data
+ * @param {Node} card product frontend
+ * @param {HTMLElement} container to display data in
+ */
+export function displayProducts(data, card, container) {
+    data.forEach(product => {
+        // add data to node
+        let cardCopy = card.cloneNode(true);
+        fillProductCard(cardCopy, product);
+
+        // append to the container
+        container.appendChild(cardCopy);
+    })
+
 }
 
 /**
@@ -141,3 +152,14 @@ export function injectProductIntoForm(product, form, productUpdateRoute) {
 // }
 
 //TODO: add fetchManufacturers function
+
+/**
+ * @param {HTMLElement} element
+ * @param {string} api
+ */
+export async function fillSelector(element, api) {
+    console.log(`filling selector using "${api}" api`);
+   const data = await fetchData(api, 'json');
+
+   fillEntitiesAsSelectorOptions(element, data);
+}

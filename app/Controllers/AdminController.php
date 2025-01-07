@@ -17,6 +17,8 @@ class AdminController
     ){
     }
 
+    // any request that is handled by the `formatResponse` function will use these stylesheets
+    /** any request handled by {@see formatResponse()} will have these stylesheets*/
     private array $globalStylesheets = [
         ['name' => 'pagination.css', 'url' => '/resources/css/pagination.css'],
         ['name' => 'windows.css', 'url' => '/resources/css/windows.css'],
@@ -86,15 +88,32 @@ class AdminController
         ];
 
         $scripts = [
-            'products-script' => ['src' => '/resources/js/products.js'],
+            'products-script' => ['src' => '/resources/js/pagination.js'],
+            'products-extra-script' => ['src' => '/resources/js/paginationExtras.js'],
         ];
 
-        return $this->formatResponse(
+        $popupForm = '/elements/createProductForm.html';
+
+        $admin = $this->authService->getAuthenticatedUser();
+
+        $options = [
+            'username' => $admin->getUsername(),
+            'email' => $admin->getEmail(),
+            'filters' => [
+                '/components/filtersCategorySelector.twig',
+                '/components/filtersSortSelector.twig',
+                '/components/createButton.twig'
+            ],
+            'containerId' => 'products-container',
+            'popupForm' => $popupForm,
+            'stylesheets' => array_merge($stylesheets, $this->globalStylesheets),
+            'scripts' => $scripts
+        ];
+
+        return $this->twig->render(
             response: $response,
-            window: '/windows/productsWindow.twig',
-            popupForm: '/elements/createProductForm.html',
-            stylesheets: $stylesheets,
-            scripts: $scripts
+            template: '/admin/dashboard.twig',
+            data: $options
         );
     }
 

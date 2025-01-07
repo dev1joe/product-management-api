@@ -1,7 +1,8 @@
 import {
+    displayProducts,
     fetchProducts,
     injectProductIntoForm,
-} from "./products-helper.js";
+} from "./productsHelper.js";
 
 import {
     fetchData,
@@ -20,14 +21,10 @@ const productCard = await fetchHtml('/resources/views/elements/adminProductCard.
 const productsContainer = document.getElementById('products-container');
 const showMoreProductsButton = document.getElementById('show-more-button');
 const filtersSortSelector = document.getElementById('filters-sorting-selector');
+const metaCount = document.getElementById('meta-count');
 
-let filters = {
-    page: 1,
-    limit: 10,
-    category: null,
-    orderBy: null,
-    orderDir: null,
-}
+let filters;
+let metadata;
 
 //______________HELPER LOGIC
 
@@ -45,11 +42,6 @@ const popupWindow = document.getElementById('popup-window');
 
 //TODO: in createProductForm: make the first child a container not a heading tag
 // or add a query parameter to the fetchHtml function so that the function returns the result of the query
-
-// await fetchHtml(
-//     '/resources/views/elements/createProductForm.html',
-//     popupWindow.querySelector('#popup-content')
-// );
 
 const createProductForm = popupWindow.querySelector('form#create-product-form');
 const imageContainer = popupWindow.querySelector('div.image-container');
@@ -83,17 +75,37 @@ filtersSortSelector.addEventListener('change', function () {
     run();
 })
 
-export function run() {
+export async function run() {
     console.log('running......')
     document.getElementById('products-button').classList.add('active');
 
-    fetchProducts({
-        route: productsApi,
-        filters: filters,
-        card: productCard,
-        container: productsContainer,
-        showMoreButton: showMoreProductsButton
-    });
+    if(filters.page === 1) {
+        productsContainer.innerHTML = '';
+    }
+
+    metaCount.textContent = 0;
+
+    try {
+        let data = await fetchProducts(productsApi, filters, showMoreProductsButton);
+
+        let fetchedProducts = data['products'];
+
+        try {
+            let fetchedMetadata = data['metadata'][0];
+            // console.log(fetchedMetadata['count']);
+            metadata.count = parseInt(fetchedMetadata['count']) || 0;
+            metadata.minPrice = parseInt(fetchedMetadata['minPrice']) / 100 || 0;
+            metadata.maxPrice = parseInt(fetchedMetadata['maxPrice']) / 100 || 0;
+            metaCount.textContent = metadata.count;
+        } catch (error) {
+            console.error(error);
+        }
+
+        displayProducts(fetchedProducts, productCard, productsContainer);
+        console.log(metadata);
+    } catch(error) {
+        console.error(error);
+    }
 }
 
 export function resetPage() {
@@ -102,13 +114,19 @@ export function resetPage() {
 
     // when `fetchProducts` function finds that the page is 1,
     // it clears the container first
-    filters = filters = {
+    filters = {
         page: 1,
         limit: 10,
         category: null,
         orderBy: null,
         orderDir: null,
     };
+
+    metadata = {
+        count: 0,
+        minPrice: 0,
+        maxPrice: 0,
+    }
 
     // modify sorting to bring last updated first
     // change in sorting triggers the run function

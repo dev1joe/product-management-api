@@ -22,53 +22,16 @@
     <div class="sidebar">
         <div class="filter-card">
             <h4 class="bread-crumbs">Home > Products</h4>
-            <p class="small-text light-gray">100 items</p>
+            <p class="small-text light-gray">
+                <span id="meta-count">100</span> items
+            </p>
         </div>
 
-        <div class="filter-card">
-            <div class="card-head">
-                <h4>Category</h4>
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
-            </div>
-            <div class="card-tail">
-                <select id="filters-category-selector">
-                    <option value="null" selected>All Categories</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="filter-card">
-            <div class="card-head">
-                <h4>Sort By</h4>
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
-            </div>
-            <div class="card-tail">
-                <select id="filters-sorting-selector">
-                    <option data-name="updatedAt" data-dir="desc" value="last-updated" selected>Last Updated
-                    </option>
-                    <option data-name="unitPriceInCents" data-dir="asc" value="lowest-price">Lowest Price</option>
-                    <option data-name="unitPriceInCents" data-dir="desc" value="highest-price">Highest Price
-                    </option>
-                </select>
-
-            </div>
-        </div>
-
-        <div class="filter-card">
-            <div class="card-head">
-                <h4>Price</h4>
-                <span class="material-symbols-outlined">keyboard_arrow_down</span>
-            </div>
-            <div class="card-tail">
-                <div class="price-range-component">
-                    <div class="price-inputs">
-                        <div>$ <input type="number"></div>
-                        <div>$ <input type="number"></div>
-                    </div>
-                    <div class="price-slider"></div>
-                </div>
-            </div>
-        </div>
+        {% if filters %}
+            {% for f in filters %}
+                {{ include('/components/filterCard.twig', {'text': f.name, 'component': f.component}) }}
+            {% endfor %}
+        {% endif %}
     </div>
 
     <div class="main">

@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use League\Flysystem\FilesystemException;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -69,9 +70,6 @@ class ProductService
     }
 
     public function fetchPaginatedProducts(ProductQueryParams $params): array {
-        // calculate page
-        $offset = ($params->page - 1) * $params->limit;
-
         // execute query and return result
         $query =  $this->entityManager->getRepository(Product::class)
             ->createQueryBuilder('p')
@@ -79,6 +77,27 @@ class ProductService
             ->leftJoin('p.category' , 'c')
             ->leftJoin('p.manufacturer', 'm');
 
+        $this->applyFilters($query, $params);
+
+        return $query->getQuery()->getArrayResult();
+    }
+
+    public function fetchPaginationMetadata(?ProductQueryParams $params): array {
+        // execute query and return result
+        $query =  $this->entityManager->getRepository(Product::class)
+            ->createQueryBuilder('p')
+            ->select('COUNT(p.id) AS count, MIN(p.unitPriceInCents) AS minPrice, MAX(p.unitPriceInCents) AS maxPrice');
+
+        if($params) {
+            $query->leftJoin('p.category' , 'c')->leftJoin('p.manufacturer', 'm');
+            $this->applyFilters($query, $params);
+            return $query->getQuery()->getArrayResult();
+        }
+
+        return $query->getQuery()->getArrayResult();
+    }
+
+    private function applyFilters(QueryBuilder $query, ProductQueryParams $params): void {
         if($params->categoryId) {
             $query->where('c.id = :id')->setParameter('id', $params->categoryId);
         }
@@ -91,11 +110,12 @@ class ProductService
             $query->andWhere('p.unitPriceInCents < :max')->setParameter('max', $params->maxPriceInCents);
         }
 
-        $query->setFirstResult($offset)
-            ->setMaxResults($params->limit)
-            ->orderBy("p.".$params->orderBy, $params->orderDir);
+        // calculate offset
+        $offset = ($params->page - 1) * $params->limit;
 
-        return $query->getQuery()->getArrayResult();
+        $query->orderBy("p.".$params->orderBy, $params->orderDir)
+            ->setFirstResult($offset)
+            ->setMaxResults($params->limit);
     }
 
     private function fetchProduct(int $id): Query {
@@ -110,7 +130,9 @@ class ProductService
     }
 
     public function fetchByIdAsArray(int $id): array {
-        return $this->fetchProduct($id)->getArrayResult();
+        // this returns an array with one product inside,
+        //so we just return the first product so that the response is a json object
+        return $this->fetchProduct($id)->getArrayResult()[0];
     }
 
     public function fetchById(int $id): ?Product {

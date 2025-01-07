@@ -86,7 +86,7 @@
 - chatGpt: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
 - third migration corrected that mistake
 
-## other
+## HTML, files, MIME types
 ### accepting a file in HTML form tag
 - I found that I need to define `enctype` attribute with value `multipart/form-data` to be able to send files to the server
 - but why is that ?? and what does the new terminology mean ?
@@ -105,11 +105,16 @@
   - type
 - but when it comes to types, the file type can be spoofed !! even the UploadedFileInterface->getClientMedaType function documentation tells you to not trust the output of this function 
 
-### MIME types reference ?? you got it
+### MIME types reference ?? you got it!
 - what are MIME types ?? (write it here for reference)
 - a reference by internet assigned numbers authority (iana) [here](https://www.iana.org/assignments/media-types/media-types.xhtml)
 
-### customer's secure connection
+## Cross-Site Resources Sharing (CORS) best practices
+- only enable CORS when necessary to minimize security risks
+- use specific origin whitelists rather than allowing access from all domains
+- limit the methods and headers allowed in CORS requests to reduce potential vulnerabilities
+
+## customer's secure connection
 1. configure cookie options:
    - httponly: only access the session using http (because it's accessible by js by default)
    - secure: HTTPS only, it's never sent on an insecure HTTP connection (except for localhost) 
@@ -117,6 +122,14 @@
 2. cross-site scripting (XSS) protection
 3. regenerate session id
 - more information at [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
+
+## JavaScript
+### recommended approach
+- <strong>Fetch and display the main data first, then activate filtering</strong>
+- take products' pagination for example, it's better to fetch and display products first, then activate filtering (by category, by price, etc..) and sorting (by release data, price, rating, etc....)
+- <strong>why this approach is better ?</strong>
+  1. User experience: Displaying products first ensures that the client can see content immediately rather than waiting for filtering options to load.
+  2. Data availability: It's better to make sure that data is accessible before activating filtering functionality, this way the application will be much efficient. If order is flipped, resources maybe wasted. 
 
 # Project Future
 - make a dynamic attributes system (suggested by [chatGPT](https://chatgpt.com/share/6713d5db-cf0d-47b4-93f0-305d9cbd7709))

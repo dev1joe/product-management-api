@@ -179,6 +179,8 @@ input[type="text"], .sidebar-button {
 
 /* window styling */
 .main {
+    height: max-content;
+    min-height: 100%;
     grid-column: 4 / span all;
     /* background-color: yellowgreen; */
     display: flex;
@@ -306,7 +308,7 @@ canvas {
 }
 
 #popup-window #popup-content {
-    margin: 10px 0;
+    margin-bottom: 20px;
     width: max-content;
 }
 

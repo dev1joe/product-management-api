@@ -58,6 +58,7 @@ export async function fetchHtml(api, container = null) {
 /**
  * @param {object} filters
  * @param {string} route
+ * @returns URL
  */
 export function applyFilters(filters, route) {
     const url = new URL(route, window.location.origin);
@@ -126,7 +127,7 @@ export function injectImageInputInContainer(imageInput, container) {
  * @param {Function} resetPageFunction
  */
 export function asynchronousFormSubmission(form, resetPageFunction) {
-    console.trace();
+    // console.trace();
     form.addEventListener('submit', async function (event) {
         event.preventDefault();
 

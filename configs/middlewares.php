@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Middlewares\AuthenticateMiddleware;
+use App\Middlewares\CorsMiddleware;
 use App\Middlewares\StartSessionMiddleware;
 use App\Middlewares\ValidationErrorsMiddleware;
 use App\Middlewares\ValidationExceptionMiddleware;

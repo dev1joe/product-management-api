@@ -20,5 +20,8 @@ return [
     ],
     'storage' => [
         'driver' => StorageDriver::Local
+    ],
+    'http' => [
+        'allowed_origin' => $_ENV['HTTP_ALLOWED_ORIGIN'] ?? ''
     ]
 ];
