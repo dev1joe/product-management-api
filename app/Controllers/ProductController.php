@@ -51,9 +51,20 @@ class ProductController
         // return $response->withHeader('Content-Type', 'application/json');
 
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
-        $data = $validator->validate($data);
 
-        $this->productService->create($data);
+        try {
+            $data = $validator->validate($data);
+        } catch(ValidationException $e) {
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(400);
+        }
+
+        try {
+            $this->productService->create($data);
+        } catch(\Exception $e) {
+            $response->getBody()->write(json_encode(['error' => 'Internal Server Error']));
+            return $response->withHeader('Content-Type','application/json')->withStatus(500);
+        }
 
         $response->getBody()->write(json_encode(['message' => 'product created successfully!']));
         return $response->withHeader('Content-Type','application/json')->withStatus(200);
@@ -123,20 +134,26 @@ class ProductController
         $id = (int) $args['id'];
         $product = $this->productService->fetchById($id);
         if(! $product) {
-            return $response->withStatus(404);
+            $response->getBody()->write(json_encode(['error' => "product not found"]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(404);
         }
 
-        [$isChanged, $message] = $this->productService->update($product, $data);
-        if($isChanged) {
-            $status = 200;
-            // $message = 'product updated successfully';
-        } else {
-            $status = 400;
-            // $message = 'product information not changed';
-        }
+        try {
+            $changedFields = $this->productService->selectiveUpdate($product, $data);
 
-        $response->getBody()->write(json_encode(['message' => $message]));
-        return $response->withHeader('Content-Type','application/json')->withStatus($status);
+            if(sizeof($changedFields) > 0) {
+                $message = 'product updated successfully';
+            } else {
+                $message = 'product information not changed';
+            }
+
+            $response->getBody()->write(json_encode(['message' => $message, 'changed fields' => $changedFields]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(200);
+
+        } catch(\Exception $e) {
+            $response->getBody()->write(json_encode(['message' => 'error updating product', 'error' => $e->getMessage()]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(200);
+        }
     }
 
     public function delete(Request $request, Response $response, array $args): Response {

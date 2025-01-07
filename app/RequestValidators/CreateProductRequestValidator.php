@@ -81,16 +81,20 @@ class CreateProductRequestValidator implements RequestValidatorInterface
 
         // photo handling
         if(array_key_exists('photo', $data)) {
-            /** @var UploadedFileInterface $uploadedFile */
-            $file = $data['photo'];
+            $v->rule(function($field, $value, $params, $fields) {
 
-            $this->fileService->validateFile(
-                $file,
-                'photo',
-                5,
-                '/^[a-zA-Z0-9\s._-]+$/',
-                ['image/png', 'image/jpeg']
-            );
+                if(! ($value instanceof UploadedFileInterface)) {
+                    return false;
+                }
+
+                return $this->fileService->validateFile(
+                    $value,
+                    'photo',
+                    5,
+                    '/^[a-zA-Z0-9\s._-]+$/',
+                    ['image/png', 'image/jpeg']
+                );
+            }, 'photo')->message('invalid photo');
         }
 
         if(! $v->validate()) {

@@ -13,8 +13,7 @@ class FileService
 {
     public function __construct(
         private readonly Filesystem $filesystem,
-    )
-    {
+    ){
     }
 
     public function validateFile(
@@ -23,31 +22,35 @@ class FileService
         int $sizeInMBs,
         string $regex,
         array $allowedMimeTypes,
-    )
+    ): bool
     {
         // validate that there are no upload errors
         if ($file->getError() !== UPLOAD_ERR_OK) {
-            throw new ValidationException([$fieldName => ['Failed to upload photo']]);
+            // throw new ValidationException([$fieldName => ['Failed to upload photo']]);
+            return false;
         }
 
         // 2. validate file's size
         $maxFileSize = $sizeInMBs * 1024 * 1024;
 
         if ($file->getSize() > $maxFileSize) {
-            throw new ValidationException([$fieldName => ['Maximum allowed size is 5 MBs']]);
+            // throw new ValidationException([$fieldName => ['Maximum allowed size is 5 MBs']]);
+            return false;
         }
 
         // 3. validate file's name
         $filename = $file->getClientFilename();
 
         if (!preg_match($regex, $filename)) {
-            throw new ValidationException([$fieldName => ['Invalid filename']]);
+            // throw new ValidationException([$fieldName => ['Invalid filename']]);
+            return false;
         }
 
         // 4. validate MIME type
         // validation using data sent by the client which can be spoofed
         if (!in_array($file->getClientMediaType(), $allowedMimeTypes)) {
-            throw new ValidationException([$fieldName => ['Invalid file type (client side validation)']]);
+            // throw new ValidationException([$fieldName => ['Invalid file type (client side validation)']]);
+            return false;
         }
 
         // validation using a Flysystem MIME type detector
@@ -59,9 +62,11 @@ class FileService
         $file->getStream()->rewind();
 
         if (!in_array($mimeType, $allowedMimeTypes)) {
-            throw new ValidationException([$fieldName => ['Invalid file type (server side validation)']]);
+            // throw new ValidationException([$fieldName => ['Invalid file type (server side validation)']]);
+            return false;
         }
 
+        return true;
     }
 
     /**

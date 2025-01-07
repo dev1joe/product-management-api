@@ -157,48 +157,35 @@ class ProductService
      * @throws FilesystemException
      * @throws ORMException
      */
-    public function update(Product $product, array $data): array {
-        $isChanged = false;
-        $message = '';
+    public function selectiveUpdate(Product $product, array $data): array {
+        $changedFields = [];
 
         // assuming that the data went through the request validator first
         /** @var Category $newCategory */
         $newCategory = $data['category'];
         $currentCategory = $product->getCategory();
 
-        if(! $currentCategory) {
-            $isChanged = true;
-            $message = $message . 'category changed ';
-            $product->setCategory($data['category']);
-        } else if($currentCategory->getId() !== $newCategory->getId()) {
-            $isChanged = true;
-            $message = $message . 'category changed ';
+        if(! $currentCategory || ($currentCategory->getId() !== $newCategory->getId())) {
             $product->setCategory($newCategory);
+            $changedFields[] = 'category';
         }
 
         /** @var Manufacturer $newManufacturer */
         $newManufacturer = $data['manufacturer'];
         $currentManufacturer = $product->getManufacturer();
 
-        if(! $currentManufacturer) {
-            $isChanged = true;
-            $message = $message . 'manufacturer changed ';
+        if(! $currentManufacturer || ($currentManufacturer->getId() !== $newManufacturer->getId())) {
             $product->setManufacturer($newManufacturer);
-        } else if($currentManufacturer->getId() !== $newManufacturer->getId()) {
-            $isChanged = true;
-            $message = $message . 'manufacturer changed ';
-            $product->setManufacturer($newManufacturer);
+            $changedFields[] = 'manufacturer';
         }
 
         if(array_key_exists('photo', $data)) {
-            $isChanged = true;
-            $message = $message . 'photo changed ';
-
             /** @var UploadedFileInterface $file */
             $file = $data['photo'];
             $relativeLocation = $this->fileService->saveProductImage($file);
 
             $product->setPhoto($relativeLocation);
+            $changedFields[] = 'photo';
         }
 
         // assuming that data went through the request validator first
@@ -206,31 +193,26 @@ class ProductService
         $price *= 100; // from dollars to cents
         $priceInCents = (int) $price;
         if($product->getUnitPriceInCents() !== $priceInCents) {
-            $isChanged = true;
-            $message = 'price changed ';
-
             $product->setUnitPriceInCents($priceInCents);
+            $changedFields[] = 'price';
         }
 
         if($product->getName() !== $data['name']) {
-            $isChanged = true;
-            $message = $message . 'name changed ';
             $product->setName($data['name']);
+            $changedFields[] = 'name';
         }
 
         if($product->getDescription() !== $data['description']) {
-            $isChanged = true;
-            $message = $message . 'description changed ';
             $product->setDescription($data['description']);
+            $changedFields[] = 'description';
         }
 
-        if($isChanged) {
+        if(sizeof($changedFields) > 0) {
             $this->entityManager->persist($product);
             $this->entityManager->flush();
-            return [$isChanged, $message];
         }
 
-        return [$isChanged, 'no fields changed'];
+        return $changedFields;
     }
 
     /**

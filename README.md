@@ -86,6 +86,15 @@
 - chatGpt: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
 - third migration corrected that mistake
 
+## RESTful APIs
+- Application Programming Interface (API)
+- REpresentational State Transfer (REST): a set of architectural principles for building web services.
+- Read: [What is a REST API?](https://blog.postman.com/rest-api-examples/)
+- Read: [Best Practices for REST APIs](https://www.linkedin.com/pulse/best-practices-rest-apis-sergey-idelson/)
+- Read: [REST API Best Practices](https://restfulapi.net/resource-naming/)
+- Read: [Rules for creating a RESTful API](https://chatgpt.com/share/677d2db6-f570-800c-b5ea-5d783f731bf1)
+- For API testing use [Dynamic Variables](https://learning.postman.com/docs/tests-and-scripts/write-scripts/variables-list)
+
 ## HTML, files, MIME types
 ### accepting a file in HTML form tag
 - I found that I need to define `enctype` attribute with value `multipart/form-data` to be able to send files to the server
