@@ -95,6 +95,11 @@
 - Read: [Rules for creating a RESTful API](https://chatgpt.com/share/677d2db6-f570-800c-b5ea-5d783f731bf1)
 - For API testing use [Dynamic Variables](https://learning.postman.com/docs/tests-and-scripts/write-scripts/variables-list)
 
+- [x] Products API
+- [ ] Categories API
+- [ ] Manufacturer API
+- [ ] Warehouse API
+- [ ] Customer API
 ## HTML, files, MIME types
 ### accepting a file in HTML form tag
 - I found that I need to define `enctype` attribute with value `multipart/form-data` to be able to send files to the server

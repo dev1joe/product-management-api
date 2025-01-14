@@ -97,4 +97,9 @@ class HomeController
             data: $options
         );
     }
+
+    public function showSession(Request $request, Response $response): Response {
+        $response->getBody()->write(json_encode($_SESSION));
+        return $response->withHeader('Content-Type', 'json');
+    }
 }

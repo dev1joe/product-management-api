@@ -20,6 +20,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 return function(App $app) {
+    $app->get('/session', [HomeController::class, 'showSession']); // for testing purposes
+
     $app->get('/', [HomeController::class, 'index']);
     $app->get('/products', [HomeController::class, 'products']);
     $app->get('/products/{id}', [ProductController::class, 'productPage']);
