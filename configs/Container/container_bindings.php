@@ -42,6 +42,10 @@ return [
         $middlewares = require CONFIGS_PATH . '/middlewares.php';
         $middlewares($app);
 
+        // disable Slim's default error handler
+        // $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+        // $errorMiddleware->setDefaultErrorHandler(false);
+
         return $app;
     },
     Config::class => create(Config::class)->constructor(

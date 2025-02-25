@@ -6,13 +6,18 @@ namespace App\Services;
 use App\Entities\Address;
 use App\Entities\Warehouse;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 
-class WarehouseService
+class WarehouseService extends BaseService
 {
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly AddressService $addressService,
     ){
+        parent::__construct(
+            $this->entityManager,
+            Warehouse::class
+        );
     }
 
     public function createWithAddress(string $name, Address $address) {
@@ -45,6 +50,14 @@ class WarehouseService
         $this->entityManager->flush();
 
         return $warehouse;
+    }
+
+    public function queryAll(): QueryBuilder
+    {
+        return $this->entityManager->getRepository(Warehouse::class)
+            ->createQueryBuilder('r') // r for Resource
+            ->select('r', 'a')
+            ->leftJoin('r.address', 'a');
     }
 
 }

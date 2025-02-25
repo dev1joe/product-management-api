@@ -5,13 +5,13 @@ namespace App\QueryValidators;
 
 use App\Contracts\QueryValidatorInterface;
 use App\DataObjects\CategoryQueryParams;
-use App\DataObjects\QueryParamsObject;
+use App\DataObjects\QueryParams;
 use App\Exceptions\MissingQueryParamsException;
 use App\Exceptions\ValidationException;
 
 class CategoryQueryValidator implements QueryValidatorInterface
 {
-    public function validate(QueryParamsObject $query): QueryParamsObject
+    public function validate(QueryParams $query): QueryParams
     {
         // if orderBy then (require orderDir with orderBy) & (validate orderBy and orderDir)
         if($query->orderBy) {

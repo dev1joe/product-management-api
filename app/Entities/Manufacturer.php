@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 
-#[Entity, Table]
+#[Entity, Table(name: 'manufacturers')]
 #[HasLifecycleCallbacks]
 class Manufacturer
 {

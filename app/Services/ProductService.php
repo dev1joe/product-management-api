@@ -7,20 +7,28 @@ use App\DataObjects\ProductQueryParams;
 use App\Entities\Category;
 use App\Entities\Manufacturer;
 use App\Entities\Product;
+use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use League\Flysystem\FilesystemException;
 use Psr\Http\Message\UploadedFileInterface;
 
-class ProductService
+class ProductService extends BaseService
 {
     public function __construct(
         private readonly EntityManager $entityManager,
         private readonly FileService $fileService,
     ){
+        parent::__construct(
+            $this->entityManager,
+            Product::class
+        );
     }
 
     /**
@@ -63,23 +71,13 @@ class ProductService
         return $product;
     }
 
-    public function fetchAll(): array {
+    public function queryAll(): QueryBuilder
+    {
         return $this->entityManager->getRepository(Product::class)
-            ->createQueryBuilder('p')->select('p', 'c')->leftJoin('p.category', 'c')
-            ->getQuery()->getArrayResult();
-    }
-
-    public function fetchPaginatedProducts(ProductQueryParams $params): array {
-        // execute query and return result
-        $query =  $this->entityManager->getRepository(Product::class)
-            ->createQueryBuilder('p')
-            ->select('p', 'c', 'm')
-            ->leftJoin('p.category' , 'c')
-            ->leftJoin('p.manufacturer', 'm');
-
-        $this->applyFilters($query, $params);
-
-        return $query->getQuery()->getArrayResult();
+            ->createQueryBuilder('r')
+            ->select('r', 'c', 'm')
+            ->leftJoin('r.category', 'c')
+            ->leftJoin('r.manufacturer', 'm');
     }
 
     public function fetchPaginationMetadata(?ProductQueryParams $params): array {
@@ -118,27 +116,6 @@ class ProductService
             ->setMaxResults($params->limit);
     }
 
-    private function fetchProduct(int $id): Query {
-        return $this->entityManager->getRepository(Product::class)
-            ->createQueryBuilder('p')
-            ->select('p', 'c', 'm')
-            ->leftJoin('p.category', 'c')
-            ->leftJoin('p.manufacturer', 'm')
-            ->where('p.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery();
-    }
-
-    public function fetchByIdAsArray(int $id): array {
-        // this returns an array with one product inside,
-        //so we just return the first product so that the response is a json object
-        return $this->fetchProduct($id)->getArrayResult()[0];
-    }
-
-    public function fetchById(int $id): ?Product {
-        return $this->fetchProduct($id)->getOneOrNullResult();
-    }
-
     public function fetchByCategory(int $id): array {
         return $this->entityManager->getRepository(Product::class)
             ->createQueryBuilder('p')
@@ -156,8 +133,14 @@ class ProductService
      * @throws OptimisticLockException
      * @throws FilesystemException
      * @throws ORMException
+     * @throws EntityNotFoundException
      */
-    public function selectiveUpdate(Product $product, array $data): array {
+    public function selectiveUpdate(int $id, array $data): array {
+        $product = $this->entityManager->getRepository(Product::class)->find($id);
+        if(! $product) {
+            throw new EntityNotFoundException('Product Not Found');
+        }
+
         $changedFields = [];
 
         // assuming that the data went through the request validator first
@@ -213,14 +196,5 @@ class ProductService
         }
 
         return $changedFields;
-    }
-
-    /**
-     * @throws OptimisticLockException
-     * @throws ORMException
-     */
-    public function delete(Product $product): void {
-        $this->entityManager->remove($product);
-        $this->entityManager->flush();
     }
 }

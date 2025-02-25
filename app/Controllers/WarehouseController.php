@@ -74,17 +74,24 @@ class WarehouseController
     }
 
     public function fetchAll(Request $request, Response $response): Response {
-        $result = $this->entityManager->getRepository(Warehouse::class)
-            ->createQueryBuilder('w')->select('w', 'a')
-            ->leftJoin('w.address', 'a')
-            ->getQuery()->getArrayResult();
+        $result = $this->warehouseService->fetchPaginated();
 
         $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
-    public function fetchById(Request $request, Response $response): Response {
-        throw new MethodNotImplementedException(); //TODO: implement this function
+    public function fetchById(Request $request, Response $response, array $args): Response {
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            $response->getBody()->write(json_encode(['error' => 'invalid ID']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $result = $this->warehouseService->fetchById($id);
+
+        $response->getBody()->write(json_encode($result));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function updateForm(Request $request, Response $response, array $args): Response {

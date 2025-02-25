@@ -14,6 +14,7 @@ use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UploadProductPhotoRequestValidator;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use League\Flysystem\Filesystem;
@@ -24,6 +25,7 @@ use App\Entities\Product;
 use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\UploadedFileInterface;
 use Slim\Views\Twig;
+use Throwable;
 
 class ProductController
 {
@@ -85,9 +87,16 @@ class ProductController
             throw new ValidationException(['id' => ["id not found in route arguments"]]);
         }
 
-        $product = $this->productService->fetchByIdAsArray($id);
-        $response->getBody()->write(json_encode($product));
-        return $response->withHeader('Content-Type', 'application/json');
+        $product = $this->productService->fetchById($id);
+
+        if(! $product) {
+            $response->getBody()->write(json_encode(['error' => "Product Not Found"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+
+        } else {
+            $response->getBody()->write(json_encode($product));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
@@ -95,23 +104,21 @@ class ProductController
 
         try {
             (new ProductQueryValidator())->validate($queryParams);
-            $result = $this->productService->fetchPaginatedProducts($queryParams);
-            $metadata = $this->productService->fetchPaginationMetadata($queryParams);
+            $result = $this->productService->fetchPaginated($queryParams);
         } catch(ValidationException|MissingQueryParamsException $e) {
-            $result = $this->productService->fetchAll();
-            $metadata = $this->productService->fetchPaginationMetadata(null);
+
+            // use default query params to fetch data
+            $result = $this->productService->fetchPaginated(new ProductQueryParams([]));
         }
+
         //TODO: do not fetch all
-        //TODO: 404 response for missing query parameters exception
-        //TODO: xxx response for validation exception
-        //TODO: xxx response for ORM\QueryException
+        //TODO: xxx response code for missing query parameters exception
+        //TODO: xxx response code for validation exception
+        //TODO: xxx response code for ORM\QueryException
         //TODO: exception handling
         //TODO: same todos for category
 
-        $response->getBody()->write(json_encode([
-            'products' => $result,
-            'metadata' => $metadata,
-        ]));
+        $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
@@ -129,17 +136,18 @@ class ProductController
         }
 
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
-        $data = $validator->validate($data);
-
-        $id = (int) $args['id'];
-        $product = $this->productService->fetchById($id);
-        if(! $product) {
-            $response->getBody()->write(json_encode(['error' => "product not found"]));
-            return $response->withHeader('Content-Type','application/json')->withStatus(404);
-        }
 
         try {
-            $changedFields = $this->productService->selectiveUpdate($product, $data);
+            $data = $validator->validate($data);
+        } catch(ValidationException $e) {
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(400);
+        }
+
+        $id = (int) $args['id'];
+
+        try {
+            $changedFields = $this->productService->selectiveUpdate($id, $data);
 
             if(sizeof($changedFields) > 0) {
                 $message = 'product updated successfully';
@@ -150,28 +158,52 @@ class ProductController
             $response->getBody()->write(json_encode(['message' => $message, 'changed fields' => $changedFields]));
             return $response->withHeader('Content-Type','application/json')->withStatus(200);
 
-        } catch(\Exception $e) {
-            $response->getBody()->write(json_encode(['message' => 'error updating product', 'error' => $e->getMessage()]));
-            return $response->withHeader('Content-Type','application/json')->withStatus(200);
+        } catch(EntityNotFoundException $e) {
+            $message = [
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($message));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+
+        } catch(Throwable $e) {
+            $response->getBody()->write(json_encode(['status' => 'fail', 'message' => $e->getMessage()]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(500);
         }
     }
 
     public function delete(Request $request, Response $response, array $args): Response {
         $id = (int) $args['id'];
 
-        $product = $this->productService->fetchById($id);
-        if(! $product) {
-            return $response->withStatus(404);
-        }
-
 //        $category = $product->getCategory();
 //        $category->decrementProductCount(1);
 //        $this->entityManager->persist($category);
-        $this->productService->delete($product);
+        try {
+            $this->productService->delete($id);
+
+        } catch(EntityNotFoundException $e) {
+            $message = [
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($message));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        } catch(Throwable $e) {
+            $message = [
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($message));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
 
         $successMessage = [
+            'status' => 'success',
             'message' => 'Product deleted successfully',
-            'deletedProductId' => $id,
+            'deletedId' => $id,
         ];
 
         $response->getBody()->write(json_encode($successMessage));

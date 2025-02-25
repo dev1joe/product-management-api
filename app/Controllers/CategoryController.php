@@ -62,19 +62,14 @@ class CategoryController
 
         try {
             (new CategoryQueryValidator())->validate($queryParams);
-            $result = $this->categoryService->fetchPaginatedCategories($queryParams);
+            $result = $this->categoryService->fetchPaginated($queryParams);
 
         } catch (ValidationException|MissingQueryParamsException $e) {
-            $result = $this->categoryService->fetchAll();
+            $result = $this->categoryService->fetchPaginated($queryParams);
         }
         // any other exception will pop into my face, haha.
 
-        $data = [
-            'categories' => $result,
-            'metadata' => []
-        ];
-
-        $response->getBody()->write(json_encode($data));
+        $response->getBody()->write(json_encode($result));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
@@ -82,21 +77,27 @@ class CategoryController
         $result = $this->categoryService->fetchIdsNames();
 
         $response->getBody()->write(json_encode($result));
-        return $response;
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function fetchById(Request $request, Response $response, array $args): Response {
         $id = (int) $args['id'];
-        $arrayCategory = $this->categoryService->fetchByIdAsArray($id);
+        $arrayCategory = $this->categoryService->fetchById($id);
 
         $response->getBody()->write(json_encode($arrayCategory));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function delete(Request $request, Response $response, array $args): Response {
-        $id = (int) $args['id'];
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            throw new ValidationException(['id' => ["id not found in route arguments"]]);
+        }
+
         $category = $this->categoryService->fetchById($id);
         if(! $category) {
+            // TODO: throw an exception instead
             return $response->withStatus(404);
         }
 

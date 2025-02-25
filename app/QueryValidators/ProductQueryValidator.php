@@ -5,13 +5,13 @@ namespace App\QueryValidators;
 
 use App\Contracts\QueryValidatorInterface;
 use App\DataObjects\ProductQueryParams;
-use App\DataObjects\QueryParamsObject;
+use App\DataObjects\QueryParams;
 use App\Exceptions\ValidationException;
 
 class ProductQueryValidator implements QueryValidatorInterface
 {
 
-    public function validate(QueryParamsObject $query): QueryParamsObject
+    public function validate(QueryParams $query): QueryParams
     {
         // TODO: Implement validate() method.
         /** @var ProductQueryParams $query */

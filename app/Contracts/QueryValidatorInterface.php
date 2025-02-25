@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Contracts;
 
-use App\DataObjects\QueryParamsObject;
+use App\DataObjects\QueryParams;
 
 interface QueryValidatorInterface
 {
-    public function validate(QueryParamsObject $query): QueryParamsObject;
+    public function validate(QueryParams $query): QueryParams;
 }

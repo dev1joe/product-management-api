@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\DataObjects;
 
-class ProductQueryParams extends QueryParamsObject
+class ProductQueryParams extends QueryParams
 {
     public ?int $categoryId = null;
     public ?int $minPriceInCents = null;

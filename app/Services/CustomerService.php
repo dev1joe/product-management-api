@@ -6,21 +6,19 @@ namespace App\Services;
 use App\Entities\Customer;
 use App\Exceptions\MethodNotImplementedException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 
-class CustomerService
+class CustomerService extends BaseService
 {
     public function __construct(
         private readonly EntityManager $entityManager,
     ){
+        parent::__construct(
+            $this->entityManager,
+            Customer::class
+        );
     }
 
-    public function fetchAll(): array {
-        return $this->entityManager->getRepository(Customer::class)
-            ->createQueryBuilder('c')
-            ->select('c')
-            ->getQuery()
-            ->getArrayResult();
-    }
 
     /**
      * a simple create function that assumes the data is already validated and all necessary fields are present
@@ -48,7 +46,19 @@ class CustomerService
         return $customer;
     }
 
-    public function fetchByEmail(string $email): Customer|null {
-        return $this->entityManager->getRepository(Customer::class)->findOneBy(['email' => $email]);
+    public function queryAll(): QueryBuilder
+    {
+        return $this->entityManager->getRepository(Customer::class)
+            ->createQueryBuilder('r')
+            ->select('r', 'a')
+            ->leftJoin('r.address', 'a');
+    }
+
+    public function fetchByEmail(string $email): array {
+        return $this->queryAll()
+            ->where('r.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getArrayResult();
     }
 }

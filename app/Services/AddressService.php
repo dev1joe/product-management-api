@@ -7,11 +7,15 @@ use App\Entities\Address;
 use App\Entities\Warehouse;
 use Doctrine\ORM\EntityManager;
 
-class AddressService
+class AddressService extends BaseService
 {
     public function __construct(
         private readonly EntityManager $entityManager,
     ){
+        parent::__construct(
+            $this->entityManager,
+            Address::class
+        );
     }
 
     /**
@@ -38,11 +42,6 @@ class AddressService
         $this->entityManager->flush();
 
         return $address;
-    }
-
-    public function fetchAllAddresses(): array {
-        return $this->entityManager->getRepository(Address::class)->createQueryBuilder('a')
-            ->select('a')->getQuery()->getArrayResult();
     }
 
     /**

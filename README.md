@@ -94,6 +94,7 @@
 - Read: [REST API Best Practices](https://restfulapi.net/resource-naming/)
 - Read: [Rules for creating a RESTful API](https://chatgpt.com/share/677d2db6-f570-800c-b5ea-5d783f731bf1)
 - For API testing use [Dynamic Variables](https://learning.postman.com/docs/tests-and-scripts/write-scripts/variables-list)
+- Metadata and default query params in API responses [here](https://chatgpt.com/share/67be06af-b354-800c-b7aa-3e648eab2d51) 
 
 - [x] Products API
 - [ ] Categories API
