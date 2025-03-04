@@ -7,6 +7,7 @@ use App\DataObjects\CategoryQueryParams;
 use App\DataObjects\QueryParams;
 use App\Entities\Category;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query;
@@ -64,8 +65,16 @@ class CategoryService extends BaseService
      * @throws FilesystemException
      * @throws ORMException
      */
-    public function update(Category $category, array $data): Category {
-        $category->setName($data['name']);
+    public function update(int $id, array $data): Category {
+        $category = $this->entityManager->getRepository(Category::class)->find($id);
+
+        if(! $category) {
+            throw new EntityNotFoundException('Category Not Found');
+        }
+
+        if(isset($data['name'])) {
+            $category->setName($data['name']);
+        }
 
         if(isset($data['image'])) {
             /** @var UploadedFileInterface $file */

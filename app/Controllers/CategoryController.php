@@ -10,9 +10,11 @@ use App\QueryValidators\CategoryQueryValidator;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\CategoryService;
+use Doctrine\ORM\EntityNotFoundException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Views\Twig;
+use Throwable;
 
 class CategoryController
 {
@@ -40,14 +42,23 @@ class CategoryController
 
         // validate
         $validator = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class);
-        $data = $validator->validate($data);
 
-        // create the category
-        $category = $this->categoryService->create($data);
+        try {
+            $data = $validator->validate($data);
+        } catch(ValidationException $e) {
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(400);
+        }
 
-        // return $response->withHeader('Location', '/admin/category/all')->withStatus(302);
+        try {
+            $this->categoryService->create($data);
+        } catch(\Throwable $e) {
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(500);
+        }
 
-         return $response;
+        $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'category created successfully!']));
+        return $response->withHeader('Content-Type','application/json')->withStatus(200);
     }
 
     public function fetchAll(Request $request, Response $response) {
@@ -63,14 +74,15 @@ class CategoryController
         try {
             (new CategoryQueryValidator())->validate($queryParams);
             $result = $this->categoryService->fetchPaginated($queryParams);
+            $response->getBody()->write(json_encode($result));
+            return $response->withHeader('Content-Type', 'application/json');
 
-        } catch (ValidationException|MissingQueryParamsException $e) {
-            $result = $this->categoryService->fetchPaginated($queryParams);
+        } catch (ValidationException $e) {
+
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
         // any other exception will pop into my face, haha.
-
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function fetchNames(Request $request, Response $response): Response {
@@ -92,20 +104,35 @@ class CategoryController
         $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
 
         if(! $id) {
-            throw new ValidationException(['id' => ["id not found in route arguments"]]);
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $category = $this->categoryService->fetchById($id);
-        if(! $category) {
-            // TODO: throw an exception instead
-            return $response->withStatus(404);
-        }
+        try {
+            $this->categoryService->delete($id);
 
-        $this->categoryService->delete($category);
+        } catch(EntityNotFoundException $e) {
+            $message = [
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($message));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        } catch(Throwable $e) {
+            $message = [
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($message));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
 
         $successMessage = [
+            'status' => 'success',
             'message' => 'Category deleted successfully',
-            'deletedCategoryId' => $id,
+            'deletedId' => $id,
         ];
 
         $response->getBody()->write(json_encode($successMessage));
@@ -122,16 +149,27 @@ class CategoryController
         }
 
         $validator = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class);
-        $data = $validator->validate($data);
 
-        $id = (int) $args['id'];
-        $category = $this->categoryService->fetchById($id);
-        if(! $category) {
-            return $response->withStatus(404);
+        try {
+            $data = $validator->validate($data);
+        } catch(ValidationException $e) {
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(400);
         }
 
-        // real update
-        $this->categoryService->update($category, $data);
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        try {
+            $this->categoryService->update($id, $data);
+        } catch (Throwable $e) {
+            $response->getBody()->write(json_encode(['status' => 'fail', 'message' => $e->getMessage()]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(500);
+        }
 
         $message = [
             'message' => 'category updated successfully!',

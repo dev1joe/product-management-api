@@ -63,12 +63,12 @@ class ProductController
 
         try {
             $this->productService->create($data);
-        } catch(\Exception $e) {
-            $response->getBody()->write(json_encode(['error' => 'Internal Server Error']));
+        } catch(\Throwable $e) {
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
             return $response->withHeader('Content-Type','application/json')->withStatus(500);
         }
 
-        $response->getBody()->write(json_encode(['message' => 'product created successfully!']));
+        $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'product created successfully!']));
         return $response->withHeader('Content-Type','application/json')->withStatus(200);
     }
     public function form(Request $request, Response $response): Response {
@@ -105,28 +105,20 @@ class ProductController
         try {
             (new ProductQueryValidator())->validate($queryParams);
             $result = $this->productService->fetchPaginated($queryParams);
-        } catch(ValidationException|MissingQueryParamsException $e) {
+            $response->getBody()->write(json_encode($result));
+            return $response->withHeader('Content-Type', 'application/json');
 
-            // use default query params to fetch data
-            $result = $this->productService->fetchPaginated(new ProductQueryParams([]));
+        } catch(ValidationException $e) {
+
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        //TODO: do not fetch all
-        //TODO: xxx response code for missing query parameters exception
-        //TODO: xxx response code for validation exception
         //TODO: xxx response code for ORM\QueryException
-        //TODO: exception handling
         //TODO: same todos for category
-
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws ORMException
-     * @throws FilesystemException
-     */
+
     public function update(Request $request, Response $response, array $args): Response {
         $data = $request->getParsedBody();
         $uploadedFiles = $request->getUploadedFiles();
@@ -144,7 +136,12 @@ class ProductController
             return $response->withHeader('Content-Type','application/json')->withStatus(400);
         }
 
-        $id = (int) $args['id'];
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
 
         try {
             $changedFields = $this->productService->selectiveUpdate($id, $data);
@@ -174,7 +171,12 @@ class ProductController
     }
 
     public function delete(Request $request, Response $response, array $args): Response {
-        $id = (int) $args['id'];
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
 
 //        $category = $product->getCategory();
 //        $category->decrementProductCount(1);

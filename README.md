@@ -156,3 +156,6 @@
 - capacity for more employees (manger, supervisor, product manager, order manager)
 - order tracking 
 - Maybe add the feature of archiving products, for data analysis sake.
+
+# Commit Message:
+refactor: generalized query params default values

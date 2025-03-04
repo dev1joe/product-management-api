@@ -37,32 +37,25 @@ class BaseService
         return $this->queryAll()->getQuery()->getArrayResult();
     }
 
-    public function fetchPaginated(?QueryParams $queryParams = null): array {
+    // TODO: I need to change order of operations, offset and limit first then order
+    public function fetchPaginated(QueryParams $queryParams): array {
+
+        $query = $this->queryAll();
+
+        // if the page is not set by the user, it'll be set to the default value,
+        // so no need for validation at that point
+        $query->setFirstResult($queryParams->limit * ($queryParams->page - 1));
+        $query->setMaxResults($queryParams->limit);
+
+        $query->orderBy('r.' . $queryParams->orderBy, $queryParams->orderDir);
+
+        $data = $query->getQuery()->getArrayResult();
+
         $metadata = [];
-
-        if($queryParams) {
-            $query = $this->queryAll();
-
-            if($queryParams->orderBy) {
-                $query->orderBy('r.' . $queryParams->orderBy, $queryParams->orderDir);
-
-                $metadata['orderBy'] = $queryParams->orderBy;
-                $metadata['orderDir'] = $queryParams->orderDir;
-            }
-
-            if($queryParams->limit) {
-                $query->setFirstResult($queryParams->limit * ($queryParams->page - 1));
-                $query->setMaxResults($queryParams->limit);
-
-                $metadata['page'] = $queryParams->page;
-                $metadata['limit'] = $queryParams->limit;
-            }
-
-            $data = $query->getQuery()->getArrayResult();
-        } else {
-            $data = $this->fetchAll();
-        }
-
+        $metadata['orderBy'] = $queryParams->orderBy;
+        $metadata['orderDir'] = $queryParams->orderDir;
+        $metadata['page'] = $queryParams->page;
+        $metadata['limit'] = $queryParams->limit;
         $metadata['totalItems'] = sizeof($data);
 
         return [
@@ -78,6 +71,14 @@ class BaseService
             ->setParameter('id', $id)
             ->getQuery()
             ->getArrayResult();
+
+//        return [
+//            'data' => $data,
+//            'metadata' => [
+//                'status' => 'success',
+//                'id' => $id
+//            ]
+//        ];
     }
 
     /**

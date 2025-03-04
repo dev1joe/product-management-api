@@ -9,29 +9,17 @@ abstract class QueryParams
     // the important thing is that it cannot be instantiated
     public ?string $orderBy = null;
     public ?string $orderDir = null;
-    public ?int $page = null;
-    public ?int $limit = null;
-    //TODO: do I convert limit variable from integer to mixed to prevent errors in that DTO
-    // and validate the data type of it in the categoriesQueryValidator class ?? or stay like that ??
+    public mixed $page = null;
+    public mixed $limit = null; // allow page and limit to be mixed values, allowing validators to catch errors
 
+    //TODO: refactor default values to environment variables / constants
     public function __construct(array $queryParams)
     {
         $queryParams = array_change_key_case($queryParams, CASE_LOWER);
 
-        if(isset($queryParams['orderby'])) {
-            $this->orderBy = $queryParams['orderby'];
-        }
-
-        if(isset($queryParams['orderdir'])) {
-            $this->orderDir = $queryParams['orderdir'];
-        }
-
-        if(isset($queryParams['page'])) {
-            $this->page = $queryParams['page'];
-        }
-
-        if(isset($queryParams['limit'])) {
-            $this->limit = (int) $queryParams['limit'];
-        }
+        $this->page = (isset($queryParams['page']))? $queryParams['page'] : 1;
+        $this->limit = (isset($queryParams['limit']))? $queryParams['limit'] : 10;
+        $this->orderBy = (isset($queryParams['orderby']))? $queryParams['orderby'] : 'id';
+        $this->orderDir = (isset($queryParams['orderdir']))? $queryParams['orderdir'] : 'asc';
     }
 }
