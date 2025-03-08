@@ -76,7 +76,7 @@ return function(App $app) {
 
        // [________________________________________ warehouse ________________________________________]
        $group->get('/warehouses/create', [WarehouseController::class, 'form']);
-       $group->get('/warehouses', [WarehouseController::class, 'fetchAll']);
+       $group->get('/warehouses', [WarehouseController::class, 'fetchAllPaginated']);
        $group->get('/warehouses/{id}', [WarehouseController::class, 'fetchById']);
 
        $group->get('/warehouses/update/{id}', [WarehouseController::class, 'updateForm']);

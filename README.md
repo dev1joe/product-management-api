@@ -158,4 +158,4 @@
 - Maybe add the feature of archiving products, for data analysis sake.
 
 # Commit Message:
-refactor: generalized query params default values
+refactor: migrating to base query validator class and get rid of custom query validators;

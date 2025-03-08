@@ -8,6 +8,7 @@ use App\Entities\Category;
 use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\MissingQueryParamsException;
 use App\Exceptions\ValidationException;
+use App\QueryValidators\BaseQueryValidator;
 use App\QueryValidators\ProductQueryValidator;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
@@ -103,7 +104,9 @@ class ProductController
         $queryParams = new ProductQueryParams($request->getQueryParams());
 
         try {
-            (new ProductQueryValidator())->validate($queryParams);
+            $queryValidator = new BaseQueryValidator(['createdat', 'updatedat', 'unitpriceincents', 'avgrating', 'id', 'name']);
+            $queryValidator->validate($queryParams);
+
             $result = $this->productService->fetchPaginated($queryParams);
             $response->getBody()->write(json_encode($result));
             return $response->withHeader('Content-Type', 'application/json');

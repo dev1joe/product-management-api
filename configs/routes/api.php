@@ -45,7 +45,7 @@ return function(App $app) {
         $group->get('/manufacturers/names', [ManufacturerController::class, 'fetchNames']);
 
         //[___________________________ warehouses ___________________________]
-        $group->get('/warehouses', [WarehouseController::class, 'fetchAll']);
+        $group->get('/warehouses', [WarehouseController::class, 'fetchAllPaginated']);
         $group->get('/warehouses/{id:[0-9]+}', [WarehouseController::class, 'fetchById']);
 
         //[___________________________ Addresses ___________________________]

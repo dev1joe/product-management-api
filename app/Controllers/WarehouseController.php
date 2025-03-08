@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\DataObjects\WarehouseQueryParams;
 use App\Entities\Address;
 use App\Entities\Warehouse;
 use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\ValidationException;
+use App\QueryValidators\BaseQueryValidator;
 use App\RequestValidators\CreateWarehouseExistingAddressRequestValidator;
 use App\RequestValidators\CreateWarehouseNewAddressRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
@@ -73,11 +75,23 @@ class WarehouseController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
-    public function fetchAll(Request $request, Response $response): Response {
-        $result = $this->warehouseService->fetchPaginated();
+    public function fetchAllPaginated(Request $request, Response $response): Response {
+        $queryParams = new WarehouseQueryParams($request->getQueryParams());
 
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
+        try {
+            $queryValidator = new BaseQueryValidator(['updatedat', 'createdat', 'name', 'id']);
+            $queryValidator->validate($queryParams);
+
+            $result = $this->warehouseService->fetchPaginated($queryParams);
+
+            $response->getBody()->write(json_encode($result));
+            return $response->withHeader('Content-Type', 'application/json');
+
+        } catch (ValidationException $e) {
+
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
     }
 
     public function fetchById(Request $request, Response $response, array $args): Response {

@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\DataObjects\CategoryQueryParams;
 use App\Exceptions\MissingQueryParamsException;
 use App\Exceptions\ValidationException;
+use App\QueryValidators\BaseQueryValidator;
 use App\QueryValidators\CategoryQueryValidator;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
@@ -72,8 +73,11 @@ class CategoryController
         $queryParams = new CategoryQueryParams($request->getQueryParams());
 
         try {
-            (new CategoryQueryValidator())->validate($queryParams);
+            $queryValidator = new BaseQueryValidator(['updatedat', 'createdat', 'name', 'productcount', 'id']);
+            $queryValidator->validate($queryParams);
+
             $result = $this->categoryService->fetchPaginated($queryParams);
+
             $response->getBody()->write(json_encode($result));
             return $response->withHeader('Content-Type', 'application/json');
 

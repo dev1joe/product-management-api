@@ -37,7 +37,6 @@ class BaseService
         return $this->queryAll()->getQuery()->getArrayResult();
     }
 
-    // TODO: I need to change order of operations, offset and limit first then order
     public function fetchPaginated(QueryParams $queryParams): array {
 
         $query = $this->queryAll();
