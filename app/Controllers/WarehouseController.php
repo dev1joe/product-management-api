@@ -3,21 +3,20 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\DataObjects\WarehouseQueryParams;
-use App\Entities\Address;
+use App\DataObjects\QueryParams;
 use App\Entities\Warehouse;
-use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
-use App\RequestValidators\CreateWarehouseExistingAddressRequestValidator;
-use App\RequestValidators\CreateWarehouseNewAddressRequestValidator;
+use App\RequestValidators\CreateWarehouseRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\AddressService;
 use App\Services\WarehouseService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityNotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
+use Throwable;
 
 class WarehouseController
 {
@@ -40,43 +39,29 @@ class WarehouseController
     public function create(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
 
-        // var_dump($data);
-        // return $response;
+        $validator = $this->requestValidatorFactory->make(CreateWarehouseRequestValidator::class);
 
-        if(array_key_exists('address_type', $data)) {
-            $addressType = $data['address_type'];
-
-            if($addressType == 'existing') {
-
-                $data = $this->requestValidatorFactory->make(
-                    CreateWarehouseExistingAddressRequestValidator::class
-                )->validate($data);
-
-                $this->warehouseService->createWithAddress($data['name'], $data['address']);
-
-            } else if($addressType == 'new') {
-
-                $data = $this->requestValidatorFactory->make(
-                    CreateWarehouseNewAddressRequestValidator::class
-                )->validate($data);
-
-                $this->warehouseService->create($data);
-
-            } else {
-                throw new ValidationException(['address_type' => ['address type must only be new or exiting, address type is ' . $addressType . '.']]);
-            }
-
-        } else {
-            throw new ValidationException(['address_type' => ['address type is required']]);
+        try {
+            $data = $validator->validate($data);
+        } catch(ValidationException $e) {
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(400);
         }
 
-        $message = ['massage' => 'warehouse created successfully!'];
+        try {
+            $this->warehouseService->create($data);
+        } catch(Throwable $e) {
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(500);
+        }
+
+        $message = ['status' => 'success', 'massage' => 'warehouse created successfully!'];
         $response->getBody()->write(json_encode($message));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
-        $queryParams = new WarehouseQueryParams($request->getQueryParams());
+        $queryParams = new QueryParams($request->getQueryParams());
 
         try {
             $queryValidator = new BaseQueryValidator(['updatedat', 'createdat', 'name', 'id']);
@@ -98,14 +83,19 @@ class WarehouseController
         $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
 
         if(! $id) {
-            $response->getBody()->write(json_encode(['error' => 'invalid ID']));
+            $response->getBody()->write(json_encode(['id' => ["id not found in route arguments"]]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $result = $this->warehouseService->fetchById($id);
+        $warehouse = $this->warehouseService->fetchById($id);
 
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
+        if(! $warehouse) {
+            $response->getBody()->write(json_encode(['error' => "Warehouse Not Found"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        } else {
+            $response->getBody()->write(json_encode($warehouse));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
     }
 
     public function updateForm(Request $request, Response $response, array $args): Response {
@@ -126,109 +116,112 @@ class WarehouseController
     }
 
     public function update(Request $request, Response $response, array $args): Response {
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        // TODO: validate that data is not null
         $data = $request->getParsedBody();
-        $id = null;
+        $validator = $this->requestValidatorFactory->make(CreateWarehouseRequestValidator::class);
 
-        if(array_key_exists('id', $data)) {
-            $id = (int) $data['id'];
-        } else {
-            $id = (int) $args['id'];
+        try {
+            $data = $validator->validate($data);
+        } catch (ValidationException $e) {
+            $response->getBody()->write(json_encode(['errors' => $e->errors]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(400);
         }
 
-        $warehouse = $this->entityManager->find(Warehouse::class, $id);
-
-        if(! $warehouse) {
-            throw new ValidationException(['name' => ['Warehouse not found']]);
+        try {
+            $this->warehouseService->update($id, $data);
+        } catch (Throwable $e) {
+            $response->getBody()->write(json_encode(['status' => 'fail', 'message' => $e->getMessage()]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(500);
         }
 
-        if(array_key_exists('address_type', $data)) {
-            $addressType = $data['address_type'];
+        $message = [
+            'status' => 'success',
+            'message' => 'warehouse updated successfully!',
+            'id' => $id
+        ];
 
-            if($addressType == 'existing') {
-
-                $data = $this->requestValidatorFactory->make(
-                    CreateWarehouseExistingAddressRequestValidator::class
-                )->validate($data);
-
-                // make sure data changed
-                // either different address
-                // or different name
-
-                /** @var Address $newAddress */
-                $newAddress = $data['address'];
-
-                if(
-                    $warehouse->getAddress()->getId() === $newAddress->getId() &&
-                    $warehouse->getName() === $data['name']
-                ) {
-                    throw new ValidationException(errors: [
-                        'name' => 'either name or address has to be changed',
-                        'address' => 'either name or address has to be changed',
-                    ]);
-                }
-
-                $warehouse->setName($data['name']);
-                $warehouse->setAddress($newAddress);
-
-            } else if($addressType == 'new') {
-
-                $data = $this->requestValidatorFactory->make(
-                    CreateWarehouseNewAddressRequestValidator::class
-                )->validate($data);
-
-                $warehouse->setName($data['name']);
-
-                // create and assign new address
-                $address = $this->addressService->create($data); // the address is flushed by the create function
-                $warehouse->setAddress($address);
-
-            } else {
-                throw new ValidationException(['address_type' => ['address type must only be new or exiting, address type is ' . $addressType . '.']]);
-            }
-
-        } else {
-            throw new ValidationException(['address_type' => ['address type is required']]);
-        }
-
-        $this->entityManager->persist($warehouse);
-        $this->entityManager->flush();
-
-        $message = "update successful !";
-        $response->getBody()->write(json_encode(['message' => $message]));
-        return $response->withHeader('Content-Type', 'application/json');
+        $response->getBody()->write(json_encode($message));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
+    // TODO: delete address when no more warehouses associated with it ??
     public function delete(Request $request, Response $response, array $args): Response {
-        $id = (int) $args['id'];
-        $isAddressDeleted = false;
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
 
-        /** @var Warehouse $warehouse */
-        $warehouse = $this->entityManager->find(Warehouse::class, $id);
-
-        $address = $warehouse->getAddress();
-
-        // if warehouse address is NOT associated with another object, DELETE IT
-        $qb = $this->entityManager->getRepository(Warehouse::class)->createQueryBuilder('w');
-        $addressAssociatedWarehouses = $qb->select('w.id')->leftJoin('w.address', 'a')->where(
-            'a.id = :addressId'
-        )->setParameter('addressId', $address->getId())->getQuery()->getArrayResult();
-
-        if(sizeof($addressAssociatedWarehouses) == 1) {
-            $this->entityManager->remove($address);
-            $isAddressDeleted = true;
+        if(! $id) {
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $this->entityManager->remove($warehouse);
-        $this->entityManager->flush();
+        try {
+            $this->warehouseService->delete($id);
+
+        } catch(EntityNotFoundException $e) {
+            $message = [
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($message));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        } catch(Throwable $e) {
+            $message = [
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($message));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+        }
 
         $successMessage = [
-            'message' => $warehouse->getName().' deleted successfully !',
-            'deletedAddressId' => $id,
-            'associatedAddressDeleted' => $isAddressDeleted,
-            'associationsQueryResult' => json_encode($addressAssociatedWarehouses)
+            'status' => 'success',
+            'message' => 'Warehouse deleted successfully',
+            'id' => $id,
         ];
 
         $response->getBody()->write(json_encode($successMessage));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
+
+//    public function delete(Request $request, Response $response, array $args): Response {
+//        $id = (int) $args['id'];
+//        $isAddressDeleted = false;
+//
+//        /** @var Warehouse $warehouse */
+//        $warehouse = $this->entityManager->find(Warehouse::class, $id);
+//
+//        $address = $warehouse->getAddress();
+//
+//        // if warehouse address is NOT associated with another object, DELETE IT
+//        $qb = $this->entityManager->getRepository(Warehouse::class)->createQueryBuilder('w');
+//        $addressAssociatedWarehouses = $qb->select('w.id')->leftJoin('w.address', 'a')->where(
+//            'a.id = :addressId'
+//        )->setParameter('addressId', $address->getId())->getQuery()->getArrayResult();
+//
+//        if(sizeof($addressAssociatedWarehouses) == 1) {
+//            $this->entityManager->remove($address);
+//            $isAddressDeleted = true;
+//        }
+//
+//        $this->entityManager->remove($warehouse);
+//        $this->entityManager->flush();
+//
+//        $successMessage = [
+//            'message' => $warehouse->getName().' deleted successfully !',
+//            'deletedAddressId' => $id,
+//            'associatedAddressDeleted' => $isAddressDeleted,
+//            'associationsQueryResult' => json_encode($addressAssociatedWarehouses)
+//        ];
+//
+//        $response->getBody()->write(json_encode($successMessage));
+//        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+//    }
 }

@@ -80,6 +80,11 @@ class BaseService
 //        ];
     }
 
+    public function fetchIdsNames(): array {
+        return $this->entityManager->getRepository($this->className)->createQueryBuilder('r')
+            ->select('r.id', 'r.name')->getQuery()->getArrayResult();
+    }
+
     /**
      * @throws OptimisticLockException
      * @throws ORMException

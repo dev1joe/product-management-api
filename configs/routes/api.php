@@ -26,27 +26,32 @@ return function(App $app) {
         //[___________________________ products ___________________________]
         $group->get('/products', [ProductController::class, 'fetchAllPaginated']);
         $group->get('/products/{id:[0-9]+}', [ProductController::class, 'fetchById']);
-
+        $group->delete('/products/{id:[0-9]+}', [ProductController::class, 'delete']);
         $group->post('/products', [ProductController::class, 'create']);
         $group->post('/products/{id:[0-9]+}', [ProductController::class, 'update']);
-        $group->delete('/products/{id:[0-9]+}', [ProductController::class, 'delete']);
 
         //[___________________________ categories ___________________________]
         $group->get('/categories', [CategoryController::class, 'fetchAllPaginated']);
         $group->get('/categories/{id:[0-9]+}', [CategoryController::class, 'fetchById']);
         $group->get('/categories/names', [CategoryController::class, 'fetchNames']);
+        $group->delete('/categories/{id:[0-9]+}', [CategoryController::class, 'delete']);
         $group->post('/categories', [CategoryController::class, 'create']);
         $group->post('/categories/{id:[0-9]+}', [CategoryController::class, 'update']);
-        $group->delete('/categories/{id:[0-9]+}', [CategoryController::class, 'delete']);
 
         //[___________________________ manufacturers ___________________________]
         $group->get('/manufacturers', [ManufacturerController::class, 'fetchAllPaginated']);
         $group->get('/manufacturers/{id:[0-9]+}', [ManufacturerController::class, 'fetchById']);
         $group->get('/manufacturers/names', [ManufacturerController::class, 'fetchNames']);
+        $group->delete('/manufacturers/{id:[0-9]+}', [ManufacturerController::class, 'delete']);
+        $group->post('/manufacturers', [ManufacturerController::class, 'create']);
+        $group->post('/manufacturers/{id:[0-9]+}', [ManufacturerController::class, 'update']);
 
         //[___________________________ warehouses ___________________________]
         $group->get('/warehouses', [WarehouseController::class, 'fetchAllPaginated']);
         $group->get('/warehouses/{id:[0-9]+}', [WarehouseController::class, 'fetchById']);
+        $group->delete('/warehouses/{id:[0-9]+}', [WarehouseController::class, 'delete']);
+        $group->post('/warehouses', [WarehouseController::class, 'create']);
+        $group->post('/warehouses/{id:[0-9]+}', [WarehouseController::class, 'update']);
 
         //[___________________________ Addresses ___________________________]
         $group->get('/addresses', [AddressController::class, 'fetchAll']);

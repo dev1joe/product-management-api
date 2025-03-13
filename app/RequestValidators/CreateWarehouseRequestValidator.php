@@ -9,7 +9,7 @@ use App\Exceptions\ValidationException;
 use Doctrine\ORM\EntityManager;
 use Valitron\Validator;
 
-class CreateWarehouseExistingAddressRequestValidator implements RequestValidatorInterface
+class CreateWarehouseRequestValidator implements RequestValidatorInterface
 {
     public function __construct(
         private readonly EntityManager $entityManager,

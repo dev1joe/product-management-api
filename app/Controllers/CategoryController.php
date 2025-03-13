@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\DataObjects\CategoryQueryParams;
-use App\Exceptions\MissingQueryParamsException;
+use App\DataObjects\QueryParams;
 use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
-use App\QueryValidators\CategoryQueryValidator;
 use App\RequestValidators\CreateCategoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\CategoryService;
@@ -70,7 +68,7 @@ class CategoryController
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
-        $queryParams = new CategoryQueryParams($request->getQueryParams());
+        $queryParams = new QueryParams($request->getQueryParams());
 
         try {
             $queryValidator = new BaseQueryValidator(['updatedat', 'createdat', 'name', 'productcount', 'id']);
@@ -97,11 +95,22 @@ class CategoryController
     }
 
     public function fetchById(Request $request, Response $response, array $args): Response {
-        $id = (int) $args['id'];
-        $arrayCategory = $this->categoryService->fetchById($id);
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
 
-        $response->getBody()->write(json_encode($arrayCategory));
-        return $response->withHeader('Content-Type', 'application/json');
+        if(! $id) {
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $category = $this->categoryService->fetchById($id);
+
+        if(! $category) {
+            $response->getBody()->write(json_encode(['error' => "Category Not Found"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        } else {
+            $response->getBody()->write(json_encode($category));
+            return $response->withHeader('Content-Type', 'application/json');
+        }
     }
 
     public function delete(Request $request, Response $response, array $args): Response {
@@ -136,7 +145,7 @@ class CategoryController
         $successMessage = [
             'status' => 'success',
             'message' => 'Category deleted successfully',
-            'deletedId' => $id,
+            'id' => $id,
         ];
 
         $response->getBody()->write(json_encode($successMessage));
@@ -144,7 +153,13 @@ class CategoryController
     }
 
     public function update(Request $request, Response $response, array $args): Response {
-        // get and validate data FIRST
+        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
+
+        if(! $id) {
+            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
         $data = $request->getParsedBody();
         $uploadedFiles = $request->getUploadedFiles();
 
@@ -161,13 +176,6 @@ class CategoryController
             return $response->withHeader('Content-Type','application/json')->withStatus(400);
         }
 
-        $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
-
-        if(! $id) {
-            $response->getBody()->write(json_encode(['id' => "id not found in route arguments"]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
-        }
-
         try {
             $this->categoryService->update($id, $data);
         } catch (Throwable $e) {
@@ -176,8 +184,9 @@ class CategoryController
         }
 
         $message = [
+            'status' => 'success',
             'message' => 'category updated successfully!',
-            'updatedCategoryId' => $id
+            'id' => $id
         ];
 
         $response->getBody()->write(json_encode($message));

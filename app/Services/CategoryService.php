@@ -3,14 +3,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\DataObjects\CategoryQueryParams;
-use App\DataObjects\QueryParams;
 use App\Entities\Category;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\Query;
 use League\Flysystem\FilesystemException;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -50,16 +47,10 @@ class CategoryService extends BaseService
         return $category;
     }
 
-    /**
-     * assumes that query parameters exit and validated
-     * @param CategoryQueryParams $queryParams
-     * @return array
-     */
-
-    public function fetchIdsNames(): array {
-        return $this->entityManager->getRepository(Category::class)->createQueryBuilder('c')
-            ->select('c.id', 'c.name')->getQuery()->getArrayResult();
-    }
+//    public function fetchIdsNames(): array {
+//        return $this->entityManager->getRepository(Category::class)->createQueryBuilder('c')
+//            ->select('c.id', 'c.name')->getQuery()->getArrayResult();
+//    }
 
     /**
      * @throws FilesystemException

@@ -4,11 +4,8 @@ declare(strict_types=1);
 namespace App\QueryValidators;
 
 use App\Contracts\QueryValidatorInterface;
-use App\DataObjects\CategoryQueryParams;
 use App\DataObjects\QueryParams;
-use App\Exceptions\MissingQueryParamsException;
 use App\Exceptions\ValidationException;
-use Exception;
 
 class CategoryQueryValidator implements QueryValidatorInterface
 {

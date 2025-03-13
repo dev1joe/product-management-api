@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\DataObjects;
 
-abstract class QueryParams
+class QueryParams
 {
     // although this class doesn't have abstract functions,
     // the important thing is that it cannot be instantiated

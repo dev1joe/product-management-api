@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\DataObjects\CategoryQueryParams;
-use App\DataObjects\ProductQueryParams;
-use App\Entities\Customer;
+
+use App\DataObjects\QueryParams;
 use App\Enums\UserType;
 use App\Services\AuthService;
 use App\Services\CategoryService;
@@ -51,7 +50,7 @@ class HomeController
 
         // fetching some categories
         $categories = $this->categoryService->fetchPaginatedCategories(
-            new CategoryQueryParams([
+            new QueryParams([
                 'orderBy' => 'id',
                 'orderDir' => 'asc',
                 'limit' => 7

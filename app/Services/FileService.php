@@ -99,4 +99,19 @@ class FileService
         return ('/storage/categories/' . $fileName);
     }
 
+    /**
+     * @return string server relative path of the product image
+     * @throws FilesystemException
+     */
+    public function saveManufacturerLogo(UploadedFileInterface $file): string
+    {
+        // sanitize file name
+        $fileName = $file->getClientFilename();
+        $fileName = str_replace([' '], ['-'], $fileName);
+
+        $this->filesystem->write('/manufacturers/' . $fileName, $file->getStream()->getContents());
+
+        return ('/storage/manufacturers/' . $fileName);
+    }
+
 }

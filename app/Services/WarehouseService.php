@@ -6,13 +6,14 @@ namespace App\Services;
 use App\Entities\Address;
 use App\Entities\Warehouse;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\QueryBuilder;
 
 class WarehouseService extends BaseService
 {
     public function __construct(
         private readonly EntityManager $entityManager,
-        private readonly AddressService $addressService,
     ){
         parent::__construct(
             $this->entityManager,
@@ -34,18 +35,19 @@ class WarehouseService extends BaseService
     /**
      * a simple create function that assumes the data is already validated and all necessary fields are present
      * @return Warehouse
+     * @throws ORMException
      */
     public function create(array $data): Warehouse {
         // address creation
-        $address = $this->addressService->create($data);
+        // $address = $this->addressService->create($data);
 
         // warehouse creation
         $warehouse = new Warehouse();
         $warehouse->setName($data['name']);
-        $warehouse->setAddress($address);
+        $warehouse->setAddress($data['address']);
 
         // entityManager
-        $this->entityManager->persist($address);
+        // $this->entityManager->persist($address);
         $this->entityManager->persist($warehouse);
         $this->entityManager->flush();
 
@@ -58,6 +60,23 @@ class WarehouseService extends BaseService
             ->createQueryBuilder('r') // r for Resource
             ->select('r', 'a')
             ->leftJoin('r.address', 'a');
+    }
+
+    public function update(int $id, array $data): Warehouse {
+        $warehouse = $this->entityManager->getRepository(Warehouse::class)->find($id);
+        if(! $warehouse) {
+            throw new EntityNotFoundException('Warehouse Not Found');
+        }
+
+        if(isset($data['name'])) {
+            $warehouse->setName($data['name']);
+        }
+
+        if(isset($data['address'])) {
+            $warehouse->setAddress($data['address']);
+        }
+
+        return $warehouse;
     }
 
 }

@@ -208,7 +208,7 @@ class ProductController
         $successMessage = [
             'status' => 'success',
             'message' => 'Product deleted successfully',
-            'deletedId' => $id,
+            'id' => $id,
         ];
 
         $response->getBody()->write(json_encode($successMessage));
