@@ -87,7 +87,7 @@ return function(App $app) {
        $group->delete('/warehouses/{id}', [WarehouseController::class, 'delete']);
 
         // [________________________________________ address ________________________________________]
-       $group->get('/addresses', [AddressController::class, 'fetchAll']);
+       $group->get('/addresses', [AddressController::class, 'fetchAllPaginated']);
 
 
         // [________________________________________ order ________________________________________]

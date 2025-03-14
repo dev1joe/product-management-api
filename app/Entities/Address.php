@@ -22,14 +22,14 @@ class Address
     private string $governorate;
     #[Column]
     private string $district;
-    #[Column]
-    private string $street;
-    #[Column]
-    private string $building;
     #[Column(nullable: true)]
-    private int $floor;
+    private ?string $street;
     #[Column(nullable: true)]
-    private int $apartment;
+    private ?string $building;
+    #[Column(nullable: true)]
+    private ?int $floor;
+    #[Column(nullable: true)]
+    private ?int $apartment;
 
     public function getId(): int
     {

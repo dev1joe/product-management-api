@@ -24,47 +24,67 @@ return function(App $app) {
         $group->get('/files', [FileController::class, 'tmp']);
 
         //[___________________________ products ___________________________]
-        $group->get('/products', [ProductController::class, 'fetchAllPaginated']);
-        $group->get('/products/{id:[0-9]+}', [ProductController::class, 'fetchById']);
-        $group->delete('/products/{id:[0-9]+}', [ProductController::class, 'delete']);
-        $group->post('/products', [ProductController::class, 'create']);
-        $group->post('/products/{id:[0-9]+}', [ProductController::class, 'update']);
+        $group->group('/products', function(RouteCollectorProxy $products) {
+            $products->get('', [ProductController::class, 'fetchAllPaginated']);
+            $products->get('/{id:[0-9]+}', [ProductController::class, 'fetchById']);
+            $products->delete('/{id:[0-9]+}', [ProductController::class, 'delete']);
+            $products->post('', [ProductController::class, 'create']);
+            $products->post('/{id:[0-9]+}', [ProductController::class, 'update']);
+        });
 
         //[___________________________ categories ___________________________]
-        $group->get('/categories', [CategoryController::class, 'fetchAllPaginated']);
-        $group->get('/categories/{id:[0-9]+}', [CategoryController::class, 'fetchById']);
-        $group->get('/categories/names', [CategoryController::class, 'fetchNames']);
-        $group->delete('/categories/{id:[0-9]+}', [CategoryController::class, 'delete']);
-        $group->post('/categories', [CategoryController::class, 'create']);
-        $group->post('/categories/{id:[0-9]+}', [CategoryController::class, 'update']);
+        $group->group('/categories', function(RouteCollectorProxy $categories) {
+            $categories->get('', [CategoryController::class, 'fetchAllPaginated']);
+            $categories->get('/{id:[0-9]+}', [CategoryController::class, 'fetchById']);
+            $categories->get('/names', [CategoryController::class, 'fetchNames']);
+            $categories->delete('/{id:[0-9]+}', [CategoryController::class, 'delete']);
+            $categories->post('', [CategoryController::class, 'create']);
+            $categories->post('/{id:[0-9]+}', [CategoryController::class, 'update']);
+        });
 
         //[___________________________ manufacturers ___________________________]
-        $group->get('/manufacturers', [ManufacturerController::class, 'fetchAllPaginated']);
-        $group->get('/manufacturers/{id:[0-9]+}', [ManufacturerController::class, 'fetchById']);
-        $group->get('/manufacturers/names', [ManufacturerController::class, 'fetchNames']);
-        $group->delete('/manufacturers/{id:[0-9]+}', [ManufacturerController::class, 'delete']);
-        $group->post('/manufacturers', [ManufacturerController::class, 'create']);
-        $group->post('/manufacturers/{id:[0-9]+}', [ManufacturerController::class, 'update']);
+        $group->group('/manufacturers', function(RouteCollectorProxy $manufacturers) {
+            $manufacturers->get('', [ManufacturerController::class, 'fetchAllPaginated']);
+            $manufacturers->get('/{id:[0-9]+}', [ManufacturerController::class, 'fetchById']);
+            $manufacturers->get('/names', [ManufacturerController::class, 'fetchNames']);
+            $manufacturers->delete('/{id:[0-9]+}', [ManufacturerController::class, 'delete']);
+            $manufacturers->post('', [ManufacturerController::class, 'create']);
+            $manufacturers->post('/{id:[0-9]+}', [ManufacturerController::class, 'update']);
+        });
 
         //[___________________________ warehouses ___________________________]
-        $group->get('/warehouses', [WarehouseController::class, 'fetchAllPaginated']);
-        $group->get('/warehouses/{id:[0-9]+}', [WarehouseController::class, 'fetchById']);
-        $group->delete('/warehouses/{id:[0-9]+}', [WarehouseController::class, 'delete']);
-        $group->post('/warehouses', [WarehouseController::class, 'create']);
-        $group->post('/warehouses/{id:[0-9]+}', [WarehouseController::class, 'update']);
+        $group->group('/warehouses', function(RouteCollectorProxy $warehouses) {
+            $warehouses->get('', [WarehouseController::class, 'fetchAllPaginated']);
+            $warehouses->get('/{id:[0-9]+}', [WarehouseController::class, 'fetchById']);
+            $warehouses->delete('/{id:[0-9]+}', [WarehouseController::class, 'delete']);
+            $warehouses->post('', [WarehouseController::class, 'create']);
+            $warehouses->post('/{id:[0-9]+}', [WarehouseController::class, 'update']);
+        });
 
         //[___________________________ Addresses ___________________________]
-        $group->get('/addresses', [AddressController::class, 'fetchAll']);
-        $group->get('/addresses/{id:[0-9]+}', [AddressController::class, 'fetchById']);
-
-        //[___________________________ Customers ___________________________]
-        $group->get('/customers', [CustomerController::class, 'fetchAll']);
-        $group->get('/customers/{id:[0-9]+}', [CustomerController::class, 'fetchById']);
-//        $group->get('/customers/{email:.+}', [CustomerController::class, 'fetchByEmail']);
+        $group->group('/addresses', function(RouteCollectorProxy $addresses) {
+            $addresses->get('', [AddressController::class, 'fetchAllPaginated']);
+            $addresses->get('/{id:[0-9]+}', [AddressController::class, 'fetchById']);
+            $addresses->delete('/{id:[0-9]+}', [AddressController::class, 'delete']);
+            $addresses->post('', [AddressController::class, 'create']);
+            $addresses->post('/{id:[0-9]+}', [AddressController::class, 'update']);
+        });
 
         //[___________________________ Inventory ___________________________]
-        $group->get('/inventory', [InventoryController::class, 'fetchAll']);
-        $group->get('/inventory/{id:[0-9]+}', [InventoryController::class, 'fetchById']);
+        $group->group('/inventories', function (RouteCollectorProxy $inventories) {
+            $inventories->get('', [InventoryController::class, 'fetchAllPaginated']);
+            $inventories->get('/{id:[0-9]+}', [InventoryController::class, 'fetchById']);
+            $inventories->delete('/{id:[0-9]+}', [InventoryController::class, 'delete']);
+            $inventories->post('', [InventoryController::class, 'create']);
+            $inventories->post('/{id:[0-9]+}', [InventoryController::class, 'update']);
+        });
+
+        //[___________________________ Customers ___________________________]
+        $group->group('/customers', function(RouteCollectorProxy $customers) {
+            $customers->get('', [CustomerController::class, 'fetchAll']);
+            $customers->get('/{id:[0-9]+}', [CustomerController::class, 'fetchById']);
+        });
+        // $group->get('/customers/{email:.+}', [CustomerController::class, 'fetchByEmail']);
 
     })->add(CorsMiddleware::class);
 

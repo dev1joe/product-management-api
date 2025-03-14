@@ -30,9 +30,21 @@ class Inventory
         return $this->warehouse;
     }
 
+    public function setWarehouse(Warehouse $warehouse): Inventory
+    {
+        $this->warehouse = $warehouse;
+        return $this;
+    }
+
     public function getProduct(): Product
     {
         return $this->product;
+    }
+
+    public function setProduct(Product $product): Inventory
+    {
+        $this->product = $product;
+        return $this;
     }
 
     public function getQuantity(): int
@@ -46,7 +58,7 @@ class Inventory
         return $this;
     }
 
-    public function decrementCount(int $amount): Inventory
+    public function decrementQuantity(int $amount = 1): Inventory
     {
         $this->quantity = $this->quantity - $amount;
         return $this;

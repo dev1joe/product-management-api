@@ -6,6 +6,9 @@ namespace App\Services;
 use App\Entities\Address;
 use App\Entities\Warehouse;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 class AddressService extends BaseService
 {
@@ -20,21 +23,78 @@ class AddressService extends BaseService
 
     /**
      * a simple create function that assumes the data is already validated and all necessary fields are present
+     * @param array $data
      * @return Address
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function create(array $data): Address {
         $address = new Address();
         $address->setCountry($data['country']);
         $address->setGovernorate($data['governorate']);
         $address->setDistrict($data['district']);
-        $address->setStreet($data['street']);
-        $address->setBuilding($data['building']);
+
+        if(array_key_exists('street', $data)) {
+            $address->setStreet($data['street']);
+        }
+
+        if(array_key_exists('building', $data)) {
+            $address->setBuilding($data['building']);
+        }
 
         if(array_key_exists('floor', $data)) {
             $address->setFloor($data['floor']);
         }
 
         if(array_key_exists('apartment', $data)) {
+            $address->setApartment($data['apartment']);
+        }
+
+        $this->entityManager->persist($address);
+        $this->entityManager->flush();
+
+        return $address;
+    }
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @return Address
+     * @throws EntityNotFoundException
+     * @throws ORMException
+     */
+    public function update(int $id, array $data): Address {
+        $address = $this->entityManager->getRepository(Address::class)->find($id);
+
+        if(! $address) {
+            throw new EntityNotFoundException('Address Not Found');
+        }
+
+        if(isset($data['country'])) {
+            $address->setCountry($data['country']);
+        }
+
+        if(isset($data['governorate'])) {
+            $address->setGovernorate($data['governorate']);
+        }
+
+        if(isset($data['district'])) {
+            $address->setDistrict($data['district']);
+        }
+
+        if(isset($data['street'])) {
+            $address->setStreet($data['street']);
+        }
+
+        if(isset($data['building'])) {
+            $address->setBuilding($data['building']);
+        }
+
+        if(isset($data['floor'])) {
+            $address->setFloor($data['floor']);
+        }
+
+        if(isset($data['apartment'])) {
             $address->setApartment($data['apartment']);
         }
 
