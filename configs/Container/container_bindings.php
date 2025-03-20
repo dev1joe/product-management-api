@@ -14,16 +14,14 @@ use Doctrine\ORM\ORMSetup;
 use League\Flysystem\Filesystem;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
-use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
-use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Views\Twig;
 use Symfony\Bridge\Twig\Extension\AssetExtension;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Asset\PathPackage;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
-use Twig\TwigFunction;
 use function DI\create;
 
 return [
@@ -44,13 +42,26 @@ return [
         $middlewares($app);
 
         $errorMiddleware = $app->addErrorMiddleware(true, true, true);
-        $errorMiddleware->setErrorHandler(HttpNotFoundException::class, function () use ($app) {
+        $errorMiddleware->setDefaultErrorHandler(function (
+            Request $request,
+            Throwable $exception,
+            bool $displayErrorDetails
+        ) use ($app) {
             $response = $app->getResponseFactory()->createResponse();
-            $response->getBody()->write(json_encode([
+
+            // Determine the appropriate HTTP status code
+            $statusCode = $exception instanceof \Slim\Exception\HttpException
+                ? $exception->getCode() ?: 500
+                : 500;
+
+            // Create JSON error response
+            $errorPayload = [
                 'status' => 'Fail',
-                'error' => 'Route Not Found'
-            ]));
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+                'message' => $exception->getMessage()
+            ];
+
+            $response->getBody()->write(json_encode($errorPayload));
+            return $response->withStatus($statusCode)->withHeader('Content-Type', 'application/json');
         });
 
         // disable Slim's default error handler

@@ -85,6 +85,10 @@ return function(App $app) {
                 $response->getBody()->write(json_encode($data));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
+
+            $test->get('', function() {
+                 throw new Exception("Something Went Wrong!"); // simulate an error
+            });
         });
 
 //        $group->get('/files/{file:.+}', [FileController::class, 'fetchFile']);
