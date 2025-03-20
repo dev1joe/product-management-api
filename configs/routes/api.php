@@ -11,17 +11,16 @@ use App\Controllers\ProductController;
 use App\Controllers\WarehouseController;
 use App\Middlewares\AjaxHandleExceptionsMiddleware;
 use App\Middlewares\CorsMiddleware;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
-// RESTful APIs use path parameters
 return function(App $app) {
     // TODO: all js fetch requests should be requesting api routes
     // TODO: exception handling
 
     $app->group('/api', function(RouteCollectorProxy $group) {
-        $group->get('/files/{file:.+}', [FileController::class, 'fetchFile']);
-        $group->get('/files', [FileController::class, 'tmp']);
 
         //[___________________________ products ___________________________]
         $group->group('/products', function(RouteCollectorProxy $products) {
@@ -29,7 +28,7 @@ return function(App $app) {
             $products->get('/{id:[0-9]+}', [ProductController::class, 'fetchById']);
             $products->delete('/{id:[0-9]+}', [ProductController::class, 'delete']);
             $products->post('', [ProductController::class, 'create']);
-            $products->post('/{id:[0-9]+}', [ProductController::class, 'update']);
+            $products->patch('/{id:[0-9]+}', [ProductController::class, 'update']);
         });
 
         //[___________________________ categories ___________________________]
@@ -39,7 +38,7 @@ return function(App $app) {
             $categories->get('/names', [CategoryController::class, 'fetchNames']);
             $categories->delete('/{id:[0-9]+}', [CategoryController::class, 'delete']);
             $categories->post('', [CategoryController::class, 'create']);
-            $categories->post('/{id:[0-9]+}', [CategoryController::class, 'update']);
+            $categories->patch('/{id:[0-9]+}', [CategoryController::class, 'update']);
         });
 
         //[___________________________ manufacturers ___________________________]
@@ -49,7 +48,7 @@ return function(App $app) {
             $manufacturers->get('/names', [ManufacturerController::class, 'fetchNames']);
             $manufacturers->delete('/{id:[0-9]+}', [ManufacturerController::class, 'delete']);
             $manufacturers->post('', [ManufacturerController::class, 'create']);
-            $manufacturers->post('/{id:[0-9]+}', [ManufacturerController::class, 'update']);
+            $manufacturers->patch('/{id:[0-9]+}', [ManufacturerController::class, 'update']);
         });
 
         //[___________________________ warehouses ___________________________]
@@ -58,7 +57,7 @@ return function(App $app) {
             $warehouses->get('/{id:[0-9]+}', [WarehouseController::class, 'fetchById']);
             $warehouses->delete('/{id:[0-9]+}', [WarehouseController::class, 'delete']);
             $warehouses->post('', [WarehouseController::class, 'create']);
-            $warehouses->post('/{id:[0-9]+}', [WarehouseController::class, 'update']);
+            $warehouses->patch('/{id:[0-9]+}', [WarehouseController::class, 'update']);
         });
 
         //[___________________________ Addresses ___________________________]
@@ -67,7 +66,7 @@ return function(App $app) {
             $addresses->get('/{id:[0-9]+}', [AddressController::class, 'fetchById']);
             $addresses->delete('/{id:[0-9]+}', [AddressController::class, 'delete']);
             $addresses->post('', [AddressController::class, 'create']);
-            $addresses->post('/{id:[0-9]+}', [AddressController::class, 'update']);
+            $addresses->patch('/{id:[0-9]+}', [AddressController::class, 'update']);
         });
 
         //[___________________________ Inventory ___________________________]
@@ -76,14 +75,26 @@ return function(App $app) {
             $inventories->get('/{id:[0-9]+}', [InventoryController::class, 'fetchById']);
             $inventories->delete('/{id:[0-9]+}', [InventoryController::class, 'delete']);
             $inventories->post('', [InventoryController::class, 'create']);
-            $inventories->post('/{id:[0-9]+}', [InventoryController::class, 'update']);
+            $inventories->patch('/{id:[0-9]+}', [InventoryController::class, 'update']);
         });
 
-        //[___________________________ Customers ___________________________]
-        $group->group('/customers', function(RouteCollectorProxy $customers) {
-            $customers->get('', [CustomerController::class, 'fetchAll']);
-            $customers->get('/{id:[0-9]+}', [CustomerController::class, 'fetchById']);
+        $group->group('/test', function(RouteCollectorProxy $test) {
+            $test->put('', function(ServerRequestInterface $request, ResponseInterface $response) {
+                $data = json_decode($request->getBody()->getContents(), true) ?? [];
+
+                $response->getBody()->write(json_encode($data));
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            });
         });
+
+//        $group->get('/files/{file:.+}', [FileController::class, 'fetchFile']);
+//        $group->get('/files', [FileController::class, 'tmp']);
+
+        //[___________________________ Customers ___________________________]
+//        $group->group('/customers', function(RouteCollectorProxy $customers) {
+//            $customers->get('', [CustomerController::class, 'fetchAll']);
+//            $customers->get('/{id:[0-9]+}', [CustomerController::class, 'fetchById']);
+//        });
         // $group->get('/customers/{email:.+}', [CustomerController::class, 'fetchByEmail']);
 
     })->add(CorsMiddleware::class);

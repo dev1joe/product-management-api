@@ -19,8 +19,8 @@ class Category
     private int $id;
     #[Column]
     private string $name;
-    #[Column]
-    private string $image;
+    #[Column(nullable: true)]
+    private ?string $image;
     #[Column(name: 'product_count', options: ['default' => 0])]
     private int $productCount = 0;
 

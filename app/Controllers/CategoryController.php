@@ -30,7 +30,7 @@ class CategoryController
 
     public function create(Request $request, Response $response): Response {
         // get data
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         // get image
         $uploadedFiles = $request->getUploadedFiles();
@@ -57,14 +57,7 @@ class CategoryController
         }
 
         $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'category created successfully!']));
-        return $response->withHeader('Content-Type','application/json')->withStatus(200);
-    }
-
-    public function fetchAll(Request $request, Response $response) {
-        $result = $this->categoryService->fetchAll();
-
-        $response->getBody()->write(json_encode($result));
-        return $response->withHeader('Content-Type', 'application/json');
+        return $response->withHeader('Content-Type','application/json')->withStatus(201);
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
@@ -160,7 +153,7 @@ class CategoryController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
         $uploadedFiles = $request->getUploadedFiles();
 
         if(isset($uploadedFiles['image'])) {
@@ -178,6 +171,7 @@ class CategoryController
 
         try {
             $this->categoryService->update($id, $data);
+            // TODO: handle EntityNotFoundException with 404 status code
         } catch (Throwable $e) {
             $response->getBody()->write(json_encode(['status' => 'fail', 'message' => $e->getMessage()]));
             return $response->withHeader('Content-Type','application/json')->withStatus(500);

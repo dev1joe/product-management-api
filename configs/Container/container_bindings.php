@@ -15,6 +15,7 @@ use League\Flysystem\Filesystem;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\App;
+use Slim\Exception\HttpNotFoundException;
 use Slim\Factory\AppFactory;
 use Slim\Psr7\Factory\ResponseFactory;
 use Slim\Views\Twig;
@@ -30,7 +31,7 @@ return [
         AppFactory::setContainer($container);
         $app = AppFactory::create();
 
-        //adding routes and middlewares
+        //adding web routes
         $routes = require CONFIGS_PATH . '/routes/web.php';
         $routes($app);
 
@@ -41,6 +42,16 @@ return [
         // add middlewares
         $middlewares = require CONFIGS_PATH . '/middlewares.php';
         $middlewares($app);
+
+        $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+        $errorMiddleware->setErrorHandler(HttpNotFoundException::class, function () use ($app) {
+            $response = $app->getResponseFactory()->createResponse();
+            $response->getBody()->write(json_encode([
+                'status' => 'Fail',
+                'error' => 'Route Not Found'
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(404);
+        });
 
         // disable Slim's default error handler
         // $errorMiddleware = $app->addErrorMiddleware(true, true, true);

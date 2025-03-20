@@ -31,8 +31,8 @@ class Product
     private ?Category $category;
     #[ManyToOne, JoinColumn(name: 'manufacturer_id', onDelete: 'RESTRICT')]
     private ?Manufacturer $manufacturer;
-    #[Column]
-    private string $photo;
+    #[Column(nullable: true)]
+    private ?string $photo;
     #[Column(name: "unit_price_in_cents")]
     private int $unitPriceInCents;
     #[Column(name: "avg_rating", type: Types::DECIMAL, precision: 2, scale: 1, options: ["default" => 0])]

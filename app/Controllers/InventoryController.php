@@ -8,6 +8,7 @@ use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
 use App\RequestValidators\CreateInventoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
+use App\RequestValidators\UpdateInventroyRequestValidator;
 use App\Services\InventoryService;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -101,7 +102,7 @@ class InventoryController
 
     public function create(Request $request, Response $response): Response {
 
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
         $validator = $this->requestValidatorFactory->make(CreateInventoryRequestValidator::class);
 
         try {
@@ -119,7 +120,7 @@ class InventoryController
         }
 
         $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'inventory created successfully!']));
-        return $response->withHeader('Content-Type','application/json')->withStatus(200);
+        return $response->withHeader('Content-Type','application/json')->withStatus(201);
     }
 
     public function update(Request $request, Response $response, array $args): Response {
@@ -130,8 +131,8 @@ class InventoryController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $data = $request->getParsedBody();
-        $validator = $this->requestValidatorFactory->make(CreateInventoryRequestValidator::class);
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
+        $validator = $this->requestValidatorFactory->make(UpdateInventroyRequestValidator::class);
 
         try {
             $data = $validator->validate($data);

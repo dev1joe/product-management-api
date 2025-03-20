@@ -22,8 +22,8 @@ class Manufacturer
     private string $name;
     #[Column]
     private string $email;
-    #[Column]
-    private string $logo;
+    #[Column(nullable: true)]
+    private ?string $logo;
     #[Column(name: 'product_count')]
     private int $productCount;
 

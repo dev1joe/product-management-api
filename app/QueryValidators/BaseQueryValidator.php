@@ -6,6 +6,7 @@ namespace App\QueryValidators;
 use App\Contracts\QueryValidatorInterface;
 use App\DataObjects\QueryParams;
 use App\Exceptions\ValidationException;
+use Valitron\Validator;
 
 class BaseQueryValidator implements QueryValidatorInterface
 {
@@ -16,31 +17,30 @@ class BaseQueryValidator implements QueryValidatorInterface
     }
 
     /**
-     * @param QueryParams $query
-     * @return QueryParams
-     * @throws ValidationException
+     * @inheritDoc
      */
     public function validate(QueryParams $query): QueryParams
     {
         $errors = [];
 
-        // if orderBy then (require orderDir with orderBy) & (validate orderBy and orderDir)
-        if(! is_string($query->orderBy)) {
-            $errors['orderBy'] = 'Invalid Type Error: orderBy has to be string';
-        }
 
         if($query->orderBy) {
             // TODO: include all the attributes of the Category entity + do for other entities
+            if(! is_string($query->orderBy)) {
+                $errors['orderBy'][] = 'Invalid Type Error: orderBy has to be string';
+            }
+
             if(! in_array(strtolower($query->orderBy), $this->allowedAttributes, true)) {
                 $errors['orderBy'][] = 'Invalid Value Error. Allowed values: ' . implode(', ', $this->allowedAttributes);
             }
         }
 
-        if(! is_string($query->orderDir)) {
-            $errors['orderDir'][] = 'Invalid Type Error: orderDir has to be string';
-        }
 
         if($query->orderDir) {
+            if(! is_string($query->orderDir)) {
+                $errors['orderDir'][] = 'Invalid Type Error: orderDir has to be string';
+            }
+
             $orderDirections = ['asc', 'desc'];
             if(! in_array(strtolower($query->orderDir), $orderDirections)) {
                 $errors['orderDir'][] = 'Invalid Value Error: Allowed values: ' . implode(', ', $orderDirections);
@@ -55,8 +55,8 @@ class BaseQueryValidator implements QueryValidatorInterface
             $query->limit = (int) $query->limit;
         }
 
-        if($query->limit < 1) {
-            $errors['limit'][] = 'Invalid Value Error: limit has to be greater than 1' . ' ' . $query->limit;
+        if($query->limit < 1 || $query->limit > 100) {
+            $errors['limit'][] = 'Invalid Value Error: limit has to be greater than 1 and less than 100';
             // throw new ValidationException(['limit' => 'Invalid Value Error: limit has to be greater than 1' . ' ' . $query->limit]);
         }
 

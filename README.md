@@ -1,6 +1,6 @@
 # Relationships
 ### customer and comments
-- if a customer deletes their account, the comments shouldn't be deleted. to implement that, the comment's customer foreign key can be null. Is that ok ? or will it produce issues ?
+- if a customer deletes their account, the comments shouldn't be deleted. to implement that, the comment's customer foreign key can be null. Is that ok ? or will it produce issues?
 
 ### comments and products
 - on delete cascade
@@ -83,12 +83,15 @@
 ### Relationships mapping mistake I made 😅
 - the problem was that the **"foreign key"** was of type VARCHAR not an INT **in all tables**
 - me: I knew where was the problem, I added the Column attribute which made the problem
-- chatGpt: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
+- ChatGPT: That makes sense. The Column attribute should not be used on a property that represents a relationship to another entity, like ManyToOne. Using Column here can cause Doctrine to treat the property as a basic column instead of a foreign key reference, which led to the issue you encountered.
 - third migration corrected that mistake
 
 ## RESTful APIs
 - Application Programming Interface (API)
-- REpresentational State Transfer (REST): a set of architectural principles for building web services.
+- Representational State Transfer (REST): a set of architectural principles for building web services.
+- Read: [RESTful web API design (Microsoft)](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design)
+- Read: [Microsoft Azure REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md)
+- Read: [The Web API Checklist](https://mathieu.fenniak.net/the-api-checklist/)
 - Read: [What is a REST API?](https://blog.postman.com/rest-api-examples/)
 - Read: [Best Practices for REST APIs](https://www.linkedin.com/pulse/best-practices-rest-apis-sergey-idelson/)
 - Read: [REST API Best Practices](https://restfulapi.net/resource-naming/)
@@ -96,11 +99,6 @@
 - For API testing use [Dynamic Variables](https://learning.postman.com/docs/tests-and-scripts/write-scripts/variables-list)
 - Metadata and default query params in API responses [here](https://chatgpt.com/share/67be06af-b354-800c-b7aa-3e648eab2d51) 
 
-- [x] Products API
-- [ ] Categories API
-- [ ] Manufacturer API
-- [ ] Warehouse API
-- [ ] Customer API
 ## HTML, files, MIME types
 ### accepting a file in HTML form tag
 - I found that I need to define `enctype` attribute with value `multipart/form-data` to be able to send files to the server
@@ -126,7 +124,7 @@
 
 ## Cross-Site Resources Sharing (CORS) best practices
 - only enable CORS when necessary to minimize security risks
-- use specific origin whitelists rather than allowing access from all domains
+- use specific origin allowlists rather than allowing access from all domains
 - limit the methods and headers allowed in CORS requests to reduce potential vulnerabilities
 
 ## customer's secure connection
@@ -141,15 +139,15 @@
 ## JavaScript
 ### recommended approach
 - <strong>Fetch and display the main data first, then activate filtering</strong>
-- take products' pagination for example, it's better to fetch and display products first, then activate filtering (by category, by price, etc..) and sorting (by release data, price, rating, etc....)
+- take products' pagination for example, it's better to fetch and display products first, then activate filtering (by category, by price, etc…) and sorting (by release data, price, rating, etc...)
 - <strong>why this approach is better ?</strong>
   1. User experience: Displaying products first ensures that the client can see content immediately rather than waiting for filtering options to load.
-  2. Data availability: It's better to make sure that data is accessible before activating filtering functionality, this way the application will be much efficient. If order is flipped, resources maybe wasted. 
+  2. Data availability: It's better to make sure that data is accessible before activating filtering functionality, this way the application will be more efficient. If order is flipped, resources maybe wasted. 
 
 # Project Future
-- make a dynamic attributes system (suggested by [chatGPT](https://chatgpt.com/share/6713d5db-cf0d-47b4-93f0-305d9cbd7709))
+- make a dynamic attributes system (suggested by [ChatGPT](https://chatgpt.com/share/6713d5db-cf0d-47b4-93f0-305d9cbd7709))
 - advanced filtering (i5, i7 CPUs for laptops)
-- sub-categories (phones > [i-phone, Samsung, phone accessories])
+- subcategories (phones > [i-phone, Samsung, phone accessories])
 - Complaints system (using UI and emails)
 - sales tracking (store sales quantity)
 - advanced CMS

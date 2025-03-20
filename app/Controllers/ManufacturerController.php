@@ -115,7 +115,7 @@ class ManufacturerController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
         $uploadedFiles = $request->getUploadedFiles();
 
         if(isset($uploadedFiles['logo'])) {
@@ -150,7 +150,7 @@ class ManufacturerController
 
     public function create(Request $request, Response $response): Response {
         // get data
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         // get image
         $uploadedFiles = $request->getUploadedFiles();
@@ -177,6 +177,6 @@ class ManufacturerController
         }
 
         $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'manufacturer created successfully!']));
-        return $response->withHeader('Content-Type','application/json')->withStatus(200);
+        return $response->withHeader('Content-Type','application/json')->withStatus(201);
     }
 }

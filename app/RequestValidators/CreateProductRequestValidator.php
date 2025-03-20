@@ -21,6 +21,9 @@ class CreateProductRequestValidator implements RequestValidatorInterface
     ){
     }
 
+    /**
+     * @inheritDoc
+     */
     public function validate(array $data): array
     {
         $v = new Validator($data);
@@ -28,20 +31,12 @@ class CreateProductRequestValidator implements RequestValidatorInterface
         //TODO: require photo
         $v->rule('required', ['name', 'category', 'price', 'description', 'manufacturer']);
         $v->rule('regex', ['name', 'description'], '/^[A-Za-z0-9\-._,*:\r\n\s\t()]*$/');
-        //TODO: I think I need to allow more characters
+        $v->rule('lengthMax', 'name', 200);
         $v->rule('lengthMax', 'description', 1000);
 
         // price handling
         $v->rule('numeric', 'price');
-        $v->rule(function($field, $value, $params, $fields) {
-            $price = (float) $value;
-
-            if($price == 0 || $price < 0) {
-                return false;
-            } else {
-                return true;
-            }
-        }, "price")->message("price must be positive");
+        $v->rule('min', 'price', 1);
 
 //        $price = (float) $data['price'];
 //        $price *= 100;

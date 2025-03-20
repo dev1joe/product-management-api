@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping\Table;
 #[Entity, Table(name: 'inventories')]
 class Inventory
 {
+    // TODO: include time stamps
     #[Id, Column, GeneratedValue]
     private int $id;
     #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]

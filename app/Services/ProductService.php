@@ -59,11 +59,13 @@ class ProductService extends BaseService
         $product->setCategory($category);
 
         // photo handling
-        /** @var UploadedFileInterface $file */
-        $file = $data['photo'];
-        $relativeLocation = $this->fileService->saveProductImage($file);
+        if(isset($data['photo'])) {
+            /** @var UploadedFileInterface $file */
+            $file = $data['photo'];
+            $relativeLocation = $this->fileService->saveProductImage($file);
 
-        $product->setPhoto($relativeLocation);
+            $product->setPhoto($relativeLocation);
+        }
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
@@ -78,21 +80,6 @@ class ProductService extends BaseService
             ->select('r', 'c', 'm')
             ->leftJoin('r.category', 'c')
             ->leftJoin('r.manufacturer', 'm');
-    }
-
-    public function fetchPaginationMetadata(?ProductQueryParams $params): array {
-        // execute query and return result
-        $query =  $this->entityManager->getRepository(Product::class)
-            ->createQueryBuilder('p')
-            ->select('COUNT(p.id) AS count, MIN(p.unitPriceInCents) AS minPrice, MAX(p.unitPriceInCents) AS maxPrice');
-
-        if($params) {
-            $query->leftJoin('p.category' , 'c')->leftJoin('p.manufacturer', 'm');
-            $this->applyFilters($query, $params);
-            return $query->getQuery()->getArrayResult();
-        }
-
-        return $query->getQuery()->getArrayResult();
     }
 
     private function applyFilters(QueryBuilder $query, ProductQueryParams $params): void {
@@ -126,6 +113,53 @@ class ProductService extends BaseService
             ->setParameter('id', $id)
             ->getQuery()
             ->getArrayResult();
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     * @throws FilesystemException
+     * @throws EntityNotFoundException
+     */
+    public function update(int $id, array $data): Product {
+        $product = $this->entityManager->find(Product::class, $id);
+        if(! $product) {
+            throw new EntityNotFoundException("Product Not Found");
+        }
+
+        if(array_key_exists('name', $data)) {
+            $product->setName($data['name']);
+        }
+
+        if(array_key_exists('category', $data)) {
+            $product->setCategory($data['category']);
+        }
+
+        if(array_key_exists('manufacturer', $data)) {
+            $product->setManufacturer($data['manufacturer']);
+        }
+
+        if(array_key_exists('description', $data)) {
+            $product->setDescription($data['description']);
+        }
+
+        if(array_key_exists('price', $data)) {
+            $product->setUnitPriceInCents((int) $data['price']);
+        }
+
+        // photo handling
+        if(isset($data['photo'])) {
+            /** @var UploadedFileInterface $file */
+            $file = $data['photo'];
+            $relativeLocation = $this->fileService->saveProductImage($file);
+
+            $product->setPhoto($relativeLocation);
+        }
+
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
+
+        return $product;
     }
 
     /**

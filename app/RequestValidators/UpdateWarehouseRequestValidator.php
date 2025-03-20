@@ -9,20 +9,27 @@ use App\Exceptions\ValidationException;
 use Doctrine\ORM\EntityManager;
 use Valitron\Validator;
 
-class CreateWarehouseRequestValidator implements RequestValidatorInterface
+class UpdateWarehouseRequestValidator implements RequestValidatorInterface
 {
     public function __construct(
         private readonly EntityManager $entityManager,
     ){
     }
 
+    /**
+     * @inheritDoc
+     */
     public function validate(array $data): array
     {
         $v = new Validator($data);
 
-        $v->rule('required', ['name', 'address']);
-        $v->rule('regex', 'name', '/^[A-Za-z._,:\s\-]*$/');
-        $v->rule('integer', 'address');
+        if(array_key_exists('name', $data)) {
+            $v->rule('regex', 'name', '/^[A-Za-z._,:\s\-]*$/');
+        }
+
+        if(array_key_exists('address', $data)) {
+            $v->rule('integer', 'address');
+        }
 
         $v->rule(function($field, $value, $params, $fields) use(&$data) {
             if(! array_key_exists('address', $data)) {

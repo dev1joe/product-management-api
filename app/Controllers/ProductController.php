@@ -4,27 +4,16 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\DataObjects\ProductQueryParams;
-use App\Entities\Category;
-use App\Exceptions\MethodNotImplementedException;
-use App\Exceptions\MissingQueryParamsException;
 use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
-use App\QueryValidators\ProductQueryValidator;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
-use App\RequestValidators\UploadProductPhotoRequestValidator;
+use App\RequestValidators\UpdateProductRequestValidator;
 use App\Services\CategoryService;
 use App\Services\ProductService;
 use Doctrine\ORM\EntityNotFoundException;
-use Doctrine\ORM\Exception\ORMException;
-use Doctrine\ORM\OptimisticLockException;
-use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use App\Entities\Product;
-use Doctrine\ORM\EntityManager;
-use Psr\Http\Message\UploadedFileInterface;
 use Slim\Views\Twig;
 use Throwable;
 
@@ -38,20 +27,12 @@ class ProductController
     ){
     }
 
-    /**
-     * @throws OptimisticLockException
-     * @throws FilesystemException
-     * @throws ORMException
-     */
     public function create(Request $request, Response $response): Response {
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         if(array_key_exists('photo', $request->getUploadedFiles())) {
             $data['photo'] = $request->getUploadedFiles()['photo'];
         }
-
-        // $response->getBody()->write(json_encode($data));
-        // return $response->withHeader('Content-Type', 'application/json');
 
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
 
@@ -70,13 +51,15 @@ class ProductController
         }
 
         $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'product created successfully!']));
-        return $response->withHeader('Content-Type','application/json')->withStatus(200);
+        return $response->withHeader('Content-Type','application/json')->withStatus(201);
     }
+
     public function form(Request $request, Response $response): Response {
         $categories = $this->categoryService->fetchIdsNames();
 
         return $this->twig->render($response, '/product/newCreateProduct.twig', ['categories' => $categories]);
     }
+
     public function productPage(Request $request, Response $response): Response {
         return $this->twig->render($response, '/product.twig');
     }
@@ -121,24 +104,7 @@ class ProductController
         //TODO: same todos for category
     }
 
-
     public function update(Request $request, Response $response, array $args): Response {
-        $data = $request->getParsedBody();
-        $uploadedFiles = $request->getUploadedFiles();
-
-        if(isset($uploadedFiles['photo'])) {
-            $data['photo'] = $uploadedFiles['photo'];
-        }
-
-        $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
-
-        try {
-            $data = $validator->validate($data);
-        } catch(ValidationException $e) {
-            $response->getBody()->write(json_encode(['errors' => $e->errors]));
-            return $response->withHeader('Content-Type','application/json')->withStatus(400);
-        }
-
         $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
 
         if(! $id) {
@@ -146,16 +112,30 @@ class ProductController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
+        $uploadedFiles = $request->getUploadedFiles();
+
+        if(isset($uploadedFiles['photo'])) {
+            $data['photo'] = $uploadedFiles['photo'];
+        }
+
+        $validator = $this->requestValidatorFactory->make(UpdateProductRequestValidator::class);
+
         try {
-            $changedFields = $this->productService->selectiveUpdate($id, $data);
+            $data = $validator->validate($data);
+        } catch(ValidationException $e) {
+            $response->getBody()->write(json_encode(['errors' => $e->errors, 'data' => $data]));
+            return $response->withHeader('Content-Type','application/json')->withStatus(400);
+        }
 
-            if(sizeof($changedFields) > 0) {
-                $message = 'product updated successfully';
-            } else {
-                $message = 'product information not changed';
-            }
+        try {
+            $this->productService->update($id, $data);
 
-            $response->getBody()->write(json_encode(['message' => $message, 'changed fields' => $changedFields]));
+            $response->getBody()->write(json_encode([
+                'status' => 'success',
+                'message' => 'Product Updated Successfully',
+                'id' => $id,
+            ]));
             return $response->withHeader('Content-Type','application/json')->withStatus(200);
 
         } catch(EntityNotFoundException $e) {
@@ -214,5 +194,4 @@ class ProductController
         $response->getBody()->write(json_encode($successMessage));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
-
 }

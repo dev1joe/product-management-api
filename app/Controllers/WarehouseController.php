@@ -9,6 +9,7 @@ use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
 use App\RequestValidators\CreateWarehouseRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
+use App\RequestValidators\UpdateWarehouseRequestValidator;
 use App\Services\AddressService;
 use App\Services\WarehouseService;
 use Doctrine\ORM\EntityManager;
@@ -37,7 +38,7 @@ class WarehouseController
     }
 
     public function create(Request $request, Response $response): Response {
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         $validator = $this->requestValidatorFactory->make(CreateWarehouseRequestValidator::class);
 
@@ -57,7 +58,7 @@ class WarehouseController
 
         $message = ['status' => 'success', 'massage' => 'warehouse created successfully!'];
         $response->getBody()->write(json_encode($message));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
@@ -123,9 +124,9 @@ class WarehouseController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        // TODO: validate that data is not null
-        $data = $request->getParsedBody();
-        $validator = $this->requestValidatorFactory->make(CreateWarehouseRequestValidator::class);
+
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
+        $validator = $this->requestValidatorFactory->make(UpdateWarehouseRequestValidator::class);
 
         try {
             $data = $validator->validate($data);

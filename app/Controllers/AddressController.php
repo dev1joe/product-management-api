@@ -9,6 +9,7 @@ use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
 use App\RequestValidators\CreateAddressRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
+use App\RequestValidators\UpdateAddressRequestValidator;
 use App\Services\AddressService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
@@ -101,7 +102,7 @@ class AddressController
     }
 
     public function create(Request $request, Response $response): Response {
-        $data = $request->getParsedBody();
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
         $validator = $this->requestValidatorFactory->make(CreateAddressRequestValidator::class);
 
         try {
@@ -119,7 +120,7 @@ class AddressController
         }
 
         $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'address created successfully!']));
-        return $response->withHeader('Content-Type','application/json')->withStatus(200);
+        return $response->withHeader('Content-Type','application/json')->withStatus(201);
     }
 
     public function update(Request $request, Response $response, array $args): Response {
@@ -130,8 +131,8 @@ class AddressController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $data = $request->getParsedBody();
-        $validator = $this->requestValidatorFactory->make(CreateAddressRequestValidator::class);
+        $data = json_decode($request->getBody()->getContents(), true) ?? [];
+        $validator = $this->requestValidatorFactory->make(UpdateAddressRequestValidator::class);
 
         try {
             $data = $validator->validate($data);

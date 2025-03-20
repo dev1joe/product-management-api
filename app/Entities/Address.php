@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping\Table;
 #[Entity, Table(name: 'addresses')]
 class Address
 {
+    // TODO: add createdAt & UpdatedAt
     #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]

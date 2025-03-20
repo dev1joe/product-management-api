@@ -8,6 +8,7 @@ use App\Entities\Warehouse;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
 
 class WarehouseService extends BaseService
@@ -62,6 +63,10 @@ class WarehouseService extends BaseService
             ->leftJoin('r.address', 'a');
     }
 
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function update(int $id, array $data): Warehouse {
         $warehouse = $this->entityManager->getRepository(Warehouse::class)->find($id);
         if(! $warehouse) {
@@ -75,6 +80,9 @@ class WarehouseService extends BaseService
         if(isset($data['address'])) {
             $warehouse->setAddress($data['address']);
         }
+
+        $this->entityManager->persist($warehouse);
+        $this->entityManager->flush();
 
         return $warehouse;
     }
