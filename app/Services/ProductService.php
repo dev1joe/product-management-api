@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DataObjects\ProductQueryParams;
+use App\DataObjects\QueryParams;
 use App\Entities\Category;
 use App\Entities\Manufacturer;
 use App\Entities\Product;
@@ -73,34 +74,43 @@ class ProductService extends BaseService
         return $product;
     }
 
-    public function queryAll(): QueryBuilder
+    public function queryAll(QueryParams $queryParams): QueryBuilder
     {
-        return $this->entityManager->getRepository(Product::class)
+        $query = $this->entityManager->getRepository(Product::class)
             ->createQueryBuilder('r')
             ->select('r', 'c', 'm')
             ->leftJoin('r.category', 'c')
             ->leftJoin('r.manufacturer', 'm');
+
+        return $this->applyFilters($query, $queryParams);
     }
 
-    private function applyFilters(QueryBuilder $query, ProductQueryParams $params): void {
+    private function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder {
+        if($params->name) {
+            $query->where('r.name LIKE :name')->setParameter('name', $params->name);
+        }
+
         if($params->categoryId) {
-            $query->where('c.id = :id')->setParameter('id', $params->categoryId);
+            $query->andWhere('c.id = ?0')->setParameter(0, $params->categoryId);
+        }
+
+        if($params->manufacturerId) {
+            $query->andWhere('m.id = ?1')->setParameter(1, $params->manufacturerId);
         }
 
         if($params->minPriceInCents) {
-            $query->andWhere('p.unitPriceInCents > :min')->setParameter('min', $params->minPriceInCents);
+            $query->andWhere('r.unitPriceInCents > :min')->setParameter('min', $params->minPriceInCents);
         }
 
         if($params->maxPriceInCents) {
-            $query->andWhere('p.unitPriceInCents < :max')->setParameter('max', $params->maxPriceInCents);
+            $query->andWhere('r.unitPriceInCents < :max')->setParameter('max', $params->maxPriceInCents);
         }
 
-        // calculate offset
-        $offset = ($params->page - 1) * $params->limit;
+        if($params->rating) {
+            $query->andWhere('r.avgRating = :rating')->setParameter('rating', $params->rating);
+        }
 
-        $query->orderBy("p.".$params->orderBy, $params->orderDir)
-            ->setFirstResult($offset)
-            ->setMaxResults($params->limit);
+        return $query;
     }
 
     public function fetchByCategory(int $id): array {

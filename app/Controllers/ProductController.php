@@ -91,6 +91,9 @@ class ProductController
             $queryValidator->validate($queryParams);
 
             $result = $this->productService->fetchPaginated($queryParams);
+
+            if(sizeof($result) == 0) return $response->withStatus(204);
+
             $response->getBody()->write(json_encode($result));
             return $response->withHeader('Content-Type', 'application/json');
 

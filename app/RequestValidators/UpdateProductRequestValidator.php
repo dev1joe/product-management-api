@@ -27,6 +27,8 @@ class UpdateProductRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
+        if(sizeof($data) == 0) throw new ValidationException(['Request Body is Empty']);
+
         if(array_key_exists('name', $data)) {
             $v->rule('regex', 'name', '/^[A-Za-z0-9\-._,`*:\r\n\s\t()]*$/');
             $v->rule('lengthBetween', 'name', 3, 200);

@@ -57,7 +57,7 @@ return [
             // Create JSON error response
             $errorPayload = [
                 'status' => 'Fail',
-                'message' => $exception->getMessage()
+                'message' => get_class($exception) . ": " . $exception->getMessage()
             ];
 
             $response->getBody()->write(json_encode($errorPayload));

@@ -7,6 +7,7 @@ class QueryParams
 {
     // although this class doesn't have abstract functions,
     // the important thing is that it cannot be instantiated
+    public ?string $name = null;
     public ?string $orderBy = null;
     public ?string $orderDir = null;
     public mixed $page = null;
@@ -17,6 +18,7 @@ class QueryParams
     {
         $queryParams = array_change_key_case($queryParams, CASE_LOWER);
 
+        $this->name = (isset($queryParams['name']))? $queryParams['name'] : null;
         $this->page = (isset($queryParams['page']))? $queryParams['page'] : 1;
         $this->limit = (isset($queryParams['limit']))? $queryParams['limit'] : 10;
         $this->orderBy = (isset($queryParams['orderby']))? $queryParams['orderby'] : 'id';

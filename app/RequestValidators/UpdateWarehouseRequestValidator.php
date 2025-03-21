@@ -23,6 +23,8 @@ class UpdateWarehouseRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
+        if(sizeof($data) == 0) throw new ValidationException(['Request Body is Empty']);
+
         if(array_key_exists('name', $data)) {
             $v->rule('regex', 'name', '/^[A-Za-z._,:\s\-]*$/');
         }

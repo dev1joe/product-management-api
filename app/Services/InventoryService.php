@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\QueryParams;
 use App\Entities\Inventory;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
@@ -21,7 +22,7 @@ class InventoryService extends BaseService
         );
     }
 
-    public function queryAll(): QueryBuilder
+    public function queryAll(QueryParams $queryParams): QueryBuilder
     {
         return $this->entityManager->getRepository(Inventory::class)
             ->createQueryBuilder('r')

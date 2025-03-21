@@ -17,6 +17,8 @@ class UpdateAddressRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
+        if(sizeof($data) == 0) throw new ValidationException(['Request Body is Empty']);
+
         if(array_key_exists('country', $data)) {
             $v->rule('regex', 'country', '/^[A-Za-z\s-]*$/');
             $v->rule('lengthBetween', 'country', 3, 50);

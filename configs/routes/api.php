@@ -17,8 +17,6 @@ use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
 return function(App $app) {
-    // TODO: all js fetch requests should be requesting api routes
-    // TODO: exception handling
 
     $app->group('/api', function(RouteCollectorProxy $group) {
 

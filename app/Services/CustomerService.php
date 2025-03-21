@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\QueryParams;
 use App\Entities\Customer;
 use App\Exceptions\MethodNotImplementedException;
 use Doctrine\ORM\EntityManager;
@@ -46,7 +47,7 @@ class CustomerService extends BaseService
         return $customer;
     }
 
-    public function queryAll(): QueryBuilder
+    public function queryAll(QueryParams $queryParams): QueryBuilder
     {
         return $this->entityManager->getRepository(Customer::class)
             ->createQueryBuilder('r')

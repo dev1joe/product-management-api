@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\QueryParams;
 use App\Entities\Address;
 use App\Entities\Warehouse;
 use Doctrine\ORM\EntityManager;
@@ -55,7 +56,7 @@ class WarehouseService extends BaseService
         return $warehouse;
     }
 
-    public function queryAll(): QueryBuilder
+    public function queryAll(QueryParams $queryParams): QueryBuilder
     {
         return $this->entityManager->getRepository(Warehouse::class)
             ->createQueryBuilder('r') // r for Resource

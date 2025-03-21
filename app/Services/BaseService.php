@@ -23,7 +23,7 @@ class BaseService
      * return the Base Query
      * @return QueryBuilder
      */
-    public function queryAll(): QueryBuilder {
+    public function queryAll(QueryParams $queryParams): QueryBuilder {
         return $this->entityManager->getRepository($this->className)
             ->createQueryBuilder('r') // r for Resource
             ->select('r');
@@ -39,9 +39,9 @@ class BaseService
 
     public function fetchPaginated(QueryParams $queryParams): array {
 
-        $query = $this->queryAll();
+        $query = $this->queryAll($queryParams);
 
-        // if the page is not set by the user, it'll be set to the default value,
+        // if the user does not set the page, it'll be set to the default value,
         // so no need for validation at that point
         $query->setFirstResult($queryParams->limit * ($queryParams->page - 1));
         $query->setMaxResults($queryParams->limit);
@@ -49,6 +49,8 @@ class BaseService
         $query->orderBy('r.' . $queryParams->orderBy, $queryParams->orderDir);
 
         $data = $query->getQuery()->getArrayResult();
+
+        if(! $data || sizeof($data) == 0) return [];
 
         $metadata = [];
         $metadata['orderBy'] = $queryParams->orderBy;

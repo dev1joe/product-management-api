@@ -24,6 +24,8 @@ class UpdateInventroyRequestValidator implements RequestValidatorInterface
     {
         $v = new Validator($data);
 
+        if(sizeof($data) == 0) throw new ValidationException(['Request Body is Empty']);
+
         if(array_key_exists('product', $data)) {
             $v->rule('integer', 'product');
 
