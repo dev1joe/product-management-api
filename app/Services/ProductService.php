@@ -86,6 +86,8 @@ class ProductService extends BaseService
     }
 
     private function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder {
+        /** @var ProductQueryParams $params */
+
         if($params->name) {
             $query->where('r.name LIKE :name')->setParameter('name', $params->name);
         }

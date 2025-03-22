@@ -9,9 +9,9 @@ use App\Exceptions\ValidationException;
 interface QueryValidatorInterface
 {
     /**
-     * @param QueryParams $query
+     * @param QueryParams $params
      * @return QueryParams
      * @throws ValidationException
      */
-    public function validate(QueryParams $query): QueryParams;
+    public function validate(QueryParams $params): QueryParams;
 }

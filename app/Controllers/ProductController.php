@@ -6,6 +6,7 @@ namespace App\Controllers;
 use App\DataObjects\ProductQueryParams;
 use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
+use App\QueryValidators\ProductQueryValidator;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UpdateProductRequestValidator;
@@ -87,7 +88,7 @@ class ProductController
         $queryParams = new ProductQueryParams($request->getQueryParams());
 
         try {
-            $queryValidator = new BaseQueryValidator(['createdat', 'updatedat', 'unitpriceincents', 'avgrating', 'id', 'name']);
+            $queryValidator = new ProductQueryValidator(['createdat', 'updatedat', 'unitpriceincents', 'avgrating', 'id', 'name']);
             $queryValidator->validate($queryParams);
 
             $result = $this->productService->fetchPaginated($queryParams);
