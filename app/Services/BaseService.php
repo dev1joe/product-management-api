@@ -21,16 +21,31 @@ class BaseService
 
     /**
      * return the Base Query
+     * @param QueryParams|null $params
      * @return QueryBuilder
      */
-    public function queryAll(QueryParams $queryParams): QueryBuilder {
-        return $this->entityManager->getRepository($this->className)
+    public function queryAll(?QueryParams $params = null): QueryBuilder {
+        $query = $this->entityManager->getRepository($this->className)
             ->createQueryBuilder('r') // r for Resource
             ->select('r');
+
+        if($params) {
+            return $this->applyFilters($query, $params);
+        }
+
+        return $query;
+    }
+
+    protected function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder {
+        if($params->name) {
+            $query->where('r.name LIKE :name')->setParameter('name', $params->name);
+        }
+
+        return $query;
     }
 
     /**
-     * Just use the Base Query from "queryAll" function and return the array result
+     * Use the Base Query from "queryAll" function and return the array result
      * @return array
      */
     public function fetchAll(): array {

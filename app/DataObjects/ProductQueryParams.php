@@ -11,23 +11,20 @@ class ProductQueryParams extends QueryParams
     public mixed $maxPriceInCents = null;
     public mixed $rating = null;
 
-    public function __construct(array $query) {
-        parent::__construct($query);
+    public function __construct(array $params) {
+        parent::__construct($params);
 
-        // TODO: what if category = string ?
-        $this->categoryId = (isset($query['category']))? $query['category'] : null;
+        $this->categoryId = (isset($params['category']))? $params['category'] : null;
 
-        $this->manufacturerId = (isset($query['manufacturer']))? $query['manufacturer'] : null;
+        $this->manufacturerId = (isset($params['manufacturer']))? $params['manufacturer'] : null;
 
-        $this->rating = (isset($query['rating']))? $query['rating'] : null;
+        $this->rating = (isset($params['rating']))? $params['rating'] : null;
 
         // TODO: use currency service 🔴
-        $minPrice = (isset($query['minPrice']))? $query['minPrice'] : null;
+        $minPrice = (isset($params['minPrice']))? $params['minPrice'] : null;
         $this->minPriceInCents = ($minPrice)? $minPrice * 100 : null;
 
-        $maxPrice = (isset($query['maxPrice']))? $query['maxPrice'] : null;
+        $maxPrice = (isset($params['maxPrice']))? $params['maxPrice'] : null;
         $this->maxPriceInCents = ($maxPrice)? $maxPrice * 100 : null;
-
-        return $this;
     }
 }

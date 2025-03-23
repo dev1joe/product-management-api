@@ -47,7 +47,7 @@ class CustomerService extends BaseService
         return $customer;
     }
 
-    public function queryAll(QueryParams $queryParams): QueryBuilder
+    public function queryAll(?QueryParams $params = null): QueryBuilder
     {
         return $this->entityManager->getRepository(Customer::class)
             ->createQueryBuilder('r')

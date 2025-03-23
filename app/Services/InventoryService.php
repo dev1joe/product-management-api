@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\InventoryQueryParams;
 use App\DataObjects\QueryParams;
 use App\Entities\Inventory;
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
@@ -22,22 +24,51 @@ class InventoryService extends BaseService
         );
     }
 
-    public function queryAll(QueryParams $queryParams): QueryBuilder
+    public function queryAll(?QueryParams $params = null): QueryBuilder
     {
-        return $this->entityManager->getRepository(Inventory::class)
+        $query = $this->entityManager->getRepository(Inventory::class)
             ->createQueryBuilder('r')
             ->select('r', 'p', 'w')
             ->leftJoin('r.product', 'p')
             ->leftJoin('r.warehouse', 'w');
+
+        if($params) {
+            return $this->applyFilters($query, $params);
+        }
+
+        return $query;
     }
 
+    protected function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder
+    {
+        /** @var InventoryQueryParams $params */
+
+        if($params->warehouseId) {
+            $query->andWhere('w.id = ?0')->setParameter(0, $params->warehouseId);
+        }
+
+        if($params->productId) {
+            $query->andWhere('p.id = ?1')->setParameter(1, $params->productId);
+        }
+
+        if($params->quantity) {
+            $query->andWhere('r.quantity = :quantity')->setParameter('quantity', $params->quantity);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function create(array $data): Inventory {
         $inventory = new Inventory();
         $inventory->setProduct($data['product']);
         $inventory->setWarehouse($data['warehouse']);
         $inventory->setQuantity((int) $data['quantity']);
 
-        $restock = (array_key_exists('lastrestock', $data))? $data['lastrestock'] : new \DateTime();
+        $restock = (array_key_exists('lastrestock', $data))? $data['lastrestock'] : new DateTime();
         $inventory->setLastRestock($restock);
 
         $this->entityManager->persist($inventory);

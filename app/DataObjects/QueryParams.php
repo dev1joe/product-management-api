@@ -14,14 +14,14 @@ class QueryParams
     public mixed $limit = null; // allow page and limit to be mixed values, allowing validators to catch errors
 
     //TODO: refactor default values to environment variables / constants
-    public function __construct(array $queryParams)
+    public function __construct(array $params)
     {
-        $queryParams = array_change_key_case($queryParams, CASE_LOWER);
+        $params = array_change_key_case($params, CASE_LOWER);
 
-        $this->name = (isset($queryParams['name']))? $queryParams['name'] : null;
-        $this->page = (isset($queryParams['page']))? $queryParams['page'] : 1;
-        $this->limit = (isset($queryParams['limit']))? $queryParams['limit'] : 10;
-        $this->orderBy = (isset($queryParams['orderby']))? $queryParams['orderby'] : 'id';
-        $this->orderDir = (isset($queryParams['orderdir']))? $queryParams['orderdir'] : 'asc';
+        $this->name = (isset($params['name']))? $params['name'] : null;
+        $this->page = (isset($params['page']))? $params['page'] : 1;
+        $this->limit = (isset($params['limit']))? $params['limit'] : 10;
+        $this->orderBy = (isset($params['orderby']))? $params['orderby'] : 'id';
+        $this->orderDir = (isset($params['orderdir']))? $params['orderdir'] : 'asc';
     }
 }

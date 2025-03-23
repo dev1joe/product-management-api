@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\DataObjects\QueryParams;
+use App\DataObjects\InventoryQueryParams;
 use App\Exceptions\ValidationException;
-use App\QueryValidators\BaseQueryValidator;
+use App\QueryValidators\InventoryQueryValidator;
 use App\RequestValidators\CreateInventoryRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UpdateInventroyRequestValidator;
@@ -24,10 +24,10 @@ class InventoryController
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
-        $queryParams = new QueryParams($request->getQueryParams());
+        $queryParams = new InventoryQueryParams($request->getQueryParams());
 
         try {
-            $queryValidator = new BaseQueryValidator(['product', 'warehouse', 'quantity', 'lastrestock', 'id']);
+            $queryValidator = new InventoryQueryValidator(['product', 'warehouse', 'quantity', 'lastrestock', 'id']);
             $queryValidator->validate($queryParams);
 
             $result = $this->inventoryService->fetchPaginated($queryParams);
@@ -116,7 +116,7 @@ class InventoryController
 
         try {
             $this->inventoryService->create($data);
-        } catch(\Throwable $e) {
+        } catch(Throwable $e) {
             $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
             return $response->withHeader('Content-Type','application/json')->withStatus(500);
         }

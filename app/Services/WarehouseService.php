@@ -56,12 +56,18 @@ class WarehouseService extends BaseService
         return $warehouse;
     }
 
-    public function queryAll(QueryParams $queryParams): QueryBuilder
+    public function queryAll(?QueryParams $params = null): QueryBuilder
     {
-        return $this->entityManager->getRepository(Warehouse::class)
+        $query = $this->entityManager->getRepository(Warehouse::class)
             ->createQueryBuilder('r') // r for Resource
             ->select('r', 'a')
             ->leftJoin('r.address', 'a');
+
+        if($params) {
+            return $this->applyFilters($query, $params);
+        }
+
+        return $query;
     }
 
     /**

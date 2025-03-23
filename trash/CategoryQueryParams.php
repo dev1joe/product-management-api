@@ -5,8 +5,8 @@ namespace App\DataObjects;
 
 class CategoryQueryParams extends QueryParams
 {
-    public function __construct(array $queryParams)
+    public function __construct(array $params)
     {
-        parent::__construct($queryParams);
+        parent::__construct($params);
     }
 }

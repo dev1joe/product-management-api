@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\ManufacturerQueryParams;
+use App\DataObjects\QueryParams;
 use App\Entities\Manufacturer;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\QueryBuilder;
 use League\Flysystem\FilesystemException;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -21,6 +24,20 @@ class ManufacturerService extends BaseService
             $this->entityManager,
             Manufacturer::class
         );
+    }
+
+    protected function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder {
+        /** @var ManufacturerQueryParams $params */
+
+        if($params->name) {
+            $query->where('r.name LIKE :name')->setParameter('name', $params->name);
+        }
+
+        if($params->email) {
+            $query->andWhere('r.email LIKE :email')->setParameter('email', $params->email);
+        }
+
+        return $query;
     }
 
     /**

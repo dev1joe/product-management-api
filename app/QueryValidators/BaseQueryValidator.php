@@ -95,6 +95,7 @@ class BaseQueryValidator implements QueryValidatorInterface
     }
 
     protected function validateFilterParams(QueryParams $params): array {
+        // TODO: do I need to validate the name parameter ?
         return [];
     }
 }

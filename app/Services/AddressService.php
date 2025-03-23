@@ -3,12 +3,14 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DataObjects\AddressQueryParams;
+use App\DataObjects\QueryParams;
 use App\Entities\Address;
-use App\Entities\Warehouse;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\QueryBuilder;
 
 class AddressService extends BaseService
 {
@@ -19,6 +21,33 @@ class AddressService extends BaseService
             $this->entityManager,
             Address::class
         );
+    }
+
+    protected function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder
+    {
+        /** @var AddressQueryParams $params */
+
+        if($params->country) {
+            $query->where('r.country LIKE :country')->setParameter('country', $params->country);
+        }
+
+        if($params->governorate) {
+            $query->andWhere('r.governorate LIKE :governorate')->setParameter('governorate', $params->governorate);
+        }
+
+        if($params->district) {
+            $query->andWhere('r.district LIKE :district')->setParameter('district', $params->district);
+        }
+
+        if($params->street) {
+            $query->andWhere('r.street LIKE :street')->setParameter('street', $params->street);
+        }
+
+        if($params->building) {
+            $query->andWhere('r.building LIKE :building')->setParameter('building', $params->building);
+        }
+
+        return $query;
     }
 
     /**

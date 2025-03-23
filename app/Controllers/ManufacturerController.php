@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\DataObjects\ManufacturerQueryParams;
 use App\DataObjects\QueryParams;
 use App\Entities\Manufacturer;
 use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\ValidationException;
 use App\QueryValidators\BaseQueryValidator;
+use App\QueryValidators\ManufacturerQueryValidator;
 use App\RequestValidators\CreateManufacturerRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\ManufacturerService;
@@ -25,10 +27,10 @@ class ManufacturerController
     }
 
     public function fetchAllPaginated(Request $request, Response $response) {
-        $queryParams = new QueryParams($request->getQueryParams());
+        $queryParams = new ManufacturerQueryParams($request->getQueryParams());
 
         try {
-            $queryValidator = new BaseQueryValidator(['updatedat', 'createdat', 'name', 'id', 'productcount']);
+            $queryValidator = new ManufacturerQueryValidator(['updatedat', 'createdat', 'name', 'id', 'productcount']);
             $queryValidator->validate($queryParams);
 
             $result = $this->manufacturerService->fetchPaginated($queryParams);

@@ -74,7 +74,7 @@ class ProductService extends BaseService
         return $product;
     }
 
-    public function queryAll(QueryParams $queryParams): QueryBuilder
+    public function queryAll(?QueryParams $params = null): QueryBuilder
     {
         $query = $this->entityManager->getRepository(Product::class)
             ->createQueryBuilder('r')
@@ -82,10 +82,14 @@ class ProductService extends BaseService
             ->leftJoin('r.category', 'c')
             ->leftJoin('r.manufacturer', 'm');
 
-        return $this->applyFilters($query, $queryParams);
+        if($params) {
+            return $this->applyFilters($query, $params);
+        }
+
+        return $query;
     }
 
-    private function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder {
+    protected function applyFilters(QueryBuilder $query, QueryParams $params): QueryBuilder {
         /** @var ProductQueryParams $params */
 
         if($params->name) {
@@ -113,18 +117,6 @@ class ProductService extends BaseService
         }
 
         return $query;
-    }
-
-    public function fetchByCategory(int $id): array {
-        return $this->entityManager->getRepository(Product::class)
-            ->createQueryBuilder('p')
-            ->select('p', 'c', 'm')
-            ->leftJoin('p.category', 'c')
-            ->leftJoin('p.manufacturer', 'm')
-            ->where('c.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->getArrayResult();
     }
 
     /**

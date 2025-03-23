@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\DataObjects\AddressQueryParams;
 use App\DataObjects\QueryParams;
 use App\Entities\Address;
 use App\Exceptions\ValidationException;
+use App\QueryValidators\AddressQueryValidator;
 use App\QueryValidators\BaseQueryValidator;
 use App\RequestValidators\CreateAddressRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
@@ -26,10 +28,10 @@ class AddressController
     }
 
     public function fetchAllPaginated(Request $request, Response $response): Response {
-        $queryParams = new QueryParams($request->getQueryParams());
+        $queryParams = new AddressQueryParams($request->getQueryParams());
 
         try {
-            $queryValidator = new BaseQueryValidator(['updatedat', 'createdat', 'country', 'id', 'governorate']);
+            $queryValidator = new AddressQueryValidator(['updatedat', 'createdat', 'country', 'id', 'governorate']);
             $queryValidator->validate($queryParams);
 
             $result = $this->addressService->fetchPaginated($queryParams);
