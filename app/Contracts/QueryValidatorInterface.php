@@ -6,7 +6,7 @@ namespace App\Contracts;
 use App\DataObjects\QueryParams;
 use App\Exceptions\ValidationException;
 
-interface QueryValidatorInterface
+interface QueryValidatorInterface extends ValidatorInterface
 {
     /**
      * @param QueryParams $params
