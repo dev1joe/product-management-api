@@ -4,24 +4,17 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Contracts\AuthServiceInterface;
-use App\Enums\UserType;
-use App\Exceptions\MethodNotImplementedException;
 use App\Exceptions\ValidationException;
 use App\RequestValidators\RegisterCustomerRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
-use App\Services\CustomerService;
-use Doctrine\ORM\EntityManager;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Slim\Views\Twig;
 use Valitron\Validator;
 
 class AuthController
 {
     public function __construct(
-        private readonly Twig $twig,
         private readonly RequestValidatorFactory $requestValidatorFactory,
-        private readonly CustomerService $customerService,
         private readonly AuthServiceInterface $authService,
     ){
     }

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Entities\Traits\HasTimestamps;
+use DateTime;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -14,7 +16,7 @@ use Doctrine\ORM\Mapping\Table;
 #[Entity, Table(name: 'inventories')]
 class Inventory
 {
-    // TODO: include time stamps
+    use HasTimestamps;
     #[Id, Column, GeneratedValue]
     private int $id;
     #[ManyToOne, JoinColumn(onDelete: 'CASCADE')]
@@ -24,7 +26,7 @@ class Inventory
     #[Column]
     private int $quantity;
     #[Column(name: 'last_restock')]
-    private \DateTime $lastRestock;
+    private DateTime $lastRestock;
 
     public function getWarehouse(): Warehouse
     {
@@ -65,12 +67,12 @@ class Inventory
         return $this;
     }
 
-    public function getLastRestock(): \DateTime
+    public function getLastRestock(): DateTime
     {
         return $this->lastRestock;
     }
 
-    public function setLastRestock(\DateTime $lastRestock): Inventory
+    public function setLastRestock(DateTime $lastRestock): Inventory
     {
         $this->lastRestock = $lastRestock;
         return  $this;

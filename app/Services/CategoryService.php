@@ -55,6 +55,7 @@ class CategoryService extends BaseService
     /**
      * @throws FilesystemException
      * @throws ORMException
+     * @throws EntityNotFoundException
      */
     public function update(int $id, array $data): Category {
         $category = $this->entityManager->getRepository(Category::class)->find($id);

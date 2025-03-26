@@ -31,7 +31,7 @@ class AddressController
         $queryParams = new AddressQueryParams($request->getQueryParams());
 
         try {
-            $queryValidator = new AddressQueryValidator(['updatedat', 'createdat', 'country', 'id', 'governorate']);
+            $queryValidator = new BaseQueryValidator(['updatedat', 'createdat', 'country', 'id', 'governorate']);
             $queryValidator->validate($queryParams);
 
             $result = $this->addressService->fetchPaginated($queryParams);

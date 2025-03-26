@@ -23,6 +23,5 @@ class AddressQueryValidator extends BaseQueryValidator
         //  then why validate parameters?
 
         return $errors;
-        // used to cancel "name" parameter validation
     }
 }

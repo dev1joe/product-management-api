@@ -99,8 +99,5 @@ return function(App $app) {
 //        });
         // $group->get('/customers/{email:.+}', [CustomerController::class, 'fetchByEmail']);
 
-    })->add(CorsMiddleware::class);
-
-    // TODO: Error handling is not working with wrong routes
-    //->add(AjaxHandleExceptionsMiddleware::class);
+    });
 };

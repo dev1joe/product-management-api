@@ -5,24 +5,19 @@ namespace App\Controllers;
 
 use App\DataObjects\ProductQueryParams;
 use App\Exceptions\ValidationException;
-use App\QueryValidators\BaseQueryValidator;
 use App\QueryValidators\ProductQueryValidator;
 use App\RequestValidators\CreateProductRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UpdateProductRequestValidator;
-use App\Services\CategoryService;
 use App\Services\ProductService;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Views\Twig;
 use Throwable;
 
 class ProductController
 {
     public function __construct(
-        private readonly Twig $twig,
-        private readonly CategoryService $categoryService,
         private readonly RequestValidatorFactory $requestValidatorFactory,
         private readonly ProductService $productService,
     ){
@@ -53,16 +48,6 @@ class ProductController
 
         $response->getBody()->write(json_encode(['status' => 'success', 'message' => 'product created successfully!']));
         return $response->withHeader('Content-Type','application/json')->withStatus(201);
-    }
-
-    public function form(Request $request, Response $response): Response {
-        $categories = $this->categoryService->fetchIdsNames();
-
-        return $this->twig->render($response, '/product/newCreateProduct.twig', ['categories' => $categories]);
-    }
-
-    public function productPage(Request $request, Response $response): Response {
-        return $this->twig->render($response, '/product.twig');
     }
 
     public function fetchById(Request $request, Response $response, array $args): Response {
@@ -103,9 +88,6 @@ class ProductController
             $response->getBody()->write(json_encode(['errors' => $e->errors]));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
-
-        //TODO: xxx response code for ORM\QueryException
-        //TODO: same todos for category
     }
 
     public function update(Request $request, Response $response, array $args): Response {

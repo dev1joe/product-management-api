@@ -17,7 +17,9 @@ class BaseQueryValidator implements QueryValidatorInterface
     }
 
     /**
-     * @inheritDoc
+     * @param QueryParams $params
+     * @return QueryParams
+     * @throws ValidationException
      */
     public function validate(QueryParams $params): QueryParams
     {
@@ -38,7 +40,6 @@ class BaseQueryValidator implements QueryValidatorInterface
         $errors = [];
 
         if($params->orderBy) {
-            // TODO: include all the attributes of the Category entity + do for other entities
             if(! is_string($params->orderBy)) {
                 $errors['orderBy'][] = 'Invalid Type Error: orderBy has to be string';
             }

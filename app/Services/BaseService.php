@@ -20,7 +20,7 @@ class BaseService
     }
 
     /**
-     * return the Base Query
+     * return the Base Query for other functions to build on
      * @param QueryParams|null $params
      * @return QueryBuilder
      */

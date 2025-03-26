@@ -12,20 +12,14 @@ use App\Services\CategoryService;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
-use Slim\Views\Twig;
 use Throwable;
 
 class CategoryController
 {
     public function __construct(
-        private readonly Twig $twig,
         private readonly RequestValidatorFactory $requestValidatorFactory,
         private readonly CategoryService $categoryService,
     ){
-    }
-
-    public function form(Request $request, Response $response): Response {
-        return $this->twig->render($response, '/category/createCategory.twig');
     }
 
     public function create(Request $request, Response $response): Response {

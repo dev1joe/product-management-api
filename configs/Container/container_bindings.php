@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Config;
 use App\Contracts\AuthServiceInterface;
 use App\Enums\StorageDriver;
+use App\ErrorHandler;
 use App\EventListeners\ProductListener;
 use App\RequestValidators\RequestValidatorFactory;
 use App\Services\AuthService;
@@ -14,14 +15,8 @@ use Doctrine\ORM\ORMSetup;
 use League\Flysystem\Filesystem;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Factory\AppFactory;
-use Slim\Views\Twig;
-use Symfony\Bridge\Twig\Extension\AssetExtension;
-use Symfony\Component\Asset\Packages;
-use Symfony\Component\Asset\PathPackage;
-use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 use function DI\create;
 
 return [
@@ -42,56 +37,18 @@ return [
         $middlewares($app);
 
         $errorMiddleware = $app->addErrorMiddleware(true, true, true);
-        $errorMiddleware->setDefaultErrorHandler(function (
-            Request $request,
-            Throwable $exception,
-            bool $displayErrorDetails
-        ) use ($app) {
-            $response = $app->getResponseFactory()->createResponse();
-
-            // Determine the appropriate HTTP status code
-            $statusCode = $exception instanceof \Slim\Exception\HttpException
-                ? $exception->getCode() ?: 500
-                : 500;
-
-            // Create JSON error response
-            $errorPayload = [
-                'status' => 'Fail',
-                'message' => get_class($exception) . ": " . $exception->getMessage()
-            ];
-
-            $response->getBody()->write(json_encode($errorPayload));
-            return $response->withStatus($statusCode)->withHeader('Content-Type', 'application/json');
-        });
-
-        // disable Slim's default error handler
-        // $errorMiddleware = $app->addErrorMiddleware(true, true, true);
-        // $errorMiddleware->setDefaultErrorHandler(false);
+        $errorMiddleware->setDefaultErrorHandler(ErrorHandler::class);
 
         return $app;
     },
     Config::class => create(Config::class)->constructor(
         require CONFIGS_PATH . '/app.php'
     ),
-    Twig::class => function(Config $config) {
-        $twig = Twig::create(
-            path: NEW_VIEWS_PATH,
-            settings: [
-                'cache' => STORAGE_PATH . "/cache",
-                'auto_reload' => $config->get('app_env') == 'development'
-            ]
-        );
-
-        // add any twig extensions here
-        $packages = new Packages(new PathPackage('/../resources', new EmptyVersionStrategy()));
-        $twig->addExtension(new AssetExtension($packages));
-        return $twig;
-    },
     EntityManager::class => function(Config $config) {
         $conn = DriverManager::getConnection($config->get('doctrine.connection'));
 
         $ormSetup = ORMSetup::createAttributeMetadataConfiguration(
-            paths: [__DIR__ . "/../../app/Entities/"], //TODO: abstract entities path ?
+            paths: [ENTITIES_PATH],
             isDevMode: $config->get('app_env') == 'development'
         );
 
@@ -124,8 +81,8 @@ return [
         // The FilesystemOperator
         return new League\Flysystem\Filesystem($adapter);
     },
-    AuthServiceInterface::class => function(ContainerInterface $container) {
-        return $container->get(AuthService::class);
-        // `App\Services\AuthService` is the default implementation of the AuthServiceInterface
-    },
+//    AuthServiceInterface::class => function(ContainerInterface $container) {
+//        return $container->get(AuthService::class);
+//        // `App\Services\AuthService` is the default implementation of the AuthServiceInterface
+//    },
 ];

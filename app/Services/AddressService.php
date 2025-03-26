@@ -144,7 +144,6 @@ class AddressService extends BaseService
 
         /** @var Address $address */
         foreach($addresses as $address) {
-            //TODO: abstract to address object function WITH VALIDATION FOR NULL VALUES
             $details = $address->getCountry() . ", " . $address->getGovernorate() . ", " . $address->getDistrict() . ", street " . $address->getStreet() . ", building " . $address->getBuilding();
 
             $result[] = ['id' => $address->getId(), 'details' => $details];

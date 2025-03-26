@@ -33,10 +33,10 @@ class Product
     private ?Manufacturer $manufacturer;
     #[Column(nullable: true)]
     private ?string $photo;
-    #[Column(name: "unit_price_in_cents")]
-    private int $unitPriceInCents;
-    #[Column(name: "avg_rating", type: Types::DECIMAL, precision: 2, scale: 1, options: ["default" => 0])]
-    private float $avgRating = 0;
+    #[Column(name: "price_in_cents")]
+    private int $priceInCents;
+    #[Column(type: Types::DECIMAL, precision: 2, scale: 1, options: ["default" => 0])]
+    private float $rating = 0;
 
     public function getId(): int
     {
@@ -104,25 +104,25 @@ class Product
         return $this;
     }
 
-    public function getUnitPriceInCents(): int
+    public function getPriceInCents(): int
     {
-        return $this->unitPriceInCents;
+        return $this->priceInCents;
     }
 
-    public function setUnitPriceInCents(int $unitPriceInCents): Product
+    public function setPriceInCents(int $priceInCents): Product
     {
-        $this->unitPriceInCents = $unitPriceInCents;
+        $this->priceInCents = $priceInCents;
         return $this;
     }
 
-    public function getAvgRating(): float
+    public function getRating(): float
     {
-        return $this->avgRating;
+        return $this->rating;
     }
 
-    public function setAvgRating(float $avgRating): Product
+    public function setRating(float $rating): Product
     {
-        $this->avgRating = $avgRating;
+        $this->rating = $rating;
         return $this;
     }
 

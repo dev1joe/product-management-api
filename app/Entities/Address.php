@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace App\Entities;
 
+use App\Entities\Traits\HasTimestamps;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'addresses')]
 class Address
 {
-    // TODO: add createdAt & UpdatedAt
+    use HasTimestamps;
     #[Id, Column, GeneratedValue]
     private int $id;
     #[Column]

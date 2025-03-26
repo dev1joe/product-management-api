@@ -8,15 +8,11 @@ use App\DataObjects\QueryParams;
 use App\Entities\Category;
 use App\Entities\Manufacturer;
 use App\Entities\Product;
-use DI\NotFoundException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMInvalidArgumentException;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Exception;
 use League\Flysystem\FilesystemException;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -46,7 +42,7 @@ class ProductService extends BaseService
         $price = (float) $data['price'];
         // converting from dollars to cents
         $price *= 100;
-        $product->setUnitPriceInCents((int) $price);
+        $product->setPriceInCents((int) $price);
 
         if(array_key_exists('manufacturer', $data)) {
             $product->setManufacturer($data['manufacturer']);
@@ -105,15 +101,15 @@ class ProductService extends BaseService
         }
 
         if($params->minPriceInCents) {
-            $query->andWhere('r.unitPriceInCents > :min')->setParameter('min', $params->minPriceInCents);
+            $query->andWhere('r.priceInCents > :min')->setParameter('min', $params->minPriceInCents);
         }
 
         if($params->maxPriceInCents) {
-            $query->andWhere('r.unitPriceInCents < :max')->setParameter('max', $params->maxPriceInCents);
+            $query->andWhere('r.priceInCents < :max')->setParameter('max', $params->maxPriceInCents);
         }
 
         if($params->rating) {
-            $query->andWhere('r.avgRating = :rating')->setParameter('rating', $params->rating);
+            $query->andWhere('r.rating = :rating')->setParameter('rating', $params->rating);
         }
 
         return $query;
@@ -148,7 +144,7 @@ class ProductService extends BaseService
         }
 
         if(array_key_exists('price', $data)) {
-            $product->setUnitPriceInCents((int) $data['price']);
+            $product->setPriceInCents((int) $data['price']);
         }
 
         // photo handling
@@ -213,8 +209,8 @@ class ProductService extends BaseService
         $price = (float) $data['price'];
         $price *= 100; // from dollars to cents
         $priceInCents = (int) $price;
-        if($product->getUnitPriceInCents() !== $priceInCents) {
-            $product->setUnitPriceInCents($priceInCents);
+        if($product->getPriceInCents() !== $priceInCents) {
+            $product->setPriceInCents($priceInCents);
             $changedFields[] = 'price';
         }
 
