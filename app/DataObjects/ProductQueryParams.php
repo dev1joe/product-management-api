@@ -5,11 +5,11 @@ namespace App\DataObjects;
 
 class ProductQueryParams extends QueryParams
 {
-    public mixed $categoryId = null;
-    public mixed $manufacturerId = null;
-    public mixed $minPriceInCents = null;
-    public mixed $maxPriceInCents = null;
-    public mixed $rating = null;
+    public string|int|null $categoryId = null;
+    public string|int|null $manufacturerId = null;
+    public string|int|null $minPriceInCents = null;
+    public string|int|null $maxPriceInCents = null;
+    public string|float|null $rating = null;
 
     public function __construct(array $params) {
         parent::__construct($params);
@@ -21,10 +21,8 @@ class ProductQueryParams extends QueryParams
         $this->rating = (isset($params['rating']))? $params['rating'] : null;
 
         // TODO: use currency service 🔴
-        $minPrice = (isset($params['minPrice']))? $params['minPrice'] : null;
-        $this->minPriceInCents = ($minPrice)? $minPrice * 100 : null;
+        $this->minPriceInCents = (isset($params['minPrice']))? $params['minPrice'] : null;
 
-        $maxPrice = (isset($params['maxPrice']))? $params['maxPrice'] : null;
-        $this->maxPriceInCents = ($maxPrice)? $maxPrice * 100 : null;
+        $this->maxPriceInCents = (isset($params['maxPrice']))? $params['maxPrice'] : null;
     }
 }

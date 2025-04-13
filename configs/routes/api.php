@@ -18,7 +18,7 @@ use Slim\Routing\RouteCollectorProxy;
 
 return function(App $app) {
 
-    $app->group('/api', function(RouteCollectorProxy $group) {
+    $app->group('/api/v1', function(RouteCollectorProxy $group) {
 
         //[___________________________ products ___________________________]
         $group->group('/products', function(RouteCollectorProxy $products) {
@@ -91,13 +91,5 @@ return function(App $app) {
 
 //        $group->get('/files/{file:.+}', [FileController::class, 'fetchFile']);
 //        $group->get('/files', [FileController::class, 'tmp']);
-
-        //[___________________________ Customers ___________________________]
-//        $group->group('/customers', function(RouteCollectorProxy $customers) {
-//            $customers->get('', [CustomerController::class, 'fetchAll']);
-//            $customers->get('/{id:[0-9]+}', [CustomerController::class, 'fetchById']);
-//        });
-        // $group->get('/customers/{email:.+}', [CustomerController::class, 'fetchByEmail']);
-
     });
 };
