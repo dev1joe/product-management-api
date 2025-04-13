@@ -7,17 +7,13 @@ use App\Contracts\RequestValidatorInterface;
 use App\Entities\Category;
 use App\Entities\Manufacturer;
 use App\Exceptions\ValidationException;
-use App\Services\FileService;
 use Doctrine\ORM\EntityManager;
-use League\MimeTypeDetection\FinfoMimeTypeDetector;
-use Psr\Http\Message\UploadedFileInterface;
 use Valitron\Validator;
 
 class CreateProductRequestValidator implements RequestValidatorInterface
 {
     public function __construct(
         private readonly EntityManager $entityManager,
-        private readonly FileService $fileService,
     ){
     }
 
@@ -72,24 +68,6 @@ class CreateProductRequestValidator implements RequestValidatorInterface
             return true;
 
         }, 'manufacturer')->message('manufacturer not found');
-
-        // photo handling
-        if(array_key_exists('photo', $data)) {
-            $v->rule(function($field, $value, $params, $fields) {
-
-                if(! ($value instanceof UploadedFileInterface)) {
-                    return false;
-                }
-
-                return $this->fileService->validateFile(
-                    $value,
-                    'photo',
-                    5,
-                    '/^[a-zA-Z0-9\s._-]+$/',
-                    ['image/png', 'image/jpeg']
-                );
-            }, 'photo')->message('invalid photo');
-        }
 
         if(! $v->validate()) {
             throw new ValidationException($v->errors());

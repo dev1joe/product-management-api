@@ -25,8 +25,8 @@ return [
         $app = AppFactory::create();
 
         //adding web routes
-        $routes = require CONFIGS_PATH . '/routes/web.php';
-        $routes($app);
+        // $routes = require CONFIGS_PATH . '/routes/web.php';
+        // $routes($app);
 
         // add api routes
         $api = require CONFIGS_PATH . '/routes/api.php';

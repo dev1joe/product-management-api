@@ -26,13 +26,6 @@ class CategoryController
         // get data
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
-        // get image
-        $uploadedFiles = $request->getUploadedFiles();
-
-        if(isset($uploadedFiles['image'])) {
-            $data['image'] = $uploadedFiles['image'];
-        }
-
         // validate
         $validator = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class);
 
@@ -151,10 +144,6 @@ class CategoryController
 
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
         $uploadedFiles = $request->getUploadedFiles();
-
-        if(isset($uploadedFiles['image'])) {
-            $data['image'] = $uploadedFiles['image'];
-        }
 
         $validator = $this->requestValidatorFactory->make(CreateCategoryRequestValidator::class);
 

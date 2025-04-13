@@ -97,7 +97,7 @@ class AddressController
 
         $successMessage = [
             'status' => 'success',
-            'message' => 'Category deleted successfully',
+            'message' => 'Address deleted successfully',
             'id' => $id,
         ];
 

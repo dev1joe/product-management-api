@@ -8,14 +8,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use League\Flysystem\FilesystemException;
-use Psr\Http\Message\UploadedFileInterface;
 
 class CategoryService extends BaseService
 {
     public function __construct(
         private readonly EntityManager $entityManager,
-        private readonly FileService $fileService,
     ){
         parent::__construct(
             $this->entityManager,
@@ -25,21 +22,12 @@ class CategoryService extends BaseService
 
     /**
      * @throws OptimisticLockException
-     * @throws FilesystemException
      * @throws ORMException
      */
     public function create(array $data): Category {
         $category = new Category();
         $category->setName($data['name']);
         $category->setProductCount(0);
-
-        if(isset($data['image'])) {
-            /** @var UploadedFileInterface $file */
-            $file = $data['image'];
-            $relativePath = $this->fileService->saveCategoryImage($file);
-
-             $category->setImage($relativePath);
-        }
 
         $this->entityManager->persist($category);
         $this->entityManager->flush();
@@ -53,7 +41,6 @@ class CategoryService extends BaseService
 //    }
 
     /**
-     * @throws FilesystemException
      * @throws ORMException
      * @throws EntityNotFoundException
      */
@@ -66,14 +53,6 @@ class CategoryService extends BaseService
 
         if(isset($data['name'])) {
             $category->setName($data['name']);
-        }
-
-        if(isset($data['image'])) {
-            /** @var UploadedFileInterface $file */
-            $file = $data['image'];
-
-            $relativePath = $this->fileService->saveCategoryImage($file);
-            $category->setImage($relativePath);
         }
 
         $this->entityManager->persist($category);

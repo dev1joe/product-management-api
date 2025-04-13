@@ -11,14 +11,11 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
-use League\Flysystem\FilesystemException;
-use Psr\Http\Message\UploadedFileInterface;
 
 class ManufacturerService extends BaseService
 {
     public function __construct(
         public readonly EntityManager $entityManager,
-        private readonly FileService $fileService,
     ){
         parent::__construct(
             $this->entityManager,
@@ -43,7 +40,6 @@ class ManufacturerService extends BaseService
     /**
      * @throws OptimisticLockException
      * @throws ORMException
-     * @throws FilesystemException
      */
     public function update(int $id, array $data): Manufacturer {
         $manufacturer = $this->entityManager->getRepository(Manufacturer::class)->find($id);
@@ -60,14 +56,6 @@ class ManufacturerService extends BaseService
             $manufacturer->setEmail($data['email']);
         }
 
-        if(isset($data['logo'])) {
-            /** @var UploadedFileInterface $file */
-            $file = $data['logo'];
-
-            $relativePath = $this->fileService->saveManufacturerLogo($file);
-            $manufacturer->setLogo($relativePath);
-        }
-
         $this->entityManager->persist($manufacturer);
         $this->entityManager->flush();
 
@@ -77,22 +65,12 @@ class ManufacturerService extends BaseService
     /**
      * @throws OptimisticLockException
      * @throws ORMException
-     * @throws FilesystemException
      */
     public function create(array $data): Manufacturer {
         $manufacturer = new Manufacturer();
         $manufacturer->setName($data['name']);
         $manufacturer->setEmail($data['email']);
         $manufacturer->setProductCount(0);
-
-        if(isset($data['logo'])) {
-            /** @var UploadedFileInterface $file */
-            $file = $data['logo'];
-            $relativePath = $this->fileService->saveManufacturerLogo($file);
-
-            $manufacturer->setLogo($relativePath);
-        }
-
 
         $this->entityManager->persist($manufacturer);
         $this->entityManager->flush();

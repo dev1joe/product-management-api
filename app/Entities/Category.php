@@ -19,8 +19,6 @@ class Category
     private int $id;
     #[Column]
     private string $name;
-    #[Column(nullable: true)]
-    private ?string $image;
     #[Column(name: 'product_count', options: ['default' => 0])]
     private int $productCount = 0;
 
@@ -37,17 +35,6 @@ class Category
     public function setName(string $name): Category
     {
         $this->name = $name;
-        return $this;
-    }
-
-    public function getImage(): string
-    {
-        return $this->image;
-    }
-
-    public function setImage(string $image): Category
-    {
-        $this->image = $image;
         return $this;
     }
 

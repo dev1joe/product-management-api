@@ -22,8 +22,6 @@ class Manufacturer
     private string $name;
     #[Column]
     private string $email;
-    #[Column(nullable: true)]
-    private ?string $logo;
     #[Column(name: 'product_count')]
     private int $productCount;
 
@@ -51,17 +49,6 @@ class Manufacturer
     public function setEmail(string $email): Manufacturer
     {
         $this->email = $email;
-        return $this;
-    }
-
-    public function getLogo(): string
-    {
-        return $this->logo;
-    }
-
-    public function setLogo(string $logo): Manufacturer
-    {
-        $this->logo = $logo;
         return $this;
     }
 

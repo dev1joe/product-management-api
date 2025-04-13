@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity, Table(name: 'products')]
-#[HasLifecycleCallbacks]
+#[HasLifecycleCallbacks] // allow updating timestamps using lifecycle callbacks
 class Product
 {
     use HasTimestamps;
@@ -31,8 +31,6 @@ class Product
     private ?Category $category;
     #[ManyToOne, JoinColumn(name: 'manufacturer_id', onDelete: 'RESTRICT')]
     private ?Manufacturer $manufacturer;
-    #[Column(nullable: true)]
-    private ?string $photo;
     #[Column(name: "price_in_cents")]
     private int $priceInCents;
     #[Column(type: Types::DECIMAL, precision: 2, scale: 1, options: ["default" => 0])]
@@ -90,17 +88,6 @@ class Product
     public function setManufacturer(Manufacturer $manufacturer): Product
     {
         $this->manufacturer = $manufacturer;
-        return $this;
-    }
-
-    public function getPhoto(): string
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(string $photo): Product
-    {
-        $this->photo = $photo;
         return $this;
     }
 

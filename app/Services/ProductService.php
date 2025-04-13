@@ -13,14 +13,12 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
-use League\Flysystem\FilesystemException;
-use Psr\Http\Message\UploadedFileInterface;
 
 class ProductService extends BaseService
 {
     public function __construct(
         private readonly EntityManager $entityManager,
-        private readonly FileService $fileService,
+        private readonly CurrencyService $currencyService,
     ){
         parent::__construct(
             $this->entityManager,
@@ -30,7 +28,6 @@ class ProductService extends BaseService
 
     /**
      * @throws OptimisticLockException
-     * @throws FilesystemException
      * @throws ORMException
      */
     public function create(array $data): Product {
@@ -40,9 +37,8 @@ class ProductService extends BaseService
 
         // price handling
         $price = (float) $data['price'];
-        // converting from dollars to cents
-        $price *= 100;
-        $product->setPriceInCents((int) $price);
+        $price = $this->currencyService->dollarsToCents($price);
+        $product->setPriceInCents($price);
 
         if(array_key_exists('manufacturer', $data)) {
             $product->setManufacturer($data['manufacturer']);
@@ -54,15 +50,6 @@ class ProductService extends BaseService
         // $category->incrementProductCount(1);
         // $this->entityManager->persist($category);
         $product->setCategory($category);
-
-        // photo handling
-        if(isset($data['photo'])) {
-            /** @var UploadedFileInterface $file */
-            $file = $data['photo'];
-            $relativeLocation = $this->fileService->saveProductImage($file);
-
-            $product->setPhoto($relativeLocation);
-        }
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
@@ -118,7 +105,6 @@ class ProductService extends BaseService
     /**
      * @throws OptimisticLockException
      * @throws ORMException
-     * @throws FilesystemException
      * @throws EntityNotFoundException
      */
     public function update(int $id, array $data): Product {
@@ -147,15 +133,6 @@ class ProductService extends BaseService
             $product->setPriceInCents((int) $data['price']);
         }
 
-        // photo handling
-        if(isset($data['photo'])) {
-            /** @var UploadedFileInterface $file */
-            $file = $data['photo'];
-            $relativeLocation = $this->fileService->saveProductImage($file);
-
-            $product->setPhoto($relativeLocation);
-        }
-
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
@@ -165,7 +142,6 @@ class ProductService extends BaseService
     /**
      * @return array{bool, string}
      * @throws OptimisticLockException
-     * @throws FilesystemException
      * @throws ORMException
      * @throws EntityNotFoundException
      */
@@ -194,15 +170,6 @@ class ProductService extends BaseService
         if(! $currentManufacturer || ($currentManufacturer->getId() !== $newManufacturer->getId())) {
             $product->setManufacturer($newManufacturer);
             $changedFields[] = 'manufacturer';
-        }
-
-        if(array_key_exists('photo', $data)) {
-            /** @var UploadedFileInterface $file */
-            $file = $data['photo'];
-            $relativeLocation = $this->fileService->saveProductImage($file);
-
-            $product->setPhoto($relativeLocation);
-            $changedFields[] = 'photo';
         }
 
         // assuming that data went through the request validator first

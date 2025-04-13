@@ -26,10 +26,6 @@ class ProductController
     public function create(Request $request, Response $response): Response {
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
-        if(array_key_exists('photo', $request->getUploadedFiles())) {
-            $data['photo'] = $request->getUploadedFiles()['photo'];
-        }
-
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
 
         try {
@@ -100,10 +96,6 @@ class ProductController
 
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
         $uploadedFiles = $request->getUploadedFiles();
-
-        if(isset($uploadedFiles['photo'])) {
-            $data['photo'] = $uploadedFiles['photo'];
-        }
 
         $validator = $this->requestValidatorFactory->make(UpdateProductRequestValidator::class);
 
