@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controllers;
+// namespace App\Controllers;
 
 use App\Contracts\AuthServiceInterface;
 use App\Exceptions\ValidationException;

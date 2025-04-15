@@ -17,6 +17,7 @@
         "php-di/php-di": "^7.0",
         "vlucas/valitron": "^1.4",
         "league/flysystem": "^3.0",
-        "league/mime-type-detection": "^1.15"
+        "league/mime-type-detection": "^1.15",
+        "firebase/php-jwt": "^6.11"
     }
 }

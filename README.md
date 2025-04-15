@@ -75,11 +75,25 @@
 - use specific origin allowlists rather than allowing access from all domains
 - limit the methods and headers allowed in CORS requests to reduce potential vulnerabilities
 
-## customer's secure connection
-1. configure cookie options:
-   - httponly: only access the session using http (because it's accessible by js by default)
-   - secure: HTTPS only, it's never sent on an insecure HTTP connection (except for localhost) 
-   - samesite: 
-2. cross-site scripting (XSS) protection
-3. regenerate session id
-- more information at [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
+## Security
+### Cookies: configure options (in case of website):
+  - httponly: only access the session using http (because it's accessible by js by default)
+  - secure: HTTPS only, it's never sent on an insecure HTTP connection (except for localhost) 
+  - samesite: 
+  - more information at [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
+
+### Sessions
+  - regenerate session id on login and logout (in case of website)
+  - 
+
+### cross-site scripting (XSS) protection
+
+### JSON Web Tokens (JWT)
+  - https://jwt.io/introduction
+  - JWT secret is used to sign and verify your tokens, it's extremely important because:
+    - if someone discovers your secret, they can forge valid tokens
+    - if the secret is too short or predictable, it can be brute-forced
+    - generate secret using `openssl rand -base64 64` (bash)
+  - can I have mandatory parameters in the payload ? yes, if they are important, but make sure to document them.
+  - should the payload be validated? Absolutely.
+  - how to use JWT? check the link ☝️
