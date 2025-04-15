@@ -37,7 +37,7 @@ class ProductController
 
         try {
             $this->productService->create($data);
-        } catch(\Throwable $e) {
+        } catch(Throwable $e) {
             $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
             return $response->withHeader('Content-Type','application/json')->withStatus(500);
         }
@@ -95,7 +95,6 @@ class ProductController
         }
 
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
-        $uploadedFiles = $request->getUploadedFiles();
 
         $validator = $this->requestValidatorFactory->make(UpdateProductRequestValidator::class);
 

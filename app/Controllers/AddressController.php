@@ -4,16 +4,12 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\DataObjects\AddressQueryParams;
-use App\DataObjects\QueryParams;
-use App\Entities\Address;
 use App\Exceptions\ValidationException;
-use App\QueryValidators\AddressQueryValidator;
 use App\QueryValidators\BaseQueryValidator;
 use App\RequestValidators\CreateAddressRequestValidator;
 use App\RequestValidators\RequestValidatorFactory;
 use App\RequestValidators\UpdateAddressRequestValidator;
 use App\Services\AddressService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
