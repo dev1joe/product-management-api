@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use App\Enums\AppEnvironment;
-use App\Enums\StorageDriver;
 
 $appEnv = $_ENV['APP_ENV'] ?? AppEnvironment::Production;
 
@@ -18,10 +17,11 @@ return [
             'password' => $_ENV['DB_PASS'],
         ]
     ],
-    'storage' => [
-        'driver' => StorageDriver::Local
-    ],
     'http' => [
-        'allowed_origin' => $_ENV['HTTP_ALLOWED_ORIGIN'] ?? ''
-    ]
+        'allowed_origin' => $_ENV['HTTP_ALLOWED_ORIGIN'] ?? '*'
+    ],
+    'security' => [
+        'jwt_secret' => $_ENV['JWT_SECRET'],
+        'jwt_alg' => $_ENV['JWT_ALG'] ?? 'HS256'
+    ],
 ];

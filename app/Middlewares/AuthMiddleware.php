@@ -24,6 +24,11 @@ class AuthMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        //TODO: what if the token is expired but the user was logged in as
+        // regular user NOT admin?
+        // I should allow / process the request with no problems
+        // use a token with very short expiration to test
+
         $authHeader = $request->getHeaderLine('Authorization');
 
         if(! $authHeader || ! str_starts_with($authHeader, 'Bearer ')) {

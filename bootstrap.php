@@ -12,6 +12,8 @@ require __DIR__ . '/vendor/autoload.php';
 // environment variables
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
+$validate = require 'configs/env_validate.php';
+$validate($dotenv);
 
 // make container
 /** @var ContainerInterface $container */

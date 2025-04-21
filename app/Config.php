@@ -3,6 +3,13 @@ declare(strict_types=1);
 
 namespace App;
 
+/*
+ * why use an environment variables wrapper?
+ * default values and error handling.
+ * decoupling from superglobals,
+ * hence, extensible code
+ * that allows loading environment variables from somewhere else without breaking the application
+ */
 class Config
 {
     public function __construct(

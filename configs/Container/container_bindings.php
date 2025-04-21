@@ -2,17 +2,13 @@
 declare(strict_types=1);
 
 use App\Config;
-use App\Contracts\AuthServiceInterface;
-use App\Enums\StorageDriver;
 use App\ErrorHandler;
 use App\EventListeners\ProductListener;
 use App\RequestValidators\RequestValidatorFactory;
-use App\Services\AuthService;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
-use League\Flysystem\Filesystem;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\App;
@@ -69,20 +65,4 @@ return [
 
         return $app->getResponseFactory();
     },
-    Filesystem::class => function(Config $config) {
-        // The internal adapter
-        $adapter = match($config->get('storage.driver')) {
-            StorageDriver::Local => new League\Flysystem\Local\LocalFilesystemAdapter(
-                PRODUCT_STORAGE_PATH
-            ),
-            //TODO: add FTP driver here if needed
-        };
-
-        // The FilesystemOperator
-        return new League\Flysystem\Filesystem($adapter);
-    },
-//    AuthServiceInterface::class => function(ContainerInterface $container) {
-//        return $container->get(AuthService::class);
-//        // `App\Services\AuthService` is the default implementation of the AuthServiceInterface
-//    },
 ];

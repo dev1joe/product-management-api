@@ -1,4 +1,4 @@
-# E-commerce API
+# Product Management API
 
 # Learning
 ## PHP

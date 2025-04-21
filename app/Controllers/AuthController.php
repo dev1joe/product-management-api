@@ -6,7 +6,6 @@ namespace App\Controllers;
 use App\Services\JwtService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Slim\Handlers\Strategies\RequestResponseNamedArgs;
 
 class AuthController
 {
@@ -19,7 +18,7 @@ class AuthController
     {
         $body = json_decode($request->getBody()->getContents(), true);
 
-        $isAdmin = strtolower($body['admin'] ?? 'false');
+        $isAdmin = strtolower($body['admin']) ?? 'false';
         $username = $body['name'] ?? $body['username'] ?? 'username';
 
         // validate isAdmin
