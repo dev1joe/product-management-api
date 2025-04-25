@@ -20,7 +20,6 @@ class ProductQueryParams extends QueryParams
 
         $this->rating = (isset($params['rating']))? $params['rating'] : null;
 
-        // TODO: use currency service 🔴
         $this->minPriceInCents = (isset($params['minPrice']))? $params['minPrice'] : null;
 
         $this->maxPriceInCents = (isset($params['maxPrice']))? $params['maxPrice'] : null;

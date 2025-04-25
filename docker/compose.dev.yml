@@ -1,0 +1,64 @@
+services:
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_app1
+    image: php_app:latest
+    restart: on-failure:10
+#    ports:
+#      - "3001:3001" # HOST:CONTAINER
+    working_dir: /app
+    volumes:
+      - "../:/app"
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_app2
+    image: php_app:latest
+    restart: on-failure:10
+    working_dir: /app
+    volumes:
+      - "../:/app"
+
+  app3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_app3
+    image: php_app:latest
+    restart: on-failure:10
+    working_dir: /app
+    volumes:
+      - "../:/app"
+
+  nginx:
+    image: nginx:1.28-alpine
+    container_name: app_server
+    restart: on-failure:10
+    ports:
+      - "80:80"
+      - "443:443" # HOST:CONTAINER
+    volumes:
+      - "../nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "../nginx/nginx-selfsigned.key:/etc/nginx/nginx-selfsigned.key"
+      - "../nginx/nginx-selfsigned.crt:/etc/nginx/nginx-selfsigned.crt"
+
+  # insert seed data
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    ports:
+      - "3306:3306" # HOST:CONTAINER
+    volumes:
+      - products-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: products
+      MYSQL_USER: user
+      MYSQL_ROOT_PASSWORD: password
+
+volumes:
+  products-mysql-data:

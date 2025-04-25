@@ -70,7 +70,4 @@ class CategoryService extends BaseService
 //        $this->entityManager->flush();
 //    }
 
-    //TODO: recalculate connections
-    // count how many products associated with each category and check if category->productCount is wrong or not
-    // if wrong change it
 }

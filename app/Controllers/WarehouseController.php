@@ -123,7 +123,6 @@ class WarehouseController
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
     }
 
-    // TODO: delete address when no more warehouses associated with it ??
     public function delete(Request $request, Response $response, array $args): Response {
         $id = (array_key_exists('id', $args))? (int) $args['id'] : null;
 

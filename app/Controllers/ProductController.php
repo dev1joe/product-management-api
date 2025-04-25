@@ -24,6 +24,7 @@ class ProductController
     }
 
     public function create(Request $request, Response $response): Response {
+        // TODO: remove the null coalescing operator (??) from all controllers
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         $validator = $this->requestValidatorFactory->make(CreateProductRequestValidator::class);
@@ -94,6 +95,7 @@ class ProductController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
+        // TODO: remove the null coalescing operator (??) from all controllers
         $data = json_decode($request->getBody()->getContents(), true) ?? [];
 
         $validator = $this->requestValidatorFactory->make(UpdateProductRequestValidator::class);
