@@ -56,9 +56,10 @@ services:
     volumes:
       - products-mysql-data:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: products
-      MYSQL_USER: user
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_PASSWORD: ${DB_PASS}
 
 volumes:
   products-mysql-data:
