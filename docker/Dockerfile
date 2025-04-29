@@ -1,7 +1,5 @@
 # change to alpine
-FROM php:8.3.19-cli-alpine
-
-WORKDIR /app
+FROM php:8.3.19-fpm-alpine
 
 RUN apk add --no-cache \
     bash \
@@ -28,7 +26,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # mounting a volume instead (live reload)
 # COPY . /app
 
-CMD ["php", "-S", "0.0.0.0:3000", "-t", "public"]
+WORKDIR /app
+# CMD ["php", "-S", "0.0.0.0:3000", "-t", "public"]
+CMD ["php-fpm"]
 
 # a command for keeping the container alive
 # CMD ["tail", "-f", "/dev/null"]

@@ -1,5 +1,10 @@
 # Product Management API
 
+# Quick Start
+- make your own `.env` file using `.env.example` template.
+- open a new terminal and change directory to `docker` using `cd docker`
+- run `docker compose -f compose.dev.yml --env-file ../.env up -d --build` in terminal.
+
 # Learning
 ## PHP
 ### Heredoc & Nowdoc
