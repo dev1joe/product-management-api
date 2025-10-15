@@ -6,7 +6,7 @@ A RESTful API with 30+ endpoints to manage product data (categories, manufacture
 - Security: Implemented JWT for role-based access control and enforced HTTPS via Nginx to secure data in transit.
 - Server: Configured Nginx with FastCGI and PHP-FPM to optimize request handling and load balancing between multiple application instances which reduced response time by ~40% and improved concurrent request handling.
 - Deployment: Used Docker to containerize PHP apps and MySQL, enabling scalable and portable environments.
-Technologies: PHP (Slim Framework), MySQL, Doctrine ORM and Migrations, DI container, Docker, Nginx.
+- Technologies: PHP (Slim Framework), MySQL, Doctrine ORM and Migrations, DI container, Docker, Nginx.
 
 <img width="1152" height="575" alt="Deployment-Diagram" src="https://github.com/user-attachments/assets/922be3d5-98f7-44fc-9483-9dcc146f9d69" />
 
